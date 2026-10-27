@@ -14310,7 +14310,7 @@
     {
       "id": "SU-0275",
       "bug": "SU-0275",
-      "default": 0,
+      "default": 1,
       "title": "Grandiose (and Redefined): effects that count buffs / debuffs see the +3 (Lenience, Holy Might, Reckoning, Pandemonium Exploit, Under Stress, Swell, Nighttaker, Ruin, Daybreaker, Heresy and two spells) (code: they counted the raw list)",
       "edits": [
         {
@@ -14332,10 +14332,19 @@
           }
         },
         {
+          "va": "0x14a34359c",
+          "expect": "000000000000",
+          "write": "ff250e54b9ff",
+          "note": "trampoline -> hook_j_su0275_elem (loader/hooks_J.c) (cave code)",
+          "kind": {
+            "type": "cave"
+          }
+        },
+        {
           "va": "0x140e1a072",
           "expect": "6a823200",
           "write": "1a955209",
-          "note": "bc_EventDamage L2488 Lenience: raw buff count -> bc_CountBuffs",
+          "note": "bc_EventDamage L2488 Lenience: list fetch -> pass-through, records the bc_CountBuffs value",
           "kind": {
             "type": "call_rel",
             "old": {
@@ -14358,10 +14367,36 @@
           }
         },
         {
+          "va": "0x140e1a30e",
+          "expect": "0e2547ff",
+          "write": "8a925209",
+          "note": "bc_EventDamage L2489 Lenience: list[0] read -> the recorded buff count (fresh value)",
+          "kind": {
+            "type": "call_rel",
+            "old": {
+              "double": 56892816.41031504
+            },
+            "new": {
+              "ours": "code cave (_RDATA slack)",
+              "addr": "0x14a34359c"
+            }
+          },
+          "anchor": {
+            "seed": "488b8424384d010048898424404d0100",
+            "seed_offset": 0,
+            "length": 55,
+            "mask": "xxxxxxxxxxxxxxxxxxxxxxxxxxx????xxxxxxxxxxxxxxxxxxxx????",
+            "sha256": "0e160b4e9c50b4e4d7598f7b43a734265544ee6b5401300b98d51805bf14b3ef",
+            "function": "bc_EventDamage",
+            "gml_line": 2489,
+            "offset": 27
+          }
+        },
+        {
           "va": "0x140eadf78",
           "expect": "64432900",
           "write": "14564909",
-          "note": "bc_EventDamage L5144 Holy Might: raw buff count -> bc_CountBuffs",
+          "note": "bc_EventDamage L5144 Holy Might: list fetch -> pass-through, records the bc_CountBuffs value",
           "kind": {
             "type": "call_rel",
             "old": {
@@ -14384,10 +14419,36 @@
           }
         },
         {
+          "va": "0x140eae1e9",
+          "expect": "33e63dff",
+          "write": "af534909",
+          "note": "bc_EventDamage L5145 Holy Might: list[0] read -> the recorded buff count (fresh value)",
+          "kind": {
+            "type": "call_rel",
+            "old": {
+              "double": 56892816.41031504
+            },
+            "new": {
+              "ours": "code cave (_RDATA slack)",
+              "addr": "0x14a34359c"
+            }
+          },
+          "anchor": {
+            "seed": "488b8424c097010048898424c8970100",
+            "seed_offset": 0,
+            "length": 55,
+            "mask": "xxxxxxxxxxxxxxxxxxxxxxxxxxx????xxxxxxxxxxxxxxxxxxxx????",
+            "sha256": "4650beadf051770b68ce07ef6af380fc0ebaa73a5144d288d5405962a2d0c90d",
+            "function": "bc_EventDamage",
+            "gml_line": 5145,
+            "offset": 27
+          }
+        },
+        {
           "va": "0x140dc5bd6",
           "expect": "06c73700",
           "write": "b6d95709",
-          "note": "bc_EventDamage L902 Reckoning: raw buff count -> bc_CountBuffs",
+          "note": "bc_EventDamage L902 Reckoning: list fetch -> pass-through, records the bc_CountBuffs value",
           "kind": {
             "type": "call_rel",
             "old": {
@@ -14410,10 +14471,36 @@
           }
         },
         {
+          "va": "0x140dc5c25",
+          "expect": "f76b4cff",
+          "write": "73d95709",
+          "note": "bc_EventDamage L903 Reckoning: list[0] read -> the recorded buff count (fresh value)",
+          "kind": {
+            "type": "call_rel",
+            "old": {
+              "double": 56892816.41031504
+            },
+            "new": {
+              "ours": "code cave (_RDATA slack)",
+              "addr": "0x14a34359c"
+            }
+          },
+          "anchor": {
+            "seed": "48898424a823010033d2488b8c24a823",
+            "seed_offset": 5,
+            "length": 55,
+            "mask": "x????xxxxxxxxxxxxxxxxxxx????xxxxxxxxxxxx????xxxxxxxxxxx",
+            "sha256": "bc0be255ad0373799fab5a8642886ee02e9da47f26d95568be7a8e384986b772",
+            "function": "bc_EventDamage",
+            "gml_line": 903,
+            "offset": 24
+          }
+        },
+        {
           "va": "0x140e72f7e",
           "expect": "5ef32c00",
           "write": "0e064d09",
-          "note": "bc_EventDamage L4077 Pandemonium Exploit: raw buff count -> bc_CountBuffs",
+          "note": "bc_EventDamage L4077 Pandemonium Exploit: list fetch -> pass-through, records the bc_CountBuffs value",
           "kind": {
             "type": "call_rel",
             "old": {
@@ -14436,10 +14523,36 @@
           }
         },
         {
+          "va": "0x140e72fa8",
+          "expect": "749841ff",
+          "write": "f0054d09",
+          "note": "bc_EventDamage L4078 Pandemonium Exploit: list[0] read -> the recorded buff count (fresh value)",
+          "kind": {
+            "type": "call_rel",
+            "old": {
+              "double": 56892816.41031504
+            },
+            "new": {
+              "ours": "code cave (_RDATA slack)",
+              "addr": "0x14a34359c"
+            }
+          },
+          "anchor": {
+            "seed": "c7842478010300ee0f000033d2488d8c",
+            "seed_offset": 5,
+            "length": 63,
+            "mask": "x????xxxxxxxxxxxxxxxxxxxxxx????xxxxxxxxxxxx????x????xxxxxxxxxxx",
+            "sha256": "6733d5cda23924c51ce92c641110845b96fdcbaf2aaa585aa050f3c606a7f7e5",
+            "function": "bc_EventDamage",
+            "gml_line": 4078,
+            "offset": 27
+          }
+        },
+        {
           "va": "0x1408931b5",
           "expect": "27f18a00",
           "write": "d703ab09",
-          "note": "bc_CreatureCast L8705 spell: +10% per buff: raw buff count -> bc_CountBuffs",
+          "note": "bc_CreatureCast L8705 spell: +10% per buff: list fetch -> pass-through, records the bc_CountBuffs value",
           "kind": {
             "type": "call_rel",
             "old": {
@@ -14462,10 +14575,36 @@
           }
         },
         {
+          "va": "0x140893214",
+          "expect": "08969fff",
+          "write": "8403ab09",
+          "note": "bc_CreatureCast L8706 spell: +10% per buff: list[0] read -> the recorded buff count (fresh value)",
+          "kind": {
+            "type": "call_rel",
+            "old": {
+              "double": 56892816.41031504
+            },
+            "new": {
+              "ours": "code cave (_RDATA slack)",
+              "addr": "0x14a34359c"
+            }
+          },
+          "anchor": {
+            "seed": "488b8424b805020048898424c0050200",
+            "seed_offset": 0,
+            "length": 55,
+            "mask": "xxxxxxxxxxxxxxxxxxxxxxxxxxx????xxxxxxxxxxxxxxxxxxxx????",
+            "sha256": "041217b44c765df2fcccd35ddede80a48d53849bab52e114f3b815e00a8aa44a",
+            "function": "bc_CreatureCast",
+            "gml_line": 8706,
+            "offset": 27
+          }
+        },
+        {
           "va": "0x1406df0f2",
           "expect": "ba39a600",
           "write": "a044c609",
-          "note": "bc_CreatureAttack L1401 Under Stress: raw debuff count -> bc_CountDebuffs",
+          "note": "bc_CreatureAttack L1401 Under Stress: list fetch -> pass-through, records the bc_CountDebuffs value",
           "kind": {
             "type": "call_rel",
             "old": {
@@ -14488,10 +14627,36 @@
           }
         },
         {
+          "va": "0x1406df1e0",
+          "expect": "3cd6baff",
+          "write": "b843c609",
+          "note": "bc_CreatureAttack L1402 Under Stress: list[0] read -> the recorded debuff count (fresh value)",
+          "kind": {
+            "type": "call_rel",
+            "old": {
+              "double": 56892816.41031504
+            },
+            "new": {
+              "ours": "code cave (_RDATA slack)",
+              "addr": "0x14a34359c"
+            }
+          },
+          "anchor": {
+            "seed": "4c8bc0ba14000000488d8c2478820000",
+            "seed_offset": 31,
+            "length": 60,
+            "mask": "xxxxxxxxxxxx????xxxxxxxxxxx????xxxxxxxxxxxxxxxxx????xxxxxxxx",
+            "sha256": "05cbe062c1342ac9d3788cbefb2764ad92c9fac8f69e500cd349c4f321f033c6",
+            "function": "bc_CreatureAttack",
+            "gml_line": 1402,
+            "offset": 27
+          }
+        },
+        {
           "va": "0x140ecf85f",
           "expect": "4d322700",
           "write": "333d4709",
-          "note": "bc_EventDamage L5752 Under Stress: raw debuff count -> bc_CountDebuffs",
+          "note": "bc_EventDamage L5752 Under Stress: list fetch -> pass-through, records the bc_CountDebuffs value",
           "kind": {
             "type": "call_rel",
             "old": {
@@ -14514,10 +14679,36 @@
           }
         },
         {
+          "va": "0x140ecf953",
+          "expect": "c9ce3bff",
+          "write": "453c4709",
+          "note": "bc_EventDamage L5753 Under Stress: list[0] read -> the recorded debuff count (fresh value)",
+          "kind": {
+            "type": "call_rel",
+            "old": {
+              "double": 56892816.41031504
+            },
+            "new": {
+              "ours": "code cave (_RDATA slack)",
+              "addr": "0x14a34359c"
+            }
+          },
+          "anchor": {
+            "seed": "4c8bc0ba14000000488d8c2428ba0200",
+            "seed_offset": 31,
+            "length": 60,
+            "mask": "xxxxxxxxxxxx????xxxxxxxxxxx????xxxxxxxxxxxxxxxxx????xxxxxxxx",
+            "sha256": "748cbdc15c05faabe84344aa749c558fc4d6db15420c681f63f201ee7f484e67",
+            "function": "bc_EventDamage",
+            "gml_line": 5753,
+            "offset": 27
+          }
+        },
+        {
           "va": "0x14138231b",
           "expect": "9107dcff",
           "write": "7712fc08",
-          "note": "bc_OnAttack L2081 Swell: raw debuff count -> bc_CountDebuffs",
+          "note": "bc_OnAttack L2081 Swell: list fetch -> pass-through, records the bc_CountDebuffs value",
           "kind": {
             "type": "call_rel",
             "old": {
@@ -14540,10 +14731,36 @@
           }
         },
         {
+          "va": "0x1413823a1",
+          "expect": "7ba4f0fe",
+          "write": "f711fc08",
+          "note": "bc_OnAttack L2082 Swell: list[0] read -> the recorded debuff count (fresh value)",
+          "kind": {
+            "type": "call_rel",
+            "old": {
+              "double": 56892816.41031504
+            },
+            "new": {
+              "ours": "code cave (_RDATA slack)",
+              "addr": "0x14a34359c"
+            }
+          },
+          "anchor": {
+            "seed": "c68424a40100000033d2488d8c24c076",
+            "seed_offset": 5,
+            "length": 59,
+            "mask": "x????xxxxxxxxxxxxxxxxxxx????xxxxxxxxxxxx????xxxxxxxxxxxxxxx",
+            "sha256": "3a5483ab48f813654cc74a26e4d3d1b79395cbfb4459c0c22d0c70e2ec8473b6",
+            "function": "bc_OnAttack",
+            "gml_line": 2082,
+            "offset": 24
+          }
+        },
+        {
           "va": "0x140dfa2ba",
           "expect": "f2873400",
           "write": "d8925409",
-          "note": "bc_EventDamage L1868 Nighttaker: raw debuff count -> bc_CountDebuffs",
+          "note": "bc_EventDamage L1868 Nighttaker: list fetch -> pass-through, records the bc_CountDebuffs value",
           "kind": {
             "type": "call_rel",
             "old": {
@@ -14566,10 +14783,36 @@
           }
         },
         {
+          "va": "0x140dfa2e4",
+          "expect": "382549ff",
+          "write": "b4925409",
+          "note": "bc_EventDamage L1869 Nighttaker: list[0] read -> the recorded debuff count (fresh value)",
+          "kind": {
+            "type": "call_rel",
+            "old": {
+              "double": 56892816.41031504
+            },
+            "new": {
+              "ours": "code cave (_RDATA slack)",
+              "addr": "0x14a34359c"
+            }
+          },
+          "anchor": {
+            "seed": "c78424780103004d07000033d2488d8c",
+            "seed_offset": 5,
+            "length": 55,
+            "mask": "x????xxxxxxxxxxxxxxxxxxxxxx????xxxxxxx????xxxxxxxxx????",
+            "sha256": "1bab3e9fd5addb0711383364a306dba9edac03a7b16a4975de6572be14df5ed3",
+            "function": "bc_EventDamage",
+            "gml_line": 1869,
+            "offset": 27
+          }
+        },
+        {
           "va": "0x140e28fd4",
           "expect": "d89a3100",
           "write": "bea55109",
-          "note": "bc_EventDamage L2786 Ruin: raw debuff count -> bc_CountDebuffs",
+          "note": "bc_EventDamage L2786 Ruin: list fetch -> pass-through, records the bc_CountDebuffs value",
           "kind": {
             "type": "call_rel",
             "old": {
@@ -14592,10 +14835,36 @@
           }
         },
         {
+          "va": "0x140e28ffe",
+          "expect": "1e3846ff",
+          "write": "9aa55109",
+          "note": "bc_EventDamage L2787 Ruin: list[0] read -> the recorded debuff count (fresh value)",
+          "kind": {
+            "type": "call_rel",
+            "old": {
+              "double": 56892816.41031504
+            },
+            "new": {
+              "ours": "code cave (_RDATA slack)",
+              "addr": "0x14a34359c"
+            }
+          },
+          "anchor": {
+            "seed": "c7842478010300e30a000033d2488d8c",
+            "seed_offset": 5,
+            "length": 63,
+            "mask": "x????xxxxxxxxxxxxxxxxxxxxxx????xxxxxxxxxxxx????x????xxxxxxxxxxx",
+            "sha256": "6967d33334863b8d6b2b63092963dbe687fa2669a8aef15c3f6103b3439d91a4",
+            "function": "bc_EventDamage",
+            "gml_line": 2787,
+            "offset": 27
+          }
+        },
+        {
           "va": "0x140ec0a4c",
           "expect": "60202800",
           "write": "462b4809",
-          "note": "bc_EventDamage L5497 Ruin: raw debuff count -> bc_CountDebuffs",
+          "note": "bc_EventDamage L5497 Ruin: list fetch -> pass-through, records the bc_CountDebuffs value",
           "kind": {
             "type": "call_rel",
             "old": {
@@ -14618,10 +14887,36 @@
           }
         },
         {
+          "va": "0x140ec0a76",
+          "expect": "a6bd3cff",
+          "write": "222b4809",
+          "note": "bc_EventDamage L5498 Ruin: list[0] read -> the recorded debuff count (fresh value)",
+          "kind": {
+            "type": "call_rel",
+            "old": {
+              "double": 56892816.41031504
+            },
+            "new": {
+              "ours": "code cave (_RDATA slack)",
+              "addr": "0x14a34359c"
+            }
+          },
+          "anchor": {
+            "seed": "c78424780103007a15000033d2488d8c",
+            "seed_offset": 5,
+            "length": 63,
+            "mask": "x????xxxxxxxxxxxxxxxxxxxxxx????xxxxxxxxxxxx????x????xxxxxxxxxxx",
+            "sha256": "e98444e1990a63f368cd3fd87ecf792750270ee616a783708eb7b77c1b5c6a1d",
+            "function": "bc_EventDamage",
+            "gml_line": 5498,
+            "offset": 27
+          }
+        },
+        {
           "va": "0x140e7559d",
           "expect": "0fd52c00",
           "write": "f5df4c09",
-          "note": "bc_EventDamage L4124 Daybreaker: raw debuff count -> bc_CountDebuffs",
+          "note": "bc_EventDamage L4124 Daybreaker: list fetch -> pass-through, records the bc_CountDebuffs value",
           "kind": {
             "type": "call_rel",
             "old": {
@@ -14644,10 +14939,36 @@
           }
         },
         {
+          "va": "0x140e75627",
+          "expect": "f57141ff",
+          "write": "71df4c09",
+          "note": "bc_EventDamage L4125 Daybreaker: list[0] read -> the recorded debuff count (fresh value)",
+          "kind": {
+            "type": "call_rel",
+            "old": {
+              "double": 56892816.41031504
+            },
+            "new": {
+              "ours": "code cave (_RDATA slack)",
+              "addr": "0x14a34359c"
+            }
+          },
+          "anchor": {
+            "seed": "488b8424907c010048898424987c0100",
+            "seed_offset": 0,
+            "length": 55,
+            "mask": "xxxxxxxxxxxxxxxxxxxxxxxxxxx????xxxxxxxxxxxxxxxxxxxx????",
+            "sha256": "200b202b052a3172192903b584829d12eff11e6c09997e7fcfeb3f368bfb00c0",
+            "function": "bc_EventDamage",
+            "gml_line": 4125,
+            "offset": 27
+          }
+        },
+        {
           "va": "0x140eb24ca",
           "expect": "e2052900",
           "write": "c8104909",
-          "note": "bc_EventDamage L5224 Heresy: raw debuff count -> bc_CountDebuffs",
+          "note": "bc_EventDamage L5224 Heresy: list fetch -> pass-through, records the bc_CountDebuffs value",
           "kind": {
             "type": "call_rel",
             "old": {
@@ -14670,10 +14991,36 @@
           }
         },
         {
+          "va": "0x140eb253a",
+          "expect": "e2a23dff",
+          "write": "5e104909",
+          "note": "bc_EventDamage L5225 Heresy: list[0] read -> the recorded debuff count (fresh value)",
+          "kind": {
+            "type": "call_rel",
+            "old": {
+              "double": 56892816.41031504
+            },
+            "new": {
+              "ours": "code cave (_RDATA slack)",
+              "addr": "0x14a34359c"
+            }
+          },
+          "anchor": {
+            "seed": "4c8bc0488b942458990100488d8c2438",
+            "seed_offset": 28,
+            "length": 52,
+            "mask": "xxxxxxxxx????xxxxxxxxxxx????xxxxxxxxxxxxxxxxxxxx????",
+            "sha256": "245ba3677c602145a19d5d2aef9c5f25de0fccf1fc115bd33d0bc746a7d8aea1",
+            "function": "bc_EventDamage",
+            "gml_line": 5225,
+            "offset": 24
+          }
+        },
+        {
           "va": "0x1408b2ecb",
           "expect": "e1fb8800",
           "write": "c706a909",
-          "note": "bc_CreatureCast L9543 spell: chance per debuff: raw debuff count -> bc_CountDebuffs",
+          "note": "bc_CreatureCast L9543 spell: chance per debuff: list fetch -> pass-through, records the bc_CountDebuffs value",
           "kind": {
             "type": "call_rel",
             "old": {
@@ -14693,6 +15040,32 @@
             "function": "bc_CreatureCast",
             "gml_line": 9543,
             "offset": 25
+          }
+        },
+        {
+          "va": "0x1408b2ef5",
+          "expect": "27999dff",
+          "write": "a306a909",
+          "note": "bc_CreatureCast L9544 spell: chance per debuff: list[0] read -> the recorded debuff count (fresh value)",
+          "kind": {
+            "type": "call_rel",
+            "old": {
+              "double": 56892816.41031504
+            },
+            "new": {
+              "ours": "code cave (_RDATA slack)",
+              "addr": "0x14a34359c"
+            }
+          },
+          "anchor": {
+            "seed": "c78424f02504004825000033d2488d8c",
+            "seed_offset": 5,
+            "length": 60,
+            "mask": "x????xxxxxxxxxxxxxxxxxxxxxx????xxxxxxxxxxxxxxxxx????xxxxxxxx",
+            "sha256": "806bd371321d21451d1f24c98728f5cc70e0ee6d101d9b7baf99033adda25722",
+            "function": "bc_CreatureCast",
+            "gml_line": 9544,
+            "offset": 27
           }
         }
       ],
@@ -14716,6 +15089,16 @@
           "start": "0x149ed89a8",
           "end": "0x149ed89af",
           "what": "hook pointer hook_j_su0275_debuffs"
+        },
+        {
+          "start": "0x14a34359c",
+          "end": "0x14a3435a1",
+          "what": "trampoline -> hook_j_su0275_elem"
+        },
+        {
+          "start": "0x149ed89b0",
+          "end": "0x149ed89b7",
+          "what": "hook pointer hook_j_su0275_elem"
         }
       ],
       "runtime_hooks": [
@@ -14726,6 +15109,10 @@
         {
           "slot_va": "0x149ed89a8",
           "symbol": "hook_j_su0275_debuffs"
+        },
+        {
+          "slot_va": "0x149ed89b0",
+          "symbol": "hook_j_su0275_elem"
         }
       ],
       "group": "heavy"
@@ -20988,31 +21375,74 @@
     {
       "id": "SU-0301",
       "bug": "SU-0301",
-      "default": 0,
-      "title": "Roulette: a heal roll ends only that hit, so the creature's remaining extra attacks still happen (code: the heal roll ended the whole attack)",
+      "default": 1,
+      "group": "heavy",
+      "title": "Roulette: a heal roll ends only that hit (no damage, like a hit that dealt none), so the remaining extra attacks and the after-attack effects still happen (code: the heal roll ended the whole attack)",
       "edits": [
         {
-          "va": "0x1406f09b2",
-          "expect": "e9c68b0000",
-          "write": "e9b1fbfdff",
-          "note": "bc_CreatureAttack L1776 Roulette heal: continue with the next hit (hit-loop continue block) instead of returning",
+          "va": "0x149856760",
+          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
+          "write": "c7442440fd060000b201488d8c2458860000e8395ca3f6488984245865000048",
+          "note": "SU-0301 Roulette heal: L1789 (first_attack_done = true), then join the per-hit end at L1871 like a hit that dealt no damage (cave code)",
+          "kind": {
+            "type": "cave"
+          }
+        },
+        {
+          "va": "0x149856780",
+          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
+          "write": "8b8424586500004889842460650000488b942460650000488d8c24803a0000e8",
+          "note": "SU-0301 Roulette heal: L1789 (first_attack_done = true), then join the per-hit end at L1871 like a hit that dealt no damage (cave code)",
+          "kind": {
+            "type": "cave"
+          }
+        },
+        {
+          "va": "0x1498567a0",
+          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
+          "write": "6c5ca3f690488d8c2458860000e86e5aa3f64c8d8c24803a000041b800000080",
+          "note": "SU-0301 Roulette heal: L1789 (first_attack_done = true), then join the per-hit end at L1871 like a hit that dealt no damage (cave code)",
+          "kind": {
+            "type": "cave"
+          }
+        },
+        {
+          "va": "0x1498567c0",
+          "expect": "000000000000000000000000000000000000000000",
+          "write": "8b15b2b01800488d4c2468e8905a06fee9dee4e9f6",
+          "note": "SU-0301 Roulette heal: L1789 (first_attack_done = true), then join the per-hit end at L1871 like a hit that dealt no damage (cave code)",
+          "kind": {
+            "type": "cave"
+          }
+        },
+        {
+          "va": "0x1406f098a",
+          "expect": "c7442440f0060000",
+          "write": "e9d15d1609909090",
+          "note": "bc_CreatureAttack L1776 (Roulette heal `return`, its line marker; the shared return tail at 0x1406f09a2 stays untouched) -> SU-0301 stub",
           "kind": {
             "type": "raw"
           },
           "anchor": {
-            "seed": "48898424784e0000488b8424784e0000",
-            "seed_offset": 0,
-            "length": 55,
-            "mask": "xxxxxxxxxxxxxxxxxxxxxxxxx????xxxxxxxxx????xxxxxxxxx????",
-            "sha256": "32d70df9f9c0976e07cc0ddf496dde7742f656e65b82508339d76e3ae08304a3",
+            "seed": "c7442440f0060000488b8424b0880000",
+            "seed_offset": 28,
+            "length": 60,
+            "mask": "x????xxxxxxxxxxxxxxxxxxx????xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            "sha256": "4bf2f883811b94c0c7c35765ec5c7bdbf261f9f180b4521ef3e14b9f408d223f",
             "function": "bc_CreatureAttack",
             "gml_line": 1776,
-            "offset": 24
+            "offset": 28
           }
         }
       ],
       "runtime_hooks": [],
-      "reserves": []
+      "reserves": [
+        {
+          "start": "0x149856760",
+          "end": "0x1498567d4",
+          "what": "SU-0301 Roulette heal continuation stub"
+        }
+      ]
     },
     {
       "id": "SU-0286",

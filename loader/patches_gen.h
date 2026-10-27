@@ -609,20 +609,35 @@ static const SuucpEdit g_edits[] = {
     {0x01568B59u, 4, {0xD3,0x39,0xD2,0xFE}, {0x2D,0xAA,0xDD,0x08}},
     {0x0A343590u, 6, {0x00,0x00,0x00,0x00,0x00,0x00}, {0xFF,0x25,0x0A,0x54,0xB9,0xFF}},
     {0x0A343596u, 6, {0x00,0x00,0x00,0x00,0x00,0x00}, {0xFF,0x25,0x0C,0x54,0xB9,0xFF}},
+    {0x0A34359Cu, 6, {0x00,0x00,0x00,0x00,0x00,0x00}, {0xFF,0x25,0x0E,0x54,0xB9,0xFF}},
     {0x00E1A072u, 4, {0x6A,0x82,0x32,0x00}, {0x1A,0x95,0x52,0x09}},
+    {0x00E1A30Eu, 4, {0x0E,0x25,0x47,0xFF}, {0x8A,0x92,0x52,0x09}},
     {0x00EADF78u, 4, {0x64,0x43,0x29,0x00}, {0x14,0x56,0x49,0x09}},
+    {0x00EAE1E9u, 4, {0x33,0xE6,0x3D,0xFF}, {0xAF,0x53,0x49,0x09}},
     {0x00DC5BD6u, 4, {0x06,0xC7,0x37,0x00}, {0xB6,0xD9,0x57,0x09}},
+    {0x00DC5C25u, 4, {0xF7,0x6B,0x4C,0xFF}, {0x73,0xD9,0x57,0x09}},
     {0x00E72F7Eu, 4, {0x5E,0xF3,0x2C,0x00}, {0x0E,0x06,0x4D,0x09}},
+    {0x00E72FA8u, 4, {0x74,0x98,0x41,0xFF}, {0xF0,0x05,0x4D,0x09}},
     {0x008931B5u, 4, {0x27,0xF1,0x8A,0x00}, {0xD7,0x03,0xAB,0x09}},
+    {0x00893214u, 4, {0x08,0x96,0x9F,0xFF}, {0x84,0x03,0xAB,0x09}},
     {0x006DF0F2u, 4, {0xBA,0x39,0xA6,0x00}, {0xA0,0x44,0xC6,0x09}},
+    {0x006DF1E0u, 4, {0x3C,0xD6,0xBA,0xFF}, {0xB8,0x43,0xC6,0x09}},
     {0x00ECF85Fu, 4, {0x4D,0x32,0x27,0x00}, {0x33,0x3D,0x47,0x09}},
+    {0x00ECF953u, 4, {0xC9,0xCE,0x3B,0xFF}, {0x45,0x3C,0x47,0x09}},
     {0x0138231Bu, 4, {0x91,0x07,0xDC,0xFF}, {0x77,0x12,0xFC,0x08}},
+    {0x013823A1u, 4, {0x7B,0xA4,0xF0,0xFE}, {0xF7,0x11,0xFC,0x08}},
     {0x00DFA2BAu, 4, {0xF2,0x87,0x34,0x00}, {0xD8,0x92,0x54,0x09}},
+    {0x00DFA2E4u, 4, {0x38,0x25,0x49,0xFF}, {0xB4,0x92,0x54,0x09}},
     {0x00E28FD4u, 4, {0xD8,0x9A,0x31,0x00}, {0xBE,0xA5,0x51,0x09}},
+    {0x00E28FFEu, 4, {0x1E,0x38,0x46,0xFF}, {0x9A,0xA5,0x51,0x09}},
     {0x00EC0A4Cu, 4, {0x60,0x20,0x28,0x00}, {0x46,0x2B,0x48,0x09}},
+    {0x00EC0A76u, 4, {0xA6,0xBD,0x3C,0xFF}, {0x22,0x2B,0x48,0x09}},
     {0x00E7559Du, 4, {0x0F,0xD5,0x2C,0x00}, {0xF5,0xDF,0x4C,0x09}},
+    {0x00E75627u, 4, {0xF5,0x71,0x41,0xFF}, {0x71,0xDF,0x4C,0x09}},
     {0x00EB24CAu, 4, {0xE2,0x05,0x29,0x00}, {0xC8,0x10,0x49,0x09}},
+    {0x00EB253Au, 4, {0xE2,0xA2,0x3D,0xFF}, {0x5E,0x10,0x49,0x09}},
     {0x008B2ECBu, 4, {0xE1,0xFB,0x88,0x00}, {0xC7,0x06,0xA9,0x09}},
+    {0x008B2EF5u, 4, {0x27,0x99,0x9D,0xFF}, {0xA3,0x06,0xA9,0x09}},
     {0x0A343900u, 6, {0x00,0x00,0x00,0x00,0x00,0x00}, {0xFF,0x25,0xEA,0x50,0xB9,0xFF}},
     {0x0A343906u, 6, {0x00,0x00,0x00,0x00,0x00,0x00}, {0xFF,0x25,0xEC,0x50,0xB9,0xFF}},
     {0x0169AD43u, 4, {0xF9,0xAB,0x97,0x00}, {0xB9,0x8B,0xCA,0x08}},
@@ -860,7 +875,11 @@ static const SuucpEdit g_edits[] = {
     {0x0A343D36u, 6, {0x00,0x00,0x00,0x00,0x00,0x00}, {0xFF,0x25,0x5C,0x4D,0xB9,0xFF}},
     {0x066679B6u, 6, {0x0F,0x84,0xE7,0x00,0x00,0x00}, {0x66,0x0F,0x1F,0x44,0x00,0x00}},
     {0x06667A1Bu, 4, {0x81,0x2E,0x8A,0xFB}, {0x17,0xC3,0xCD,0x03}},
-    {0x006F09B2u, 5, {0xE9,0xC6,0x8B,0x00,0x00}, {0xE9,0xB1,0xFB,0xFD,0xFF}},
+    {0x09856760u, 32, {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}, {0xC7,0x44,0x24,0x40,0xFD,0x06,0x00,0x00,0xB2,0x01,0x48,0x8D,0x8C,0x24,0x58,0x86,0x00,0x00,0xE8,0x39,0x5C,0xA3,0xF6,0x48,0x89,0x84,0x24,0x58,0x65,0x00,0x00,0x48}},
+    {0x09856780u, 32, {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}, {0x8B,0x84,0x24,0x58,0x65,0x00,0x00,0x48,0x89,0x84,0x24,0x60,0x65,0x00,0x00,0x48,0x8B,0x94,0x24,0x60,0x65,0x00,0x00,0x48,0x8D,0x8C,0x24,0x80,0x3A,0x00,0x00,0xE8}},
+    {0x098567A0u, 32, {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}, {0x6C,0x5C,0xA3,0xF6,0x90,0x48,0x8D,0x8C,0x24,0x58,0x86,0x00,0x00,0xE8,0x6E,0x5A,0xA3,0xF6,0x4C,0x8D,0x8C,0x24,0x80,0x3A,0x00,0x00,0x41,0xB8,0x00,0x00,0x00,0x80}},
+    {0x098567C0u, 21, {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}, {0x8B,0x15,0xB2,0xB0,0x18,0x00,0x48,0x8D,0x4C,0x24,0x68,0xE8,0x90,0x5A,0x06,0xFE,0xE9,0xDE,0xE4,0xE9,0xF6}},
+    {0x006F098Au, 8, {0xC7,0x44,0x24,0x40,0xF0,0x06,0x00,0x00}, {0xE9,0xD1,0x5D,0x16,0x09,0x90,0x90,0x90}},
     {0x09856700u, 6, {0x00,0x00,0x00,0x00,0x00,0x00}, {0xFF,0x25,0x5A,0x1B,0x68,0x00}},
     {0x09856706u, 6, {0x00,0x00,0x00,0x00,0x00,0x00}, {0xFF,0x25,0x5C,0x1B,0x68,0x00}},
     {0x013271B8u, 4, {0x14,0x41,0xBE,0x00}, {0x44,0xF5,0x52,0x08}},
@@ -1071,32 +1090,32 @@ static const SuucpPatch g_patches[] = {
     {"SU-0234", 1, 581, 4, ""},  /* Memento of Attack / Intelligence / Defense / Speed: also counts while the gem is Sealed (code: a sealed Memento gave nothing) */
     {"SU-0269", 1, 585, 10, ""},  /* Fallen Star: 50% for every stat (code: 35% for Defense / Intelligence / Speed), a Feared holder does not steal, and Max Health gains can be stolen too */
     {"SU-0202", 1, 595, 6, ""},  /* Unstable Horror: the damage uses the master's highest stat, Health included (Maximum Health) (code: the second-highest when Health was highest) */
-    {"SU-0275", 0, 601, 16, "heavy"},  /* Grandiose (and Redefined): effects that count buffs / debuffs see the +3 (Lenience, Holy Might, Reckoning, Pandemonium Exploit, Under Stress, Swell, Nighttaker, Ruin, Daybreaker, Heresy and two spells) (code: they counted the raw list) */
-    {"SU-0216", 1, 617, 12, ""},  /* Forsaken Wonder: the Relic buffs given at the start of battle (Arbiter, Ferro, Prime & Ventus, Salus, Triumvir, Whisper) and Bloodseeker's 'always has' buffs spread to your other creatures and last forever; with Primordial Curse, Blazefury 40's start-of-battle Burning lasts forever (code: no spread, no permanence for these direct adds) */
-    {"SU-0218", 1, 629, 163, "heavy"},  /* Photosynthesis: buffs and minions your Herbling receives at the start of battle count, like the ones it receives later (code: only in-battle grants counted). Start-of-battle stat gains not built */
-    {"SU-0206", 1, 792, 5, ""},  /* Misery (Nemesis): your creatures cannot gain buffs from direct adds either (start-of-battle, 'always has', in-battle direct grants), as from buff events (code: only the buff event refused). Start-of-battle stat gains not built */
-    {"SU-0219", 1, 797, 4, ""},  /* Artifact Health %: current and Max Health gain the same amount (code: current Health gained a share of the already raised Max Health, which nearly cancelled Sacrifice) */
-    {"SU-0183", 1, 801, 3, ""},  /* Hymn of Panic: the Timeline is shuffled into a uniformly random order (code: a coin flip into two groups with a fixed order inside each) */
-    {"SU-0189", 1, 804, 2, ""},  /* Lord Zantai's battle: forced 'move to the bottom of the Timeline' moves him down 1 place, like the other bosses (code: the boss list missed battle type 37) */
-    {"SU-0310", 1, 806, 2, ""},  /* 'Cannot be resurrected' (Burn Their Corpses, Endwalker, Feast and Famine, End On a High Note, Epigraphy, Disintegrating Arrow) also stops resurrections queued before the death (Terminus, Defy the Gods, Reincarnation, Genesis) (code: checked only when queued) */
-    {"SU-0204", 1, 808, 1, ""},  /* Realm 'Next battle' boosts work in the next battle of any kind (code: switched off in boss and special battles but still used up there) */
-    {"SU-0289", 1, 809, 21, "heavy"},  /* Master of Spellmanes: gems that can't be sealed read as unsealed at once (code: sealed until the gem manager's next pass); also the read side of SU-0212 */
-    {"SU-0212", 1, 830, 0, ""},  /* Diabolism / Straight Up / Unstoppable Force: their gems read as unsealed at once (code: sealed until the gem manager's next pass). Needs SU-0289 (shared sealed-read hooks) and SU-0137 (cast check) */
-    {"SU-0271", 1, 830, 4, ""},  /* Gemcutter unseals only its own side's Ultimate gems (code: every Ultimate gem on the field when either side has it) */
-    {"SU-0226", 1, 834, 1, ""},  /* Chaos Rift is filed as a utility spell (code: a stat-boosting spell), so Velox / Lagopus / Temptation rank 100 no longer pick it */
-    {"SU-0228", 1, 835, 4, ""},  /* Velox / Lagopus also cast Dark Ritual, a stat-changing spell (code: only BOOST / DEBOOST-tagged gems) */
-    {"SU-0229", 1, 839, 0, ""},  /* Velox / Lagopus also cast Death Siphon, a stat-changing spell (code: only BOOST / DEBOOST-tagged gems). Needs SU-0228 (shared tag-test hook) */
-    {"SU-0233", 1, 839, 1, ""},  /* Ice Bolt always afflicts Frozen (code: only when its damage on the target is above 0) */
-    {"SU-0235", 1, 840, 4, ""},  /* Shellbust deals 150% of the Defense actually lost (code: of the planned loss, even when it is blocked, reflected or turned into a gain) */
-    {"SU-0242", 1, 844, 5, ""},  /* Smith cards power 2 raise only the buff / debuff trick slots' activation chance (code: every trick slot's value by 10%) */
-    {"SU-0272", 1, 849, 2, ""},  /* Giftwrapped Army gives each Mimic buffs it doesn't already have (code: repeats possible) */
-    {"SU-0222", 1, 851, 3, ""},  /* Spin the Wheel also works for an enemy holder, on your creatures' turns (code: only your holder on enemy turns). Needs SU-0001 */
-    {"SU-0301", 0, 854, 1, ""},  /* Roulette: a heal roll ends only that hit, so the creature's remaining extra attacks still happen (code: the heal roll ended the whole attack) */
-    {"SU-0286", 1, 855, 4, ""},  /* Master of Hounds: only Hounds' Dire Wolves use the highest stat (code: every Dire Wolf owner on the holder's side) */
-    {"SU-0243", 1, 859, 2, ""},  /* Teleportation Shrine: after paying 1,000 Power the Realm Type choice travels (code: the cost was checked again after paying and failed below 2,000) */
-    {"SU-0268", 1, 861, 4, ""},  /* Master of Wights + Forbearance: the Wight's 100% Health is the base the resurrection bonuses add to (code: Master of Wights overwrote the bonus with 100%) */
-    {"SU-0200", 1, 865, 4, "heavy"},  /* Disarmed: the Artifact's trait, its Nether Stone's traits and the Nether Stone's trick properties are lost too (code: only stats, trick slots and spells were) */
-    {"SU-0280", 1, 869, 36, "heavy"},  /* Improbable Catapult: Avatar traits copied to enemies work for the enemy side (Prayer Position, Avenged Sevenfold, Firelord, Expanded Power, The End, Perfect Imperfection's damage parts, The Truth, The Black, I HATE YOU); code: your side only */
+    {"SU-0275", 1, 601, 31, "heavy"},  /* Grandiose (and Redefined): effects that count buffs / debuffs see the +3 (Lenience, Holy Might, Reckoning, Pandemonium Exploit, Under Stress, Swell, Nighttaker, Ruin, Daybreaker, Heresy and two spells) (code: they counted the raw list) */
+    {"SU-0216", 1, 632, 12, ""},  /* Forsaken Wonder: the Relic buffs given at the start of battle (Arbiter, Ferro, Prime & Ventus, Salus, Triumvir, Whisper) and Bloodseeker's 'always has' buffs spread to your other creatures and last forever; with Primordial Curse, Blazefury 40's start-of-battle Burning lasts forever (code: no spread, no permanence for these direct adds) */
+    {"SU-0218", 1, 644, 163, "heavy"},  /* Photosynthesis: buffs and minions your Herbling receives at the start of battle count, like the ones it receives later (code: only in-battle grants counted). Start-of-battle stat gains not built */
+    {"SU-0206", 1, 807, 5, ""},  /* Misery (Nemesis): your creatures cannot gain buffs from direct adds either (start-of-battle, 'always has', in-battle direct grants), as from buff events (code: only the buff event refused). Start-of-battle stat gains not built */
+    {"SU-0219", 1, 812, 4, ""},  /* Artifact Health %: current and Max Health gain the same amount (code: current Health gained a share of the already raised Max Health, which nearly cancelled Sacrifice) */
+    {"SU-0183", 1, 816, 3, ""},  /* Hymn of Panic: the Timeline is shuffled into a uniformly random order (code: a coin flip into two groups with a fixed order inside each) */
+    {"SU-0189", 1, 819, 2, ""},  /* Lord Zantai's battle: forced 'move to the bottom of the Timeline' moves him down 1 place, like the other bosses (code: the boss list missed battle type 37) */
+    {"SU-0310", 1, 821, 2, ""},  /* 'Cannot be resurrected' (Burn Their Corpses, Endwalker, Feast and Famine, End On a High Note, Epigraphy, Disintegrating Arrow) also stops resurrections queued before the death (Terminus, Defy the Gods, Reincarnation, Genesis) (code: checked only when queued) */
+    {"SU-0204", 1, 823, 1, ""},  /* Realm 'Next battle' boosts work in the next battle of any kind (code: switched off in boss and special battles but still used up there) */
+    {"SU-0289", 1, 824, 21, "heavy"},  /* Master of Spellmanes: gems that can't be sealed read as unsealed at once (code: sealed until the gem manager's next pass); also the read side of SU-0212 */
+    {"SU-0212", 1, 845, 0, ""},  /* Diabolism / Straight Up / Unstoppable Force: their gems read as unsealed at once (code: sealed until the gem manager's next pass). Needs SU-0289 (shared sealed-read hooks) and SU-0137 (cast check) */
+    {"SU-0271", 1, 845, 4, ""},  /* Gemcutter unseals only its own side's Ultimate gems (code: every Ultimate gem on the field when either side has it) */
+    {"SU-0226", 1, 849, 1, ""},  /* Chaos Rift is filed as a utility spell (code: a stat-boosting spell), so Velox / Lagopus / Temptation rank 100 no longer pick it */
+    {"SU-0228", 1, 850, 4, ""},  /* Velox / Lagopus also cast Dark Ritual, a stat-changing spell (code: only BOOST / DEBOOST-tagged gems) */
+    {"SU-0229", 1, 854, 0, ""},  /* Velox / Lagopus also cast Death Siphon, a stat-changing spell (code: only BOOST / DEBOOST-tagged gems). Needs SU-0228 (shared tag-test hook) */
+    {"SU-0233", 1, 854, 1, ""},  /* Ice Bolt always afflicts Frozen (code: only when its damage on the target is above 0) */
+    {"SU-0235", 1, 855, 4, ""},  /* Shellbust deals 150% of the Defense actually lost (code: of the planned loss, even when it is blocked, reflected or turned into a gain) */
+    {"SU-0242", 1, 859, 5, ""},  /* Smith cards power 2 raise only the buff / debuff trick slots' activation chance (code: every trick slot's value by 10%) */
+    {"SU-0272", 1, 864, 2, ""},  /* Giftwrapped Army gives each Mimic buffs it doesn't already have (code: repeats possible) */
+    {"SU-0222", 1, 866, 3, ""},  /* Spin the Wheel also works for an enemy holder, on your creatures' turns (code: only your holder on enemy turns). Needs SU-0001 */
+    {"SU-0301", 1, 869, 5, "heavy"},  /* Roulette: a heal roll ends only that hit (no damage, like a hit that dealt none), so the remaining extra attacks and the after-attack effects still happen (code: the heal roll ended the whole attack) */
+    {"SU-0286", 1, 874, 4, ""},  /* Master of Hounds: only Hounds' Dire Wolves use the highest stat (code: every Dire Wolf owner on the holder's side) */
+    {"SU-0243", 1, 878, 2, ""},  /* Teleportation Shrine: after paying 1,000 Power the Realm Type choice travels (code: the cost was checked again after paying and failed below 2,000) */
+    {"SU-0268", 1, 880, 4, ""},  /* Master of Wights + Forbearance: the Wight's 100% Health is the base the resurrection bonuses add to (code: Master of Wights overwrote the bonus with 100%) */
+    {"SU-0200", 1, 884, 4, "heavy"},  /* Disarmed: the Artifact's trait, its Nether Stone's traits and the Nether Stone's trick properties are lost too (code: only stats, trick slots and spells were) */
+    {"SU-0280", 1, 888, 36, "heavy"},  /* Improbable Catapult: Avatar traits copied to enemies work for the enemy side (Prayer Position, Avenged Sevenfold, Firelord, Expanded Power, The End, Perfect Imperfection's damage parts, The Truth, The Black, I HATE YOU); code: your side only */
 };
 
 static const SuucpHook g_hooks[] = {
@@ -1242,6 +1261,7 @@ static const SuucpHook g_hooks[] = {
     {"SU-0202", 0x09ED8998u, (void *)hook_j_su0202_provoke},
     {"SU-0275", 0x09ED89A0u, (void *)hook_j_su0275_buffs},
     {"SU-0275", 0x09ED89A8u, (void *)hook_j_su0275_debuffs},
+    {"SU-0275", 0x09ED89B0u, (void *)hook_j_su0275_elem},
     {"SU-0216", 0x09ED89F0u, (void *)hook_k_su0216_start},
     {"SU-0216", 0x09ED89F8u, (void *)hook_k_su0216_always},
     {"SU-0218", 0x09ED8A00u, (void *)hook_k_su0218_add},

@@ -60,7 +60,9 @@ static int m_has_condition(void *self, void *other, RValue *creature, double con
     return e_call(M_HAS_CONDITION, self, other, 2, a);
 }
 
-/* ===== SU-0301 Roulette: byte edit only (bc_CreatureAttack L1776 continues with the next hit). ===== */
+/* ===== SU-0301 Roulette: cave stub only, no C hook (research/build_hooks_M.py). The heal branch's own `return`
+ * (bc_CreatureAttack L1776 marker, not the return tail it shares with the L176 exit) jumps to a stub that runs L1789
+ * and joins the per-hit end at L1871, the point a hit that dealt no damage reaches. ===== */
 
 /* ===== SU-0286 Master of Hounds: "Your Hounds' Dire Wolves now deal damage based on their highest stat". The L1067
  * gate in bc_OnAttack had only the side test; the Dire Wolves' owner is the attacker, bc_OnAttack's [frame + 0x168f0].

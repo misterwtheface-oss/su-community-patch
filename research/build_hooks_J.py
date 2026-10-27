@@ -10,7 +10,9 @@
                                 steal); bc_EventGainMaxHP L312 bc_GetEnemiesOf -> hook that runs the Fallen Star block
   SU-0202 Unstable Horror     : bc_OnDefend L510 / bc_OnProvoke L163 n = 2 -> 1 (constant repoint); `amount = 0`
                                 (L512 / L165) -> hook (Health -> Maximum Health)
-  SU-0275 Grandiose           : 14 raw buff / debuff list fetches -> hook (count = bc_CountBuffs / bc_CountDebuffs)
+  SU-0275 Grandiose           : 14 raw buff / debuff list fetches -> pass-through hook (records the list's identity
+                                and bc_CountBuffs / bc_CountDebuffs of the same creature); each site's single list[0]
+                                read (array element helper) -> hook returning a fresh value equal to that counter
 
 Verifies every expect byte, call target, constant, frame offset and data-flow assumption against the exe. Assigned
 space only: code 0x14a343500-0x14a3438ff (xcave), data 0x149ed8950-0x149ed89cf (.data tail).
@@ -26,10 +28,12 @@ OWN = ("SU-0281", "SU-0261", "SU-0264", "SU-0234", "SU-0269", "SU-0202", "SU-027
 # data (must match loader/hooks_J.c)
 J_SELF, J_OTHER, J_IDX = 0x149ed8950, 0x149ed8958, 0x149ed8960
 SLOT = {"jeal": 0x149ed8968, "dev": 0x149ed8970, "drac": 0x149ed8978, "fsgate": 0x149ed8980, "fshp": 0x149ed8988,
-        "uhdef": 0x149ed8990, "uhprov": 0x149ed8998, "buffs": 0x149ed89a0, "debuffs": 0x149ed89a8}
+        "uhdef": 0x149ed8990, "uhprov": 0x149ed8998, "buffs": 0x149ed89a0, "debuffs": 0x149ed89a8,
+        "elem": 0x149ed89b0}
 SYM = {"jeal": "hook_j_su0281_count", "dev": "hook_j_su0261_count", "drac": "hook_j_su0264_highest",
        "fsgate": "hook_j_su0269_holder", "fshp": "hook_j_su0269_maxhp", "uhdef": "hook_j_su0202_defend",
-       "uhprov": "hook_j_su0202_provoke", "buffs": "hook_j_su0275_buffs", "debuffs": "hook_j_su0275_debuffs"}
+       "uhprov": "hook_j_su0202_provoke", "buffs": "hook_j_su0275_buffs", "debuffs": "hook_j_su0275_debuffs",
+       "elem": "hook_j_su0275_elem"}
 
 EQ_INT, EQ, ASSIGN, FREE1, FREE2, SET_INT, ELEM = 0x14028c8f0, 0x14028c8d0, 0x14028c410, 0x14028c140, 0x14028c220, \
     0x14028c530, 0x14028c820
@@ -453,17 +457,29 @@ for name, l1, l2, lset, stat_off, health, key in (("bc_OnDefend", 506, 510, 512,
                                     "Maximum Health when the stat is Health" % (name, lset)))
 
 # ---- SU-0275 Grandiose -----------------------------------------------------------------------------------------------
+# Never writes into a game array or a game-owned value (2026-10-26 crash: the first version overwrote list[0] of the
+# fetched array, which can be the creature's own stored list). The fetch hook is a pure pass-through that records, in
+# the DLL, (array identity, its list[0], the counter for the same creature). Each site's single list[0] read (ELEM, the
+# array element read helper: returns a pointer the caller only reads) goes to a hook that runs the original read and,
+# when the array and its list[0] match the record, returns a pointer to a fresh real holding the counter instead.
+# Anything unexpected returns the original pointer.
 GB, GD, CB, CD = FN["bc_GetCreatureBuffs"], FN["bc_GetCreatureDebuffs"], FN["bc_CountBuffs"], FN["bc_CountDebuffs"]
 assert (GB, GD, CB, CD) == (0x1411422e0, 0x141142ab0, 0x140689e20, 0x14068d0c0)
+_e = S.disasm(ELEM, ELEM + 0x50)                       # ELEM(arr, idx) -> &data[idx]
+assert [i.mnemonic for i in _e[:6]] == ["push", "sub", "mov", "mov", "and", "cmp"] and _e[5].op_str == "eax, 2", "ELEM"
+# helpers that consume the element pointer as a read-only source (out = rcx, a stack temp; element in rdx or r8)
+READERS = {ASSIGN: "copy", 0x14028c630: "dst += src", 0x140290cc0: "out = a * b", 0x1402e06c0: "out = n * a",
+           0x1402e0680: "out = a * f", 0x1402bd5a0: "a <= b", 0x1402908a0: "out = a + b"}
 p = patch("SU-0275", "Grandiose (and Redefined): effects that count buffs / debuffs see the +3 (Lenience, Holy Might, "
                      "Reckoning, Pandemonium Exploit, Under Stress, Swell, Nighttaker, Ruin, Daybreaker, Heresy and two "
                      "spells) (code: they counted the raw list)", "heavy")
-tb = tramp("buffs", p); td = tramp("debuffs", p)
+tb = tramp("buffs", p); td = tramp("debuffs", p); te = tramp("elem", p)
 SITES = [(0x140e1a071, "B", "Lenience"), (0x140eadf77, "B", "Holy Might"), (0x140dc5bd5, "B", "Reckoning"),
          (0x140e72f7d, "B", "Pandemonium Exploit"), (0x1408931b4, "B", "spell: +10% per buff"),
          (0x1406df0f1, "D", "Under Stress"), (0x140ecf85e, "D", "Under Stress"), (0x14138231a, "D", "Swell"),
          (0x140dfa2b9, "D", "Nighttaker"), (0x140e28fd3, "D", "Ruin"), (0x140ec0a4b, "D", "Ruin"),
          (0x140e7559c, "D", "Daybreaker"), (0x140eb24c9, "D", "Heresy"), (0x1408b2eca, "D", "spell: chance per debuff")]
+_jumps = {}
 for site, kind, what in SITES:
     name = host(site); ins, lines, _ = fn(name); k = at(name, site)
     target = GB if kind == "B" else GD
@@ -477,29 +493,51 @@ for site, kind, what in SITES:
         rd = [j for j in range(k, k + 40) if ins[j].mnemonic == "mov" and rip(ins[j]) == 0x149934128]
         assert len(rd) == 1 and varname(0x149934128) == "count2" and ins[rd[0] + 4].op_str == "edx, edx" and \
             calls(ins[rd[0] + 6], ELEM), hex(site)
+        # the count2 slot pointer goes straight into the element read
+        assert calls(ins[rd[0] + 2], 0x140297c10) and ins[rd[0] + 3].op_str == "qword ptr [rsp + 0x123a8], rax" and \
+            ins[rd[0] + 5].op_str == "rcx, qword ptr [rsp + 0x123a8]", hex(site)
         refs = [i for i in S.disasm(*S.func_range("bc_EventDamage")) if i.mnemonic == "mov" and rip(i) == 0x149934128]
         assert len(refs) == 2, "count2 is read elsewhere"
+        rk = rd[0] + 6; end = rk + 1
     else:
-        X = mem(st); reads = 0
+        X = mem(st); reads = []; end = len(ins)
         for j in range(k + 4, len(ins)):
             if mem(ins[j]) != X:
                 continue
             nx, pv = ins[j + 1], ins[j - 1]
             if ins[j].op_str.startswith("rcx") and ((calls(nx, ASSIGN) and pv.op_str == "rdx, rax") or
                                                      calls(nx, SET_INT)):
-                break                                 # reassigned: a different value from here on
+                end = j; break                        # reassigned: a different value from here on
             if calls(nx, ELEM) and pv.op_str == "edx, edx":
-                reads += 1; continue                  # list[0], the count
+                assert ins[j].mnemonic == "lea" and ins[j].op_str == "rcx, [%s + %#x]" % X, ins[j].op_str
+                reads.append(j + 1); continue         # list[0], the count
             if ins[j].op_str.startswith("rcx") and (calls(nx, FREE1) or calls(nx, FREE2)) and (pv.mnemonic == "nop" or calls(pv, FREE2)):
                 continue                              # function-exit release
             raise SystemExit("%s %#x: list used at %#x (%s)" % (what, site, ins[j].address, ins[j].op_str))
-        assert reads == 1, (hex(site), reads)
-    p["edits"].append(call_redirect(site, target, tb if kind == "B" else td, "%s L%d %s: raw %s count -> %s" % (
-        name, lines[k], what, "buff" if kind == "B" else "debuff", "bc_CountBuffs" if kind == "B" else "bc_CountDebuffs")))
-# the two fetchers build a fresh list: list[0] = count, list[1..] = the conditions (no global store)
-for f in ("bc_GetCreatureBuffs", "bc_GetCreatureDebuffs"):
-    ins, _, _ = fn(f)
-    assert not [i for i in ins if calls(i, VARSET)], f
+        assert len(reads) == 1, (hex(site), reads)
+        rk = reads[0]
+    # the element pointer is only read: moved into rdx / r8 of the next helper call, whose out (rcx) is a stack temp
+    assert ins[rk + 1].op_str in ("rdx, rax", "r8, rax"), (hex(site), ins[rk + 1].op_str)
+    cj = next(j for j in range(rk + 2, rk + 6) if ins[j].mnemonic == "call")
+    assert int(ins[cj].op_str, 16) in READERS, (hex(site), ins[cj].op_str)
+    assert ins[cj - 1].mnemonic == "lea" and re.match(r"rcx, \[rsp \+ 0x[0-9a-f]+\]$", ins[cj - 1].op_str), hex(site)
+    assert not any("rax" in i.op_str or "r8" in i.op_str and ins[rk + 1].op_str == "r8, rax" for i in ins[rk + 2:cj]), \
+        hex(site)
+    # the read always follows its own fetch: nothing jumps into (fetch, read] from outside, except a loop back-edge
+    # (Swell: `i <= list[0]` is a loop condition) from before the local's reassignment to after the store of the list,
+    # so the local still holds the fetched list. The record is therefore not consumed by a read.
+    if name not in _jumps:
+        _jumps[name] = [(i.address, int(i.op_str, 16)) for i in ins
+                        if i.mnemonic.startswith("j") and i.op_str.startswith("0x")]
+    lo_w, hi_w, stored = site, ins[rk].address, ins[k + 3].address
+    hi_s = ins[end].address if end < len(ins) else 1 << 64
+    bad = [(a, t) for a, t in _jumps[name] if lo_w < t <= hi_w and not (lo_w <= a <= hi_w)
+           and not (hi_w < a < hi_s and t > stored)]
+    assert not bad, (hex(site), [(hex(a), hex(t)) for a, t in bad])
+    p["edits"].append(call_redirect(site, target, tb if kind == "B" else td, "%s L%d %s: list fetch -> pass-through, "
+        "records the %s value" % (name, lines[k], what, "bc_CountBuffs" if kind == "B" else "bc_CountDebuffs")))
+    p["edits"].append(call_redirect(ins[rk].address, ELEM, te, "%s L%d %s: list[0] read -> the recorded %s count "
+        "(fresh value)" % (name, lines[rk], what, "buff" if kind == "B" else "debuff")))
 
 # ---- space and overlap -----------------------------------------------------------------------------------------------
 taken = []
