@@ -14,7 +14,8 @@ every change is listed in **[PATCH_NOTES.pdf](PATCH_NOTES.pdf)**.
 ## Install
 1. In Steam, right-click **Siralim Ultimate → Manage → Browse local files**. This opens the game folder (the one with
    `SiralimUltimate.exe`).
-2. Copy **`version.dll`** and **`suucp.ini`** from the `release` folder into that game folder.
+2. Download the latest zip from this repository's **Releases** page, unzip it, and copy **`version.dll`** and
+   **`suucp.ini`** into that game folder (next to `SiralimUltimate.exe`). Nothing in the game folder is replaced.
 3. Start the game as usual.
 
 To check it's working, open **`suucp.log`** in the game folder after starting the game. The last lines should read
@@ -51,5 +52,5 @@ everything else through to Windows' own `version.dll`, and writes `suucp.log`. T
 game's own `localization_override` folder, built from your installed game text, changing only the English line.
 
 ## Building from source
-The `source` folder has the complete loader source. With **Visual Studio Build Tools** (MSVC, x64) installed, run
-`source\build.cmd`; it produces `version.dll`.
+The complete source is in this repository (`loader/`). With **Visual Studio Build Tools** (MSVC, x64) and Python
+installed, run `loader\build.cmd`; it produces `loader\build\version.dll` and `suucp.ini`.
