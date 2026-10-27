@@ -1,0 +1,43 @@
+{
+  "id": "SU-0155",
+  "aliases": [
+    "B6#6b"
+  ],
+  "title": "Phasers (new finding, not claimed)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Phasers",
+      "runtime_id": 2128,
+      "text_key": "L_TRAIT_DESC_PHASERS"
+    }
+  ],
+  "problem": "The text says 1 charge to one non-Ultimate gem. The code gives +1 to every qualifying gem and ignores each gem's maximum, so charges can go over max. It also only works on your side: an enemy with Phasers neither zeroes its damage nor restores charges.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0155",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B6#6b"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: -. Evidence: same sites; the loop never reads the maximum; side check @0x140ed7481. Fix sketch: S: leave the loop after the first +1 (jump to 0x140ed78ea). Enemy side: S, remove the side check (je @0x140ed7497). The max cap needs H. Triage 2026-10-26: S: leave the loop after the first +1 (jump to 0x140ed78ea) and remove the side check (je @0x140ed7497). The per-gem maximum cap needs a hook (follow-up). 2026-10-26: partial byte patch SU-0155 built (one gem, either side). Still needs a hook: the +1 ignores the gem's maximum charges (bc_EventDamage L5966 increments charges with no cap); hook = clamp charges to the gem's max after the +1. | Batch S: cap built as patch SU-0155-cap (clamp charges to charges_max). In-game test: Phasers: hit with charges near max; charges never exceed each gem's maximum (cap part, patch SU-0155-cap). 2026-10-26: both parts built (SU-0155 side/loop + SU-0155-cap).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Phasers (trait)",
+    "intended": "When the creature attacks, it deals 0 damage but restores 1 charge to a non-Ultimate spell gem.",
+    "actual": "In the unpatched game, it added a charge to every eligible gem, could go above a gem's maximum, and only worked for the player's side.",
+    "fix": "Now one gem gets the charge, for either side (SU-0155), and charges never go above the gem's maximum (separate switch SU-0155-cap).",
+    "impact": "neutral",
+    "flags": []
+  }
+}

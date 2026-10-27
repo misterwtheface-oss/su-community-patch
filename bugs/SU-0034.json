@@ -1,0 +1,45 @@
+{
+  "id": "SU-0034",
+  "aliases": [
+    "A36"
+  ],
+  "title": "Bouquet (boss tier 930)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Bouquet",
+      "runtime_id": 930,
+      "text_key": "L_TRAIT_DESC_BOUQUET2"
+    }
+  ],
+  "problem": "Two Barrier blocks both test 930; the second looks copied from tier 1370.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0034",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§14"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: S 2026-10-26: built as byte patch SU-0034 (verified against the baseline exe; not yet run in game).",
+  "release_notes": {
+    "section": "Bosses & Nether bosses",
+    "effect": "Bouquet, tier 930 (boss trait)",
+    "intended": "The boss gains Barrier once at the end of its turn.",
+    "actual": "In the unpatched game, it gained Barrier twice.",
+    "fix": "Now it gains Barrier once.",
+    "impact": "weaker",
+    "flags": [
+      "boss"
+    ]
+  }
+}

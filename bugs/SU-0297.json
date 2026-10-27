@@ -1,0 +1,43 @@
+{
+  "id": "SU-0297",
+  "aliases": [
+    "B6#14"
+  ],
+  "title": "Ravish",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Ravish",
+      "runtime_id": 1100,
+      "text_key": "L_TRAIT_DESC_RAVISH"
+    }
+  ],
+  "problem": "Text: \"it deals damage to the enemy\". The code hits whoever dealt the damage, with no side check. So a hit from an ally (a Confused attack, or a Stand As One copy, which is sourced to the damaged ally) makes Ravish hit that ally, and a hit sourced to the holder itself bounces back onto itself. Two holders on opposite sides do bounce hits back and forth until the per-turn damage limit (15) stops it, which is what the text literally says.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0297",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B6#14"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: After this creature takes damage, it deals damage to the enemy equal to 100% of the damage taken. Evidence: bc_EventDamage L7050: source > -1 @0x140f70820, scr_CritHasPassive(creature, 1100) @0x140f70a0e, amount > 0 @0x140f70a57; no slot comparison. L7051: bc_EventDamage(creature as source, source as target, amount) @0x140f71240, queued scr_AddEventToStack @0x140f712cf. Precedent: SU-0126 Spiderlings (same missing enemy test, patched). Fix sketch: Call-site hook on scr_CritHasPassive(creature, 1100) at bc_EventDamage L7050 (call @0x140f70a0e, same pattern as the SU-0124 / SU-0126 hooks): return false unless the damaged creature and the source are on opposite sides ((creature.slot == 0) != (source.slot == 0); slot var 0x1499e0aa8, source var 0x1499e0c38, creature var 0x1499e3228). The source > -1 test runs before it, so the source is valid. Reasoning: \"The enemy\" names the target as an enemy; the code never checks the side. Same shape as Spiderlings (SU-0126), which the text-is-the-contract ruling already fixed with a side test. The timing and Barrier points are game-wide conventions the text does not address. App note (unpatched game): In the unpatched game Ravish hits whoever dealt the damage, allies included (e.g. a Confused ally); it uses the damage before Barrier, and dodged or prevented hits do not trigger it. Source: errata round 2 (2026-10-26). | Patched (batch I, 2026-10-26): call-site hook on the L7050 scr_CritHasPassive(creature, 1100) gate (0x140f70a0e) -> hook_i_su0297_ravish (loader/hooks_I.c): false when the event's source and creature are on the same side (slot == 0 vs > 0); unknown sides keep the game's answer. Source > -1 is tested before the gate.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Ravish (trait)",
+    "intended": "After this creature takes damage, it deals damage to the enemy equal to 100% of the damage taken.",
+    "actual": "In the unpatched game, Ravish hit back whoever dealt the damage, with no side check. A hit from a Confused ally (or a copied hit credited to an ally) made it damage that ally, and damage credited to the creature itself bounced back onto itself.",
+    "fix": "Now Ravish only hits back when the damage came from an enemy.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

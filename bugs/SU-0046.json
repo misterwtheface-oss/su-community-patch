@@ -1,0 +1,43 @@
+{
+  "id": "SU-0046",
+  "aliases": [
+    "B09"
+  ],
+  "title": "Master of Rift Dancers (deaths)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Master of Rift Dancers",
+      "runtime_id": 1481,
+      "text_key": "L_TRAIT_DESC_MASTEROFRIFTDANCERS"
+    }
+  ],
+  "problem": "Repeats the *whole* on-death, no side test.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0046",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§11 item 2"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test:  Fix: H | 2026-10-26 realign (text is the contract): text claims \"their innate traits activate 1 additional time\". H: Master of Rift Dancers on deaths: repeat only the Rift Dancer innate traits, only for the holder's side (currently the whole bc_OnDeath, no side test). vs bugged: weaker. | Left needs-hook (batch C): Master of Rift Dancers repeats the whole bc_OnDeath; repeating only the Rift Dancer innate traits for the holder's side needs the Rift Dancer blocks split out of that function (one trait block at a time), beyond a safe call-site or byte change. Round-2 C2 2026-10-26: still needs-hook. 'Repeat only the innate traits' cannot be done by gating one call: the extra pass is a whole bc_OnDeath; limiting it would need a context flag honoured by every gate helper inside it (scr_CritHasPassive, scr_Any*HasPassive, scr_PerkLevel, scr_CritHasRelicPerk, scr_CritHasCondition) via function-entry detours, a pattern this patch does not use yet. Round-3 F2 2026-10-26: built. Corrected reading: the Rift Dancers' death innate is Dark Dance (50, 'all effects that activate when a creature dies activate 1 additional time'), so the master's extra pass is Dark Dance activating once more, a whole bc_OnDeath pass, as the code does; the bug was the missing Dark Dance condition (the Defend / Provoke cases already nest the master inside Fan Dance / Moon Dance). The two bc_AllRace calls in the death count (bc_ExecuteEvents L448) now also require that side to hold Dark Dance. In-game test: all-Rift-Dancer party with Master of Rift Dancers and Nadin (Dark Dance): an on-death effect fires 3 times per death (base + Dark Dance + Master); without Dark Dance on that side: once (no Master pass).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Master of Rift Dancers (trait)",
+    "intended": "The extra on-death activation needs Master of Rift Dancers on the side.",
+    "actual": "In the unpatched game, any side made only of Rift Dancers got it, with or without the Master.",
+    "fix": "Now only the side that has the Master gets the extra activation.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

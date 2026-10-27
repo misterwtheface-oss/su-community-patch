@@ -1,0 +1,55 @@
+{
+  "id": "SU-0173",
+  "aliases": [
+    "B4#40-floater"
+  ],
+  "title": "Chroma's Stability floater text missing",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Chroma's Stability",
+      "runtime_id": 961,
+      "text_key": "L_TRAIT_DESC_CHROMA'SSTABILITY"
+    }
+  ],
+  "problem": "The damage-event floater for Chroma's Stability (bc_EventDamage L619 / L626) looks up L_TRAIT_NAME_CHROMA'SINSTABILITY, which has no localization row, so the floater shows a missing/blank name. The trait's real name row is L_TRAIT_NAME_CHROMA'SSTABILITY.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-text",
+  "status": "patched",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "own:EO§6 item 2",
+    "community:B4#40"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Display only. Text fix: add the missing row, all languages copied from the real name row. 2026-10-26: text correction shipped via localization_override (loader text module).",
+  "text_fix": [
+    {
+      "file": "traits.csv",
+      "key": "L_TRAIT_NAME_CHROMA'SINSTABILITY",
+      "en_proposed": "Chroma's Stability",
+      "new_row": true,
+      "copy_other_languages_from": "L_TRAIT_NAME_CHROMA'SSTABILITY"
+    }
+  ],
+  "release_notes": {
+    "section": "Interface text",
+    "effect": "Chroma's Stability (battle text)",
+    "intended": "The floating text names Chroma's Stability.",
+    "actual": "In the unpatched game, the text row was missing, so the name was blank.",
+    "fix": "Now the missing text is added.",
+    "impact": "neutral",
+    "flags": [
+      "text"
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "SU-0040",
+  "aliases": [
+    "B03"
+  ],
+  "title": "Mindbender",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Mindbender",
+      "runtime_id": 410,
+      "text_key": "L_TRAIT_DESC_MINDBENDER"
+    }
+  ],
+  "problem": "\"Avoid damage\" zeroes only the base, so bonus damage still lands.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0040",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§7"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Hit a Mindbender team with a big \"% more damage\" spell Fix: H | 2026-10-26 realign (text is the contract): text claims \"30% chance to avoid damage from spells\". H: bc_EventDamage L4918-L4922: on the avoid roll also zero the bonus pool (currently only the base amount). vs bugged: stronger. | In-game test: cast a big '% more damage' attack into a Mindbender team: hits that Mindbender avoids deal 0 and show no damage number.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Mindbender (trait)",
+    "intended": "30% chance to avoid damage from spells.",
+    "actual": "In the unpatched game, an avoided spell still dealt its bonus damage.",
+    "fix": "Now an avoided spell deals no damage at all.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

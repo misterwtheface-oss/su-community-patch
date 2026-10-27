@@ -1,0 +1,41 @@
+{
+  "id": "SU-0011",
+  "aliases": [
+    "A12"
+  ],
+  "title": "Shapeshifter card powers 2/3",
+  "subjects": [
+    {
+      "kind": "card",
+      "name": "Shapeshifter card powers 2/3"
+    }
+  ],
+  "problem": "Works backwards: your creatures take *more* damage from classes they beat, nothing from classes that beat them.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0011",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§7"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Shapeshifter set powers 2 and 3: an enemy Shapeshifter set holder hit by a non-weak attack takes 10% / 20% less damage; with no weak-branch bonus. Fix: S: fix branch / sign 2026-10-26 build check: not a byte edit. Code applies powers 2/3 inside the WEAK branch (defender beats attacker, bc_EventDamage L3987-L3992: bonus -= bonus x 0.1/0.2, then amount -= bonus = more damage taken). The text wants less damage taken from attackers STRONG against your creature. Hook spec: (1) skip the weak-branch statements L3987-L3992 (jump); (2) in the strong branch, after 'amount += bonus' (L~3950, @0x140e6c30b) when target.slot > 0 and card power 2 (3) is unlocked, multiply amount by 0.9 (0.8) - a call-site C hook on that add, reading target/slot via the self value at [rsp+0x21ef8] like hook_su0002_count_race.",
+  "release_notes": {
+    "section": "Cards",
+    "effect": "Shapeshifter card set, powers 2 and 3 (card)",
+    "intended": "Your creatures take 10% / 20% less damage from attackers whose class is strong against them.",
+    "actual": "The game worked the wrong way round: your creatures took more damage from attackers of a class they are strong against.",
+    "fix": "Now the reduction applies against attackers that are strong against your creature.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

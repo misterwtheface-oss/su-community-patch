@@ -1,0 +1,55 @@
+{
+  "id": "SU-0087",
+  "aliases": [
+    "H08"
+  ],
+  "title": "Amalgam ranks 50 / 60 / 100",
+  "subjects": [
+    {
+      "kind": "relic",
+      "name": "Amalgam, Warped Mirror of T'mere M'rgo",
+      "relic_code_id": 30,
+      "rank": 50
+    },
+    {
+      "kind": "relic",
+      "name": "Amalgam, Warped Mirror of T'mere M'rgo",
+      "relic_code_id": 30,
+      "rank": 60
+    },
+    {
+      "kind": "relic",
+      "name": "Amalgam, Warped Mirror of T'mere M'rgo",
+      "relic_code_id": 30,
+      "rank": 100
+    }
+  ],
+  "problem": "Inverted blocks have no side test: they heal enemies once your creature is Inverted",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0087",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "handoff:HANDOFF_bug_report_candidates.md"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Hook spec: research/handoff_eval.md 2026-10-26 hook batch B2 built (research/hooks_B2.json, loader/hooks_B2.c). The five rank gates (bc_EventDamage R60 / R50 / R100, bc_EventHeal R50 / R100) are false when the Inverted creature (the event source) is on the bearer's own side. In-game test: Let an enemy inflict Inverted on one of your creatures with an Amalgam 60/100 bearer in the party: its attacks heal the enemy once (not twice), and once Inverted wears off it does not come back. An enemy with Inverted still heals your creatures twice and gets Inverted re-applied.",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "Amalgam, ranks 50, 60 and 100 (relic)",
+    "intended": "These ranks work on enemies that are Inverted.",
+    "actual": "In the unpatched game, they also worked when your own creature was Inverted: its attacks healed enemies twice and it kept or regained Inverted.",
+    "fix": "Now they only work on Inverted enemies.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

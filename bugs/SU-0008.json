@@ -1,0 +1,43 @@
+{
+  "id": "SU-0008",
+  "aliases": [
+    "A08"
+  ],
+  "title": "Fable rank 80 (on-death half)",
+  "subjects": [
+    {
+      "kind": "relic",
+      "name": "Fable, Mythical Stone of Shallan",
+      "relic_code_id": 29,
+      "rank": 80
+    }
+  ],
+  "problem": "Same cause: the on-death repeat never happens (also starves rank 90).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0008",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:BR:fable_r80"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: H: call with \"allow dead\" Hook batch R (loader/hooks_R.c, research/hooks_R.json). In-game test: Fable at rank 80 on a creature with an on-death effect: when it dies, the on-death effect activates twice (rank 90's stat growth counts both).",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "Fable, rank 80 (relic)",
+    "intended": "Your creatures' on-death effects activate 1 additional time.",
+    "actual": "In the unpatched game, the extra activation never happened.",
+    "fix": "Now on-death effects activate the additional time, and the deaths are counted for the relic's rank-90 bonus as well.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

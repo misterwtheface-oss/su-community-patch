@@ -1,0 +1,51 @@
+{
+  "id": "SU-0012",
+  "aliases": [
+    "A13",
+    "B2#43"
+  ],
+  "title": "Materium rank 100",
+  "subjects": [
+    {
+      "kind": "relic",
+      "name": "Materium, Shifting Gem of Aurum",
+      "relic_code_id": 15,
+      "rank": 100
+    }
+  ],
+  "problem": "Adds a second copy of rank 90's \"10% to cast each off-class permanent spell\" roll (rank 90's own block is in bc_CreatureCast; rank 100's text is only \"can equip Sorcery Spell Gems\").",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0012",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§3",
+    "own:relic_signatures.json",
+    "community:B2#43"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true,
+      "verified_in_game": {
+        "date": "2026-10-26",
+        "by": "code only",
+        "result": "user ruling: hard to verify in game (needs many casts); code validation suffices"
+      }
+    }
+  },
+  "notes": "Fix: S: skip the duplicate block — in patch (byte-verified)",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "Materium, rank 100 (relic)",
+    "intended": "The bearer can only equip Sorcery spell gems.",
+    "actual": "In the unpatched game, besides the restriction, the game ran a second copy of rank 90's 10% extra-cast roll.",
+    "fix": "Now rank 100 only adds the restriction; the rank-90 roll happens once.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

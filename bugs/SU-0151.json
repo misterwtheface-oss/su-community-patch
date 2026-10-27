@@ -1,0 +1,43 @@
+{
+  "id": "SU-0151",
+  "aliases": [
+    "B4#37"
+  ],
+  "title": "Filtered Truth (41)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Filtered Truth",
+      "runtime_id": 41,
+      "text_key": "L_TRAIT_DESC_FILTEREDTRUTH"
+    }
+  ],
+  "problem": "In the stat getters, enemy Attack is capped at the enemy's stored base Intelligence field, and Intelligence at the stored base Attack field. This happens before each stat's own bonus pool (traits, buffs, stat gains) is added. So the two stats are only equal when neither has bonuses. Text: \"always have equal Attack and Intelligence; whichever is lower\".",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0151",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B4#37"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Sets enemies' Intelligence to their Attack and keeps it there; Attack can still grow, Intelligence stays fixed. Evidence: crit_attack L854-L859 @0x1417bbcdd (intelligence field @0x1417bbdcc); crit_intelligence L930-L935 @0x1417e26e4 (attack field @0x1417e27d1). Fix sketch: Apply the min after the pool, against the other stat's final value; needs care to avoid the two getters calling each other forever (H) Triage 2026-10-26: Attack/Intelligence are equalized on stored bases before bonuses, so they end unequal. Hook: apply the min on final values (guard against mutual recursion). | Left needs-hook (batch C): the min must be taken on the two final values, but crit_attack and crit_intelligence each compute their own bonus pool, so each would have to call the other (mutual recursion) and the game calls them from hundreds of sites. Needs a re-entrancy-guarded wrapper of both getters. Round-2 hook (A2): crit_attack and crit_intelligence are wrapped at entry (relocated prologue trampolines); the early base-field caps (L854-859 / L930-935) are skipped; for an enemy of a Filtered Truth holder each getter returns the lower of the two FINAL values (partner computed under a guard, no mutual recursion). In-game test: Filtered Truth vs an enemy with Attack/Intelligence buffs: its displayed Attack and Intelligence are always equal and equal to the lower one.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Filtered Truth (trait)",
+    "intended": "Enemies always have equal Attack and Intelligence, whichever is lower.",
+    "actual": "The game compared the base stats before buffs and bonuses, so the final values could differ.",
+    "fix": "Now both stats equal the lower of the two final values.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

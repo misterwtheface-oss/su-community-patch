@@ -1,0 +1,43 @@
+{
+  "id": "SU-0149",
+  "aliases": [
+    "B4#24"
+  ],
+  "title": "Diabolic Link (243)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Diabolic Link",
+      "runtime_id": 243,
+      "text_key": "L_TRAIT_DESC_DIABOLICLINK"
+    }
+  ],
+  "problem": "The numbers are right but the order isn't. Code: total = sum of all Diabolic Max Health including the creature itself, then each gets hpmax += total; hp += total, then hpmax, hp −75%. Result = 25% × (own + everyone's). Own Health is counted twice, so a lone Diabolic ends at 50%, not 25%. Doesn't stack (team-wide check).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0149",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B4#24"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Doesn't share-then-reduce: it sets each to 25%, then adds the total to all of them, so a full team ends at 1.75×, and a lone one at 50%. Evidence: bc_StartupStatGain L1464-L1467 (sum), L1474-L1475 add total @0x14175e6c6 / 0x14175e77b, L1482-L1483 ×0.75 cut; gate @0x14175dff5. Fix sketch: Leave out the creature's own Max Health from what it receives (H), or reword the text (T) Triage 2026-10-26: Own Max Health counted in what it receives (lone Diabolic ends at 50%). Hook: exclude the creature's own Max Health. | In-game test: a lone Diabolic Horde with Diabolic Link ends the battle start at 25% of its Max Health (was 50%); two of them each get the other's share, then -75%.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Diabolic Link (trait)",
+    "intended": "At the start of battle, your Diabolic Horde share their Maximum Health with each other, then lose 75% of it.",
+    "actual": "In the unpatched game, each creature also counted its own Maximum Health again, so a lone one ended at 50% instead of 25%.",
+    "fix": "Now each one receives only the others' Maximum Health.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

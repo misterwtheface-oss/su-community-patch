@@ -1,0 +1,43 @@
+{
+  "id": "SU-0029",
+  "aliases": [
+    "A31"
+  ],
+  "title": "Ejector Seat",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Ejector Seat",
+      "runtime_id": 2123,
+      "text_key": "L_TRAIT_DESC_EJECTORSEAT"
+    }
+  ],
+  "problem": "\"Ignored if an ally has the same trait\" guards only one of its two branches.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0029",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§8 item 1"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: H 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Two creatures with Ejector Seat on your side; hit one with indirect damage (e.g. Poison): its Health is NOT set to 0. With only one holder: indirect damage sets it to 0 as before.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Ejector Seat (trait)",
+    "intended": "The trait doesn't work if an ally has the same trait.",
+    "actual": "In the unpatched game, when the holder took indirect damage, the game skipped that check.",
+    "fix": "Now the ally check applies to every kind of damage.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

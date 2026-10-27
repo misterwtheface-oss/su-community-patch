@@ -1,0 +1,45 @@
+{
+  "id": "SU-0030",
+  "aliases": [
+    "A32"
+  ],
+  "title": "Fable rank 50",
+  "subjects": [
+    {
+      "kind": "relic",
+      "name": "Fable, Mythical Stone of Shallan",
+      "relic_code_id": 29,
+      "rank": 50
+    }
+  ],
+  "problem": "\"On-debuff effects activate 1 additional time\": only Unbound Hatred repeats.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0030",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§9"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: H 2026-10-26 hook batch B2 built (research/hooks_B2.json, loader/hooks_B2.c). The debuff case's Unbound Hatred repeat bound (scr_PerkLevel(367) @0x1410f018b, re-read every pass) reads one higher when the debuffed creature bears Fable rank 50 (scr_CritHasRelicPerk(creature, 29, 5), the buff case's own test), so on-debuff reactions run one extra pass, adding to Unbound Hatred. Scope: the bearer side of the text (as the buff case); the relic's own on-debuff effects have no separate debuff-case code. In-game test: Give a creature Fable 50 and a trait that reacts when it is debuffed (e.g. a gain-on-debuff trait); have an enemy debuff it: the reaction fires twice (three times with Unbound Hatred). Without Fable 50: once.",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "Fable, rank 50 (relic)",
+    "intended": "Your creatures' on-debuff effects activate 1 additional time.",
+    "actual": "In the unpatched game, only Unbound Hatred got the extra activation.",
+    "fix": "Now your creatures' on-debuff effects activate the additional time. Partial: the relic's own on-debuff effects are not repeated.",
+    "impact": "stronger",
+    "flags": [
+      "partial"
+    ]
+  }
+}

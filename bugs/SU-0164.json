@@ -1,0 +1,43 @@
+{
+  "id": "SU-0164",
+  "aliases": [
+    "B5#16"
+  ],
+  "title": "Kiichi's Aggression (1254)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Kiichi's Aggression",
+      "runtime_id": 1254,
+      "text_key": "L_TRAIT_DESC_KIICHI'SAGGRESSION"
+    }
+  ],
+  "problem": "The splash is 50% of the Bleed amount worked out at the start of turn (bc_CalculateBleedDamage plus the start-of-turn Bleed modifiers), before the damage pipeline. Then each splash hit runs through the pipeline with no source (dtype indirect). That matches the claim. The text says \"50% of that damage\".",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0164",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#16"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: The splash is 50% of the base Bleed amount, not of the damage dealt; boosted by general \"takes more damage\", not by Bleed-only boosts (except the Pilwiz card). Evidence: bc_CreatureStartOfTurn: Bleed amount from bc_CalculateBleedDamage @0x140b6f1ee into [rsp+0x1b2d0]; gate @0x140b75a82 / 0x140b75c57; bc_GetAlliesOf(c, false, false) @0x140b75eaa; × 0.5 of [rsp+0x1b2d0] @0x140b763de; source −1. Fix sketch: Reword to \"50% of its Bleeding damage\" (T). Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. The splash is 50% of the base Bleed amount. 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"all other enemies take 50% of that damage\". Fix: H: base the splash on the damage the Bleed tick actually dealt (after the pipeline) instead of the pre-pipeline Bleed amount (bc_CreatureStartOfTurn @0x140b763de). vs bugged: depends. | Left needs-hook (batch C): the splash is computed in bc_CreatureStartOfTurn before the Bleed tick goes through the damage pipeline (the tick is queued as an event and resolved later), so the dealt amount does not exist yet. A fix must move the splash into the damage event of the Bleed tick. Round-2 C2 2026-10-26: still needs-hook. Two blockers: the splash events are queued with the pre-pipeline Bleed amount before the tick resolves, and 'take 50% of that damage' runs into the same no-modifier-free-path issue as SU-0140 (the splash hits go through the pipeline again). Wants the SU-0140 decision first; then: record the tick's dealt amount in bc_ExecuteEvents' damage case and resize the already-queued splash events. User ruling 2026-10-26 (with SU-0140): Splashing-style splash of the damage actually dealt. Batch C3: the Bleed tick's bc_EventDamage call (bc_CreatureStartOfTurn @0x140b7042e) is hooked to remember the amount the built event will deal; the Kiichi's Aggression splash calls (@0x140b767bd, built later in the same start of turn) use 50% of it; if the tick was prevented (builder returned -1) no splash is queued. The splash stays sourceless and indirect, like the Bleed tick itself (Bleed has no source, so there is no kill credit to keep). In-game test: an enemy with Bleeding and damage reduction (e.g. Defending): the other enemies take half of what the Bleed tick actually dealt, not half of the full Bleed amount; a fully prevented tick causes no splash.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Kiichi's Aggression (trait)",
+    "intended": "After an enemy takes Bleed damage, all other enemies take 50% of that damage.",
+    "actual": "In the unpatched game, the splash used the Bleed amount before the enemy's damage reductions.",
+    "fix": "Now the splash is 50% of the damage the enemy actually took; a fully prevented tick causes no splash.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

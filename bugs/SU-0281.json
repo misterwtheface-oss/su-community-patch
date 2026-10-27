@@ -1,0 +1,43 @@
+{
+  "id": "SU-0281",
+  "aliases": [
+    "B5#14"
+  ],
+  "title": "Jealousy",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Jealousy",
+      "runtime_id": 455,
+      "text_key": "L_TRAIT_DESC_JEALOUSY"
+    }
+  ],
+  "problem": "Jealousy counts Imlers and Imlings with its own loop, not the shared race counter. Odd One, Shackler's Mastery and the Forest Pact perk say that race-count effects act as if there are 2 (or <1>) more creatures of that race, but they never reach Jealousy, so it stays on. By those texts it should act as if there were 3+ Imlers and 3+ Imlings and switch off. The 'base stats' part matches the text.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0281",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#14"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "User 2026-10-26: fix (shared race count; weaker). Text: If you only have one {RACE_Imler} and one {RACE_Imling} fighting on your side, both creatures share 50% of their base {STAT_attack}, {STAT_intelligence}, {STAT_defense}, and ... Evidence: crit_attack L558-L577: bc_GetAlliesOf at L558; loop L562-L574 with race == Imler / Imling compares and +1 (@0x1417b6a51-0x1417b6b3a); counts == 1 tested at L577; reads the partner's base_attack @0x1417b6e24. Same in crit_defense @0x1417c9f13, crit_intelligence @0x1417ddf91, crit_speed @0x1417f0b84. Odd One 1080 (@0x140690421), Shackler's Mastery 585 (@0x14069079e) and Forest Pact live only in bc_CountRace / bc_CountRaceDead. Texts: L_TRAIT_DESC_ODDONE 'traits, spells, and other effects that are affected by the number of creatures that belong to a certain race act as if they have 2 more'; L_TRAIT_DESC_SHACKLER'SMASTERY 'race-specific traits act as if your party contains 2 more'; L_P_FORESTPACT_DESC 'act as if you have <1> more'. Fix sketch: In the four getters, replace the hand-written counts with bc_CountRace(bc_GetAlliesOf(c, false, true), \"Imler\") and bc_CountRace(..., \"Imling\"): a hook after the loop and before the L577 test overwrites the two count locals, so the == 1 tests see the race-count boosters. Reasoning: Jealousy's own text is silent, but Odd One, Shackler's Mastery and Forest Pact each claim to affect effects that depend on a race count, and Jealousy is one. Under ruling 1 their claim governs, which makes Jealousy weaker. Flag for the user: treating 'only one' as an exception is the other possible call, since the fix turns the trait off. App note (unpatched game): Jealousy ignores Odd One, Shackler's Mastery and Forest Pact, so it stays active alongside them. Source: errata round 2 (2026-10-26). | Patched (batch J, 2026-10-26): the two 'count == 1' runtime compares of the Jealousy block in each stat getter (crit_attack L577 @0x1417b6b58 / 0x1417b6b71, crit_defense L630 @0x1417ca08b / 0x1417ca0a1, crit_intelligence L673 @0x1417de109 / 0x1417de11f, crit_speed L636 @0x1417f0d05 / 0x1417f0d1e) go to a per-getter cave stub that saves self / other / getter index and jumps to hook_j_su0281_count (loader/hooks_J.c): once the holder was found in the ally list (the block's own flag), it compares bc_CountRace(allies, \"Imler\" / \"Imling\") == 1 on the same bc_GetAlliesOf list; otherwise the game's compare. Cost on the getters' hot path: one bool read per call.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Jealousy (trait)",
+    "intended": "If you only have one Imler and one Imling fighting on your side, both creatures share 50% of their base Attack, Intelligence, Defense and Speed with each other. Odd One, Shackler's Mastery and Forest Pact make race-count effects act as if you had more creatures of that race.",
+    "actual": "In the unpatched game, Jealousy counted your Imlers and Imlings itself, so Odd One, Shackler's Mastery and Forest Pact never affected it and it stayed active alongside them.",
+    "fix": "Now Jealousy uses the same race count as every other race effect, so Odd One, Shackler's Mastery and Forest Pact count toward it (with them, you no longer have 'only one' of each and the sharing stops).",
+    "impact": "weaker",
+    "flags": []
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "SU-0216",
+  "aliases": [
+    "B2#16"
+  ],
+  "title": "Forsaken Wonder (Antiquarian): spread",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Forsaken Wonder (Antiquarian): spread",
+      "runtime_id": 655,
+      "text_key": "L_P_FORSAKENWONDER_DESC (cf. L_RELIC_ZONTE1, L_RELIC_TENEBRIS1)"
+    }
+  ],
+  "problem": "The spread runs only for buffs that go through the buff event. Every start-of-battle Relic buff is put on directly, so none of them spread. The text says any buff your Relics give spreads, and Triumvir and Whisper rank 10 say in so many words that the relic gives the buff. Affected: Arbiter 10 (Shelled), Ferro 10 (Proficient), Prime & Ventus 10 / 50 (Agile / Savage), Salus 10 (Mending), Triumvir 10 (Arcane), Whisper 10 (Invisible), and Bloodseeker 30 / 60's 'always has' Leeching / Mending. In-battle Relic buffs spread only when the event's source is the Relic object (or an Ancient Synchronicity creature).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0216",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B2#16"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "User 2026-10-26: fix: start-of-battle grants trigger the same 'after it gains' reactions. Text: Buffs granted by your creatures' Relics last forever. In addition, after your Relics give one of your creatures a buff, they grant all your other creatures that buff as well. | ... Evidence: Spread gate bc_OnBuffDebuff L57-L66: source.critconstant == 967 || scr_CritHasAncientSyn @0x1414311bf, scr_ConditionIsBuff @0x141431226, scr_PerkLevel(655) @0x1414312fb -> bc_GetAlliesOf @0x14143146a -> bc_EventBuff @0x1414317d0; bc_OnBuffDebuff runs only from the bc_ExecuteEvents buff case. Direct adds (no bc_Startup* function calls bc_EventBuff): bc_StartupBuffsDebuffs scr_CritAddCondition @0x14169ad42 L877 (Whisper), @0x14169b4a2 L883 (Triumvir), @0x14169c362 L895 (Salus), @0x14169d222 L907 (Ferro), @0x14169d982 L913 (Arbiter), @0x14169e0e2 L919 (P&V 10), @0x14169e768 L922 (P&V 50); bc_MaintainPermanentEffects @0x1412bb877 L672 / @0x1412bbbfc L678 (Bloodseeker 30 / 60). Fix sketch: Redirect the 7 scr_CritAddCondition calls in bc_StartupBuffsDebuffs (addresses above) to one C hook. The hook calls the original, then, if scr_PerkLevel(655) > 0 and the target is on your side, queues bc_EventBuff(source -1, ally, cond, same duration) for every other living creature on your side. That is the same call the in-battle spread makes (bc_OnBuffDebuff L66 @0x1414317d0), and the controller drains the event stack before phase 4. With SU-0080 v4 the spread copies get duration -2, which also covers the 'last forever' half for these buffs (this closes SU-0080's 'partial' flag for start-of-battle Relic buffs). Optional: the same hook on the two Bloodseeker 'always has' adds in bc_MaintainPermanentEffects (they run only when the buff is missing, so each spread follows a real gain). If B2#20 is also taken, share the hook with it. Reasoning: The text promises the spread for any buff a Relic gives, and two Relic texts explicitly say the relic gives the start-of-battle buff. The code skips these buffs because they bypass the buff event. SU-0080 already lists the same start-of-battle gap as 'partial' for the permanence half, so the patch owners treat these buffs as in scope. Not covered: SU-0080 and SU-0130 fix the permanence side test and source, not the spread. App note (unpatched game): Forsaken Wonder doesn't spread the buffs Relics give at the start of battle (Arbiter, Ferro, Prime & Ventus, Salus, Triumvir and Whisper rank 10/50) or Bloodseeker's always-on buffs; it spreads only Relic buffs given during battle. Source: errata round 2 (2026-10-26). | Patched (batch K, 2026-10-26; user: start-of-battle grants trigger the same 'after it gains' reactions): call-site hooks on the 8 Relic start-of-battle adds of bc_StartupBuffsDebuffs (L877 Whisper 10, L883 Triumvir 10, L889 Blazefury 40, L895 Salus 10, L907 Ferro 10, L913 Arbiter 10, L919 / L922 Prime & Ventus 10 / 50) -> hook_k_su0216_start, and the two Bloodseeker 'always has' adds of bc_MaintainPermanentEffects (L675 rank 30, L681 rank 60; they run only when the buff is missing) -> hook_k_su0216_always (loader/hooks_K.c). Permanence: a buff (scr_ConditionIsBuff, not a minion) on your creature with scr_PerkLevel(655, 1) gets duration -2; Blazefury 40's Burning with scr_PerkLevel(654, 1) too (SU-0080 v3 rule: no side limit). Spread: when the bearer holds the buff after the add, the in-battle bc_OnBuffDebuff L59-L66 sequence is replayed: bc_GetAlliesOf(bearer, false, false), then per ally bc_EventBuff(-1, ally, buff, -2, -1, -1, -1, last, '(' + lcz('L_P_FORSAKENWONDER') + ')') + scr_AddEventToStack(1, event); source -1 so the copies don't spread again (no double spread with SU-0080, whose hook only covers the three event sites). Ferro 100 (Animated Weapon) and Ripplevein 10 (Zombies) are minions: untouched. Closes SU-0080's 'partial' for start-of-battle Relic effects ('always has' adds already pass -2). If SU-0216 is switched off, SU-0218 does not count these 8 Relic grants (their call sites belong to this fix).",
+  "release_notes": {
+    "section": "Perks",
+    "effect": "Forsaken Wonder (perk)",
+    "intended": "Buffs your creatures' Relics give last forever, and after a Relic gives one of your creatures a buff, all your other creatures get that buff as well.",
+    "actual": "In the unpatched game, the buffs Relics give at the start of battle (Arbiter, Ferro, Prime & Ventus, Salus, Triumvir and Whisper) never spread to your other creatures and did not last forever, and Bloodseeker's always-on buffs never spread.",
+    "fix": "Now those buffs spread to your other creatures and last forever, like Relic buffs given during battle. With Primordial Curse, Blazefury's start-of-battle Burning on its bearer also lasts forever, as Relic debuffs do during battle.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

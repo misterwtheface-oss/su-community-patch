@@ -1,0 +1,43 @@
+{
+  "id": "SU-0051",
+  "aliases": [
+    "B14"
+  ],
+  "title": "Tantalizing Temptation",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Tantalizing Temptation",
+      "runtime_id": 1227,
+      "text_key": "L_TRAIT_DESC_TANTALIZINGTEMPTATION"
+    }
+  ],
+  "problem": "Attacks at 98% (argument form mix-up), text 200%.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0051",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§14"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test:  Fix: S | 2026-10-26 realign (text is the contract): text claims \"attack one of their allies for 200% normal damage\". K: bc_CreatureEndOfTurn L1264 bc_CreatureAttack damage-reduction argument RValue 2.0 (= 98%) lea rdx @0x140b04970 -> static RValue -100.0 @0x1498e12d0 (= 200%, the Rend and Tear scale); disp @0x140b04973. vs bugged: stronger. 2026-10-26: built as byte patch SU-0051 (verified against the baseline exe; not yet run in game).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Tantalizing Temptation (trait)",
+    "intended": "At the end of each enemy's turn, it is forced to attack one of its allies for 200% normal damage.",
+    "actual": "In the unpatched game, the forced attack dealt 98% of normal damage.",
+    "fix": "Now the forced attack deals 200% normal damage.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

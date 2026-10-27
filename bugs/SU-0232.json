@@ -1,0 +1,34 @@
+{
+  "id": "SU-0232",
+  "aliases": [
+    "B3#14"
+  ],
+  "title": "Fermented Hops (healing bonuses)",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Fermented Hops",
+      "runtime_id": 320,
+      "text_key": "L_SD_FERMENTEDHOPS; L_SPELLMOD_INCREASEDHEALING / L_SPMOD_INCREASEDHEALING; L_P_SPELLMENDING_DESC; L_CODD_SPELLGEMS_ENCHANTING"
+    }
+  ],
+  "problem": "The heal is a flat 35% of Max Health sent straight to the heal event. The Enchanter lets you put Obsidian ('Healing Increased By X%') on it, but Obsidian, Spell Mending and the other 'spells heal X% more' bonuses only exist in the spell-healing calculator, which this spell never calls, so they do nothing. General healing modifiers in the heal event still apply.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": null,
+  "status": "open",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#14"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Fermented Hops: \"Enemies with {CONDNAME_DEBUFF_BLIGHT} are healed for an amount equal to 35% of their Maximum {STAT_health}. Otherwise, they are afflicted with ... Evidence: bc_CreatureCast L4813 @0x1407f245e (hpmax x 0.35 -> bc_EventHeal @0x1407f2872). Obsidian only in bc_SpellHealing @0x14164f0e3; Spell Mending (perk 205) only @0x14165077e; Gemling 1 only @0x14164f8a0. Compat column 11 = 1 for id 320 (scr_FixSpellGemProps: HEAL tag). Fix sketch: Proposed family record (one record for all fixed-amount spells): spells whose damage / heal / stat amount is a fixed formula sent straight to the event (no bc_SpellDamage / bc_SpellHealing / bc_SpellStat call) still accept the matching gem properties at the Enchanter (scr_FixSpellGemProps 0x1460a8080 sets the compat columns from tags / description), but those properties and the 'spells deal / heal X% more' bonuses live only in the calculators (inv_SpellGemGetStat has 40 callers: 10 bc_SpellDamage, 10 bc_SpellStat, 9 bc_SpellHealing, none in the event code). Candidate population from spell_signatures + spell_property_compat: 25 Moonstone-compatible damage spells with no damage calculator, 8 Obsidian-compatible heals with no healing calculator, 14 Malachite-compatible stat spells with no stat calculator (verify per spell before shipping). For heals: C hook wrapping the bc_EventHeal call of each fixed-heal spell (Fermented Hops @0x1407f2872, Lifeline @0x140858fc0, Archangel's Blessing @0x14081fc89, Utopia @0x14080a553, Herd Immunity @0x14081eb70, Eaten Alive @0x14078baf2, Drain Life @0x140789f51, Rune of Lua @0x1408c597e, Divinity @0x14085d492) that multiplies the amount by 1 + the same 'heals more' shares bc_SpellHealing adds (Obsidian GetStat(gem,2)/100, Spell Mending rank, Gemling 1 on Ethereal gems, and any other bc_SpellHealing 'more' clause). Potency-only terms (Intelligence tiers, potency-stat properties) stay out. Reasoning: The property and perk texts promise more healing from the caster's spells, and the Enchanter offers Obsidian on this gem, which the codex says only happens when a property works. The code skips every one of them, so the texts are contradicted. Ship as one family record with #56. App note (unpatched game): Fermented Hops' heal is a flat 35% of Max Health: the Obsidian property and 'spells heal X% more' bonuses don't affect it, only general healing modifiers do. Source: errata round 2 (2026-10-26)."
+}

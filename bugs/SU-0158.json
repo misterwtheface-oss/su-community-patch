@@ -1,0 +1,43 @@
+{
+  "id": "SU-0158",
+  "aliases": [
+    "B6#43"
+  ],
+  "title": "Valiant Heart (1924)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Valiant Heart",
+      "runtime_id": 1924,
+      "text_key": "L_TRAIT_DESC_VALIANTHEART"
+    }
+  ],
+  "problem": "+1 attack and +1 cast for each ally whose secondary fusion equals the creature's own. Unfused creatures all store \"none\" (−1) and nothing excludes that, so they all match. The ally list includes the creature itself, so every creature on the side gets at least +1.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0158",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B6#43"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Unfused creatures count as having the same secondary Fusion. Evidence: bc_CreatureAttack L810-L819: allies incl. self @0x1406c6b89, fuse2 == fuse2 @0x1406c6cbd, +1 hit @0x1406c6ce6; bc_CreatureCast L781-L789 @0x140746a16 / 0x140746b5c. Fix sketch: H: skip allies with no secondary fusion (−1), and decide whether self counts. Triage 2026-10-26: Unfused creatures all match and the creature counts itself. Hook: skip allies without a secondary fusion (-1) and self. 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Unfused creatures with Valiant Heart: no extra attacks/casts. A creature whose secondary Fusion matches 2 allies: +2 (it no longer counts itself).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Valiant Heart (trait)",
+    "intended": "Your creatures attack and cast 1 additional time for each creature with the same secondary Fusion.",
+    "actual": "In the unpatched game, creatures counted themselves, and creatures without a Fusion all matched each other.",
+    "fix": "Now only other creatures with the same secondary Fusion count.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "id": "SU-0299",
+  "aliases": [
+    "B6#16"
+  ],
+  "title": "Reform",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Reform",
+      "runtime_id": 1851,
+      "text_key": "L_TRAIT_DESC_REFORM"
+    }
+  ],
+  "problem": "The claim (Reform resurrects its own bearer when the bearer has Life After Death) cannot happen. The death block requires the dead creature NOT to have Reform. With Life After Death the dead bearer keeps its traits, so it fails that test; without Life After Death the dead bearer does not count as a Reform holder at all, so only another holder can revive it, which the text allows (\"your other creatures\").",
+  "category": "not-a-bug",
+  "confidence": "code-certain",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "community:B6#16"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: After your other creatures are killed for the first time, they are resurrected with 30% {STAT_health}. This trait does not stack. Evidence: bc_OnDeath L1930: revived == false, deaths (0x1499e1928) <= 1; L1931: (slot == 0 && scr_AnyEnemyHasPassive(1851) @0x141503e7d) || (slot > 0 && scr_AnyAllyHasPassive(1851) @0x141504052); L1932: scr_CritHasPassive(dying, 1851) == false @0x14150423f; L1933 bc_EventResurrect 30% @0x1415048c1. scr_CritHasPassive @0x14202c2c0: hp <= 0 returns false unless the Life After Death flag (player side) / beyondtheveil var (0x1499e1518, enemy side) is set and the trait is not 445/66/234; scr_AnyAllyHasPassive loops crits through scr_CritHasPassive (@0x141f0ac83). Reasoning: Both branches (with and without Life After Death) exclude the dead bearer, so self-resurrection through Reform is impossible. The proposed in-game test is not needed; a self-revival seen in game must come from another effect. Source: errata round 2 (2026-10-26).",
+  "reason": "works as its text says"
+}

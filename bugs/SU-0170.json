@@ -1,0 +1,45 @@
+{
+  "id": "SU-0170",
+  "aliases": [
+    "B5#33"
+  ],
+  "title": "Master of Stags (1501)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Master of Stags",
+      "runtime_id": 1501,
+      "text_key": "L_TRAIT_DESC_MASTEROFSTAGS"
+    }
+  ],
+  "problem": "The Master is hand-coded for only 6 of the 8 Stag traits: Touched By The Gods, Sun/Moon/Star Prayer, Like Sand (bc_CreatureCast) and Endlessly (inv_SpellGemsUpdate). Christmas Is Canceled (Stag Guide) and Prism (Stag Abstract) have no Master code. Like Sand: base cost 2 (+1, text says +2), 4 with the Master (+3). Prayers: the doubled chance doubled again (×4), so ~24% → ~96%. Stag Royal / Outcast: bc_AllRace reads the in-battle race, so it depends on when gems are recomputed. Not settled.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0170",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#33"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: No effect on some Stags; \"chance\" Stags reach ~96%; Like Sand gives +3 charges (50% not 100% more); Stag Royal only with Stags as main parents, so not with Outcast No Longer. Evidence: Sites: bc_CreatureCast @0x140743947 / 0x140766391 / 0x140a5d037 / 0x140a5e370 / 0x140a5f44b; inv_SpellGemsUpdate @0x141db8d67; bc_AllRace reads race @0x1406021e3 / 0x140602453. Fix sketch: Add code for the 2 missing traits (H); Stag Royal needs in-game test (Outcast party, check Endlessly charges in battle). Triage 2026-10-26: Christmas Is Canceled and Prism (Stag traits) have no Master of Stags code. Hook. Like Sand's numbers are tracked in SU-0066. Stag Royal + Outcast No Longer: in-game test (Outcast party, check Endlessly charges). | Batch S: left needs-hook. \"100% more effective\" has no defined meaning for some Stags (Christmas Is Canceled, Prism); needs a per-Stag ruling first. User ruling 2026-10-26: '100% more effective' doubles the trait's numbers: Christmas Is Canceled afflicts 6 random enemies (3 x 2); Prism uses 200% of the potency-modifier stats (100% x 2). 2026-10-26 hook batch B2 built (research/hooks_B2.json, loader/hooks_B2.c). Prism half: the 24 Prism gates in bc_SpellDamage / bc_SpellHealing / bc_SpellStat note whether the passing side holds Master of Stags and bc_AllRace('Stag', side) (the game's own Master test), and the 12 'stat = modifier stat' assigns double the stat once, so Prism uses 200% of the modifier stat (read as 2 x the stat, not the gem formula with 200%). Christmas Is Canceled half NOT built: doubling the afflicted count needs the enemy list walked from C (it waits for batch A2's creature-list helper). Other Stags: the game's Master code for Touched By The Gods, the Prayers, Like Sand and Endlessly is unchanged by B2; the Prayer block (bc_CreatureCast L19053) doubles its roll multiplier once, and the reported ~96% was not reproduced from that block (in-game check). Like Sand numbers: SU-0066. In-game test: all-Stag party with Master of Stags and a Prism holder; cast a spell whose gem has a potency modifier (e.g. potency based on Attack): potency uses 2 x Attack. Remove one Stag (or the Master): 1 x Attack. | 2026-10-26 hook batch F1 built (research/hooks_F1.json, loader/hooks_F1.c). Christmas Is Canceled half built as patch SU-0170-xmas: the trait's gate (scr_CritHasPassive(creature, 1020), bc_StartupBuffsDebuffs L1414) remembers the holder; on the block's first Disarmed add (L1459), if the holder's side passes the Master test (holds 1501 and bc_AllRace('Stag', side)), up to 3 more distinct living enemies not already picked get the same add (6 total). In-game test: all-Stag party with Master of Stags and a Christmas Is Canceled holder, 6 enemies: all 6 start Disarmed. Without the Master: 3.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Master of Stags (trait)",
+    "intended": "If your whole party is Stags, their innate traits are 100% more effective.",
+    "actual": "In the unpatched game, Prism and Christmas Is Canceled were not boosted.",
+    "fix": "Now Prism uses 200% of its stats and Christmas Is Canceled Disarms 6 enemies instead of 3 (separate switch SU-0170-xmas). Partial: only these two traits are covered; the other Stag traits are unchanged.",
+    "impact": "stronger",
+    "flags": [
+      "partial"
+    ]
+  }
+}

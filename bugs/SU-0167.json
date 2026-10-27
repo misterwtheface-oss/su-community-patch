@@ -1,0 +1,43 @@
+{
+  "id": "SU-0167",
+  "aliases": [
+    "B5#26"
+  ],
+  "title": "Master of Dumplings (1428)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Master of Dumplings",
+      "runtime_id": 1428,
+      "text_key": "L_TRAIT_DESC_MASTEROFDUMPLINGS"
+    }
+  ],
+  "problem": "The skin → Ultimate switch covers code skins 129-132, 134-150 and 572-580. 133 = Dreamsicle (skins.json 134) is missing, so it falls to the random pick.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0167",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#26"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Equip the Dreamsicle skin on a Master of Dumplings creature; its Ultimate spell is the Dumplings one (442), never a random one. Community claim: The Dreamsicle skin has no Ultimate and gives a random one. Evidence: bc_StartupGems: skin @0x141706b03; case values @0x141706b6f-0x141706e7e (0x81-0x84, 0x86-0x96, 0x23c-0x244; no 0x85). Fix sketch: Add a case for 133 with Caliban's Avatar Ultimate (H). Triage 2026-10-26: Skin switch has no case for code skin 133 (Dreamsicle). Hook: add the case with Caliban's Avatar Ultimate.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Master of Dumplings (trait)",
+    "intended": "Your Dumplings gain an Ultimate based on the wild Dumpling skin they wear.",
+    "actual": "In the unpatched game, the Dreamsicle skin had no matching Ultimate and got a random one.",
+    "fix": "Now the Dreamsicle skin gives Caliban's Ultimate, Awakened Nether Orbs.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

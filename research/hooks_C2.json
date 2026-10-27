@@ -1,0 +1,78 @@
+{
+  "patches": [
+    {
+      "id": "SU-0050",
+      "bug": "SU-0050",
+      "default": 1,
+      "title": "Gambler's Game: otherwise it gains a random trait, as the text says (code gave a random debuff)",
+      "edits": [
+        {
+          "va": "0x1488bff50",
+          "expect": "000000000000",
+          "write": "ff255a896101",
+          "note": "trampoline: jmp [slot] -> hook_su0050_gambler (loader/hooks_C2.c) (cave code)"
+        },
+        {
+          "va": "0x140c3eb12",
+          "expect": "2ac53900",
+          "write": "3a14c807",
+          "note": "bc_CreatureStartOfTurn L3668: bc_EventDebuff(random debuff) -> trait event"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed88b0",
+          "symbol": "hook_su0050_gambler"
+        }
+      ]
+    },
+    {
+      "id": "SU-0028-turns",
+      "bug": "SU-0028",
+      "default": 1,
+      "title": "Master of Cataclysms (needs SU-0028): the qualifying party's traits roll at the start of EVERY creature's turn (code: only on that party's own turns)",
+      "edits": [
+        {
+          "va": "0x1488bff58",
+          "expect": "000000000000",
+          "write": "ff255a896101",
+          "note": "trampoline: jmp [slot] -> hook_su0028_cata_gate (loader/hooks_C2.c) (cave code)"
+        },
+        {
+          "va": "0x140b5755d",
+          "expect": "6f3d3b01",
+          "write": "f789d607",
+          "note": "L748 gate (enemy turn): scr_AnyEnemyHasPassive(2191) -> some side qualifies"
+        },
+        {
+          "va": "0x140b57732",
+          "expect": "6a313b01",
+          "write": "2288d607",
+          "note": "L748 gate (your turn): scr_AnyAllyHasPassive(2191) -> some side qualifies"
+        },
+        {
+          "va": "0x140b57982",
+          "expect": "1aa4aaff",
+          "write": "d285d607",
+          "note": "L749 gate (enemy turn): bc_AllRace(Cataclysm, 0) -> some side qualifies"
+        },
+        {
+          "va": "0x140b57bae",
+          "expect": "eea1aaff",
+          "write": "a683d607",
+          "note": "L749 gate (your turn): bc_AllRace(Cataclysm, 1) -> some side qualifies"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed88b8",
+          "symbol": "hook_su0028_cata_gate"
+        },
+        {
+          "slot_va": "0x149ed8478",
+          "symbol": "c2_cataclysm_holder"
+        }
+      ]
+    }
+  ]
+}

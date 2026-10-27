@@ -1,0 +1,43 @@
+{
+  "id": "SU-0310",
+  "aliases": [
+    "B6#36"
+  ],
+  "title": "Terminus",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Terminus",
+      "runtime_id": 1588,
+      "text_key": "L_TRAIT_DESC_TERMINUS"
+    }
+  ],
+  "problem": "Burn Their Corpses: \"If an enemy dies while it is afflicted with Burning, it cannot be resurrected.\" A Burning enemy with Terminus is still resurrected after its first Terminus death; only later cycles are refused. Cause: Terminus queues the kill and the resurrection together, and the \"cannot be resurrected\" check runs when the resurrection is queued (the creature is still alive), not when it executes. The same gap applies to every resurrection queued before the death (Defy the Gods, Reincarnation, Genesis) and to all six flag sources (Burn Their Corpses, Endwalker, Feast and Famine, End On a High Note, Epigraphy, Disintegrating Arrow).",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0310",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B6#36"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: At the start of this creature's turn, it is killed. Then, it is resurrected with 100% {STAT_health}. Evidence: bc_CreatureStartOfTurn L2224 @0x140bc6d4c: bc_EventOHKO(self) then bc_EventResurrect(self, 1.0 x hpmax), both queued (@0x140bc7360). bc_EventResurrect (0x141080b80) tests can_resurrect at queue time; bc_ExecuteEvents resurrect case L1307-L1312 tests only `creature.hp <= 0` @0x1410da5f3. can_resurrect = false is written in bc_OnDeath at the death (REVIVE_CHAIN_FINDINGS S35). Text key of the blocker: L_P_BURNTHEIRCORPSES_DESC. Fix sketch: Hook the resurrect case of bc_ExecuteEvents at L1312 (the `hp <= 0` compare @0x1410da5f3): also require that the creature may still be resurrected, using the same rule bc_EventResurrect applies at queue time (can_resurrect != false, keeping its exemptions such as enemy resurrections in False God battles). If not, skip the case as when hp > 0. Only resurrections queued before the death are affected; all others already passed the same check. Reasoning: Burn Their Corpses makes an explicit claim (\"it cannot be resurrected\") that the code honours from the second cycle on but not the first, purely because of queue timing. The fix is one execution-time check, consistent with how every other resurrection is already gated. Could also be filed as a system record (\"resurrections queued before the death\") rather than under Terminus. App note (unpatched game): In the unpatched game a Terminus (or Defy the Gods) revival ignores \"cannot be resurrected\" effects the first time, because the revival is queued before the death. Source: errata round 2 (2026-10-26). | Patched (batch K, 2026-10-26): the resurrect case's execute-time `creature.hp <= 0` compare (bc_ExecuteEvents L1312 @0x1410da5f3) -> hook_k_su0310_dead: also false when creature.can_resurrect == false (the game's own test, as in bc_EventResurrect @0x141082226), keeping bc_EventResurrect's exemption (enemy side and battle type 88, or enemy Vulcanar critconstant 736 while scr_AnyEnemyHasPassive(678)). False skips the case as when Health > 0 (silent, no 'Prevented!'). Beyond the record's list: the bc_OnDeath resurrections queued before the death flags are written (Somnus, Born Again, Angry Army; Ultimate Ember is exempt) are now stopped by those flags too, as the flags' 'cannot be resurrected' says.",
+  "release_notes": {
+    "section": "Combat rules",
+    "effect": "Terminus (trait) and 'cannot be resurrected' effects",
+    "intended": "If an enemy dies while it is afflicted with Burning, it cannot be resurrected (Burn Their Corpses; likewise Endwalker, Feast and Famine, End On a High Note, Epigraphy, Disintegrating Arrow).",
+    "actual": "In the unpatched game, a resurrection set up before the death (Terminus, Defy the Gods, Reincarnation, Genesis) still brought the creature back once, because 'cannot be resurrected' was checked only when the resurrection was set up.",
+    "fix": "Now 'cannot be resurrected' also stops those resurrections, and the ones a death sets up just before the effect takes hold (Angry Army, Born Again, Somnus), except where the game already exempts them (enemies in False God battles, Vulcanar with Ultimate Ember).",
+    "impact": "neutral",
+    "flags": []
+  }
+}

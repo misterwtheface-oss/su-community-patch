@@ -1,0 +1,43 @@
+{
+  "id": "SU-0148",
+  "aliases": [
+    "B4#17"
+  ],
+  "title": "Colony (84)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Colony",
+      "runtime_id": 84,
+      "text_key": "L_TRAIT_DESC_COLONY"
+    }
+  ],
+  "problem": "The loop goes over the side's party slots and makes each other Griffon Defend if it isn't already Defending. There is no Health / dead check, so dead Griffons \"Defend\" too (and their on-defend effects can run).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0148",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B4#17"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Triggers on dead Griffons too, without Life After Death. Evidence: bc_OnDefend L442-L456: race == Griffon && side has 84 @0x14153e1b5 / 0x14153e25f; loop tests isdefending @0x14153e3a9 and race @0x14153e447 only; bc_CreatureDefend(…, 1) @0x14153e51a. Fix sketch: Add a hp > 0 test to the loop (H) Triage 2026-10-26: Dead Griffons Defend too. Hook: add hp > 0 to the loop. | In-game test: Colony team with one dead Griffon: when another Griffon defends, the dead one does not Defend.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Colony (trait)",
+    "intended": "After one of your Griffons defends, the rest of them defend as well.",
+    "actual": "In the unpatched game, dead Griffons defended too.",
+    "fix": "Now only living Griffons defend.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

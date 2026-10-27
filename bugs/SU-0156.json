@@ -1,0 +1,43 @@
+{
+  "id": "SU-0156",
+  "aliases": [
+    "B6#8"
+  ],
+  "title": "Pumpkin Spice (333)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Pumpkin Spice",
+      "runtime_id": 333,
+      "text_key": "L_TRAIT_DESC_PUMPKINSPICE"
+    }
+  ],
+  "problem": "At battle start the game walks the turn list (both sides, fastest first). At the first creature with the trait it swaps Max Health and Defense for that creature's side, then ends the whole effect. A second holder, including one on the other side, never gets its swap. The \"exceptions\" are battles where the enemy holder was faster.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0156",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B6#8"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Yours stops the enemy's from working, with exceptions. Evidence: bc_StartupStatLoss: trait check @0x1417696e1, allies @0x1417697d6, swap L255-L257, then jump past the outer loop @0x1417699dc. Fix sketch: H: one swap per side. (A simple jump edit would swap twice when two holders share a side, undoing it.) Triage 2026-10-26: Only the first holder's side swaps. Hook: one swap per side. 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Pumpkin Spice on your creature AND on an enemy (e.g. Pumking): at battle start BOTH sides swap Maximum Health and Defense (each side once). Two holders on one side: still swapped once.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Pumpkin Spice (trait)",
+    "intended": "At the start of battle, your creatures swap their Maximum Health with their Defense.",
+    "actual": "In the unpatched game, only the side of the first holder in turn order swapped.",
+    "fix": "Now each side with a holder swaps once.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

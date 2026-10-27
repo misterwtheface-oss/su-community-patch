@@ -1,0 +1,43 @@
+{
+  "id": "SU-0163",
+  "aliases": [
+    "B5#9"
+  ],
+  "title": "Horde (141)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Horde",
+      "runtime_id": 141,
+      "text_key": "L_TRAIT_DESC_HORDE"
+    }
+  ],
+  "problem": "Every creature on your side (holder included) gets 5% of the base Speed (realspeed) of each ally that does not have Horde, itself included. So the exclusion is on the givers, while the text says Horde holders don't receive it. Only one copy works (one side-wide check). It is a live stat-getter bonus, not a one-time start-of-battle gain.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0163",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#9"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Every creature, including itself and Horde holders, gets 5% of each creature's base Speed; only one copy works. Evidence: crit_speed: scr_AnyAllyHasPassive(141) @0x1417f3296 and slot > 0 @0x1417f32d7; list of crits[1..6] without 141 (scr_CritHasPassive(.,141) == false @0x1417f34b7); += realspeed × 0.05 @0x1417f365f / 0x1417f36c0. Enemy mirror @0x1417f3744. Fix sketch: Reword to \"Creatures with this trait don't share their Speed\" (T), or add a receiver test (H). Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. Holders still receive; they just don't give. 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"This effect is not applied to creatures that have this trait\". Fix: H: crit_speed Horde block (@0x1417f3296): skip the bonus when the receiving creature has 141 (and keep counting all givers). vs bugged: mixed. 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Horde on one creature: compare its Speed in battle with and without the trait — it should not receive the 5% shares (others still do).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Horde (trait)",
+    "intended": "Your creatures share 5% of their Speed with each other; creatures with Horde don't receive it.",
+    "actual": "In the unpatched game, the holders received the shares, and the creatures with Horde were left out of giving instead.",
+    "fix": "Now creatures with Horde don't receive the shared Speed.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

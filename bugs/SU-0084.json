@@ -1,0 +1,44 @@
+{
+  "id": "SU-0084",
+  "aliases": [
+    "H05"
+  ],
+  "title": "Illusion minion",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Illusion",
+      "runtime_id": 299,
+      "key": "ILLUSION",
+      "text_key": "L_SD_ILLUSION"
+    }
+  ],
+  "problem": "Illusion minion: +2 Artifact attack rolls when the ATTACKER has Illusion (code tested the target)",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0084",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "handoff:HANDOFF_bug_report_candidates.md"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Details: research/handoff_eval.md",
+  "release_notes": {
+    "section": "Conditions & minions",
+    "effect": "Illusion (minion)",
+    "intended": "The master's post-action effects (on-attack and so on) activate 2 additional times.",
+    "actual": "In the unpatched game, for the master's Artifact on-attack effects, the game checked whether the target had an Illusion instead of the attacker.",
+    "fix": "Now the attacker's Illusion gives its Artifact on-attack effects the 2 extra activations.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

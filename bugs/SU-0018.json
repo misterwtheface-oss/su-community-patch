@@ -1,0 +1,43 @@
+{
+  "id": "SU-0018",
+  "aliases": [
+    "A20"
+  ],
+  "title": "Eternal Rest",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Eternal Rest",
+      "runtime_id": 2050,
+      "text_key": "L_TRAIT_DESC_ETERNALREST"
+    }
+  ],
+  "problem": "Rolls Sleeping at the start *and* end of each enemy turn (text: end only).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0018",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§1 item 2"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: S: skip the start-of-turn roll — in patch (byte-verified)",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Eternal Rest (trait)",
+    "intended": "At the end of each enemy's turn, there is a 10% chance to put it to Sleep.",
+    "actual": "The game also rolled the chance at the start of enemy turns.",
+    "fix": "Now it only rolls at the end of each enemy's turn.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

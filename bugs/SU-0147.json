@@ -1,0 +1,43 @@
+{
+  "id": "SU-0147",
+  "aliases": [
+    "B4#9"
+  ],
+  "title": "Braze (344)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Braze",
+      "runtime_id": 344,
+      "text_key": "L_TRAIT_DESC_BRAZE"
+    }
+  ],
+  "problem": "Text: \"Class Strength\" Artifact properties deal 50% more damage. Code: when the attacker has an artifact and the target is of one of the 5 classes, it adds +50% of the whole hit. It doesn't scale the property and doesn't check that the artifact has that class's property at all. Every target has a class, so in practice it is a flat +50% for any of your creatures with an artifact. The Beacon card set part was not checked.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0147",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B4#9"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Counts as Class Strength but is worked out separately, so card set bonuses raise it. Evidence: bc_EventDamage L4036 (source has item), L4038 (scr_CreatureClass(creature)), L4039 property term, L4040-L4041 Braze pool += amount × 0.5; gates @0x140e6fc11 / 0x140e70710 / 0x140e7120f / 0x140e71d0e / 0x140e7280d. Fix sketch: Make Braze use 50% of the property term (stat / 100 × amount) instead of the amount (H) Triage 2026-10-26: In-game test: a creature whose Artifact has no Class Strength property, with and without Braze: does Braze still add +50% damage? (Same pattern as Unbreakable SU-0058.) | 2026-10-26 realign (text is the contract): text claims \"Class Strength Artifact properties deal 50% more damage to that class\". H: Braze: +50% of the attacker's Class Strength property for the target's class instead of a flat +50% of the hit. vs bugged: weaker (no flat 50%). | In-game test: Braze with an Artifact without a Class Strength property: no extra damage; with a +X% vs a class property: that bonus grows by 50% against that class only.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Braze (trait)",
+    "intended": "Your creatures' Class Strength Artifact properties deal 50% more damage to that class.",
+    "actual": "In the unpatched game, any creature with an Artifact got a flat +50% damage, with or without a Class Strength property.",
+    "fix": "Now the bonus raises the Class Strength property's own damage bonus by 50%, against that class only.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

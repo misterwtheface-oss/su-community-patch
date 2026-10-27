@@ -1,0 +1,47 @@
+{
+  "id": "SU-0146",
+  "aliases": [
+    "B4#6"
+  ],
+  "title": "Better, Faster, Stronger (1989) + Writhelings",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Better, Faster, Stronger",
+      "runtime_id": 1989,
+      "text_key": "L_TRAIT_DESC_BETTER,FASTER,STRONGER"
+    },
+    {
+      "kind": "condition",
+      "name": "Writhelings (minion)"
+    }
+  ],
+  "problem": "In the Writheling block, the BFS part repeats the Pleasant Disease buff (one random buff per Writheling stack), not the Writheling's debuff. It runs even without Pleasant Disease. Text: \"minions perform their effects twice\".",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0146",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B4#6"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Instead of a second debuff on an enemy, it gives a random ally a buff (like Pleasant Disease), and it stacks with Pleasant Disease. Evidence: bc_EventDamage L7055+ Writheling block (cond 46 @0x140f71555): debuff loop @0x140f72536; Pleasant Disease 1144 @0x140f729b5 → bc_EventBuff @0x140f7367d; BFS 1989 @0x140f73afc → bc_GetRandomBuff @0x140f73fcb → bc_EventBuff @0x140f747c4. Fix sketch: Make the BFS block repeat the debuff (bc_GetRandomDebuff / bc_EventDebuff on an enemy) (H) Triage 2026-10-26: BFS repeats Pleasant Disease's random buff instead of the Writheling debuff, even without Pleasant Disease. Hook: repeat the debuff. 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Better, Faster, Stronger + a creature with Writhelings (no Pleasant Disease); take an attack: each Writheling afflicts a random ENEMY with a random debuff twice (no random buffs on your creatures).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Better, Faster, Stronger with Writhelings (trait / minion)",
+    "intended": "Your creatures' minions perform their effects twice.",
+    "actual": "In the unpatched game, for Writhelings the game repeated Pleasant Disease's random buff instead of the Writheling's debuff.",
+    "fix": "Now Writhelings afflict a random enemy with a random debuff a second time.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

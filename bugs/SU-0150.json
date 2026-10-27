@@ -1,0 +1,43 @@
+{
+  "id": "SU-0150",
+  "aliases": [
+    "B4#32"
+  ],
+  "title": "Extra Treat (1036)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Extra Treat",
+      "runtime_id": 1036,
+      "text_key": "L_TRAIT_DESC_EXTRATREAT"
+    }
+  ],
+  "problem": "Dumpling cast limit is set to 3, but the cast counter is raised before the limit compare, so at most limit − 1 = 2 casts fit (the same off-by-one gives 14 / 15 normal casts).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0150",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B4#32"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: \"Maximum of 3 casts per turn\" actually allows 2. Evidence: bc_CreatureCast limit = 3 @0x1406fe182 / 0x140755c6e; clamp casts - 1 >= 3 @0x140755c61. Fix sketch: Raise the Extra Treat constant 3 → 4 (K), or fix the off-by-one for all casts (S) Triage 2026-10-26: K: Extra Treat cast limit 3 -> 4 (@0x1406fe182 / 0x140755c6e), so 3 casts fit under the counter's off-by-one. 2026-10-26: built as byte patch SU-0150 (verified against the baseline exe; not yet run in game).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Extra Treat (trait)",
+    "intended": "Your Dumplings' spells cost no charges, but they can cast a maximum of 3 times per turn.",
+    "actual": "In the unpatched game, only 2 casts per turn fit.",
+    "fix": "Now 3 casts per turn are allowed.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

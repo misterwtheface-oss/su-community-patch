@@ -1,0 +1,60 @@
+{
+  "patches": [
+    {
+      "id": "SU-0140",
+      "bug": "SU-0140",
+      "default": 1,
+      "title": "Internal Combustion: when the target is killed, all other enemies take 25% of the damage dealt as a splash (Splashing's form: no second round of spell bonuses or crit, no chaining; kills count for the caster)",
+      "edits": [
+        {
+          "va": "0x1410a593e",
+          "expect": "9e918408",
+          "write": "0ebd8408",
+          "note": "bc_ExecuteEvents L431 IC splash bc_EventDamage: dtype RValue 1.0 (spell) -> static -1.0 (indirect, as Splashing)"
+        }
+      ]
+    },
+    {
+      "id": "SU-0164",
+      "bug": "SU-0164",
+      "default": 1,
+      "title": "Kiichi's Aggression: after an enemy takes damage from Bleeding, all other enemies take 50% of the damage it actually took (code: 50% of the pre-reduction Bleed amount)",
+      "edits": [
+        {
+          "va": "0x1488bff60",
+          "expect": "000000000000",
+          "write": "ff255a896101",
+          "note": "trampoline -> hook_su0164_bleed_tick (cave code)"
+        },
+        {
+          "va": "0x1488bff68",
+          "expect": "000000000000",
+          "write": "ff255a896101",
+          "note": "trampoline -> hook_su0164_kiichi (cave code)"
+        },
+        {
+          "va": "0x140b7042f",
+          "expect": "eda31600",
+          "write": "2dfbd407",
+          "note": "bc_CreatureStartOfTurn Bleed tick bc_EventDamage -> hook: remember the amount it deals"
+        },
+        {
+          "va": "0x140b767be",
+          "expect": "5e401600",
+          "write": "a697d407",
+          "note": "bc_CreatureStartOfTurn Kiichi's Aggression splash bc_EventDamage -> hook: 50% of the tick's dealt amount"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed88c0",
+          "symbol": "hook_su0164_bleed_tick"
+        },
+        {
+          "slot_va": "0x149ed88c8",
+          "symbol": "hook_su0164_kiichi"
+        }
+      ]
+    }
+  ]
+}

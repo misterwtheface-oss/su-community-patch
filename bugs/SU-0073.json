@@ -1,0 +1,44 @@
+{
+  "id": "SU-0073",
+  "aliases": [
+    "C07"
+  ],
+  "title": "Shackler's Trance",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Shackler's Trance",
+      "runtime_id": 586,
+      "text_key": "L_TRAIT_DESC_SHACKLER'STRANCE"
+    }
+  ],
+  "problem": "Code: ×2 when it isn't its turn (100% more). Text: \"200% more\".",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0073",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§7",
+    "own:handoff B"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Ruling 2026-10-26: align the code to the text. Fix: K: RValue 2.0 → 3.0 — in patch (byte-verified)",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Shackler's Trance (trait)",
+    "intended": "The creature deals 200% more damage when it is not its turn.",
+    "actual": "In the unpatched game, it dealt 100% more.",
+    "fix": "Now it deals 200% more.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

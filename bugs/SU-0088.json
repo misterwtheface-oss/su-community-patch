@@ -1,0 +1,41 @@
+{
+  "id": "SU-0088",
+  "aliases": [
+    "H09"
+  ],
+  "title": "on-attack relic ranks",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "On-attack relic ranks without a side test"
+    }
+  ],
+  "problem": "About 20 on-attack relic ranks have no side test (matters only when the bearer is Confused)",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0088",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "handoff:HANDOFF_bug_report_candidates.md"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Hook spec: research/handoff_eval.md 2026-10-26 hook batch B2 built (research/hooks_B2.json, loader/hooks_B2.c). The six 'this relic attacks that target / the enemy' rank gates in bc_OnAttack (L1047, 1051, 1259, 1270, 1274, 1278) are false when attacker and target are on the same side. In-game test: Confuse a bearer of an on-attack follow-up relic (e.g. 'this relic attacks the enemy as well'): when it hits an ally, the relic does not attack that ally; against an enemy it still does.",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "On-attack relic follow-ups ('this relic attacks the target as well')",
+    "intended": "The relic follows up on the bearer's attacks against enemies.",
+    "actual": "In the unpatched game, when a Confused bearer hit an ally, the relic attacked that ally too.",
+    "fix": "Now the follow-up is skipped when the bearer hits its own side.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

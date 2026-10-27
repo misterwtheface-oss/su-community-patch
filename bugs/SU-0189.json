@@ -1,0 +1,44 @@
+{
+  "id": "SU-0189",
+  "aliases": [
+    "B1#27"
+  ],
+  "title": "Bosses moved down the Timeline",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Bosses moved down the Timeline",
+      "text_key": "L_CODD_COMBAT_ADDITIONAL_TIPS2"
+    }
+  ],
+  "problem": "The rule runs only in story Caliban (36), Nether Boss (38), Gate of the Gods (39) and False God (88) battles. Lord Zantai's fight (37) is missing, although the game treats it as a boss fight everywhere else (instant kills don't kill him), so Zantai can be sent to the bottom. Hidden parts (text silent): in those four battle types it applies to every enemy-side creature, and it also turns 'drop N places' into 'drop 1 place'; no effect was found that passes the exempt 'forced bottom' code (-3).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0189",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#27"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: When a boss would be forced to move to the bottom of the {TIMELINE}, they are instead moved down 1 position only. Evidence: bc_ExecuteEvents 'actionqueue' L1053: battletype ==int 0x26 @0x1410c9a67, 0x27 @0x1410c9a8a, 0x24 @0x1410c9aad, 0x58 @0x1410c9ad0; creature.slot == 0 @0x1410c9b4c; position != -2 @0x1410c9b94, != -3 @0x1410c9bd8 -> L1055 position = 1 (@0x1410c9c06). Instant-kill boss list 36/37/38/39/88 (NETHER_BOSS_BEHAVIOR_FINDINGS L29). Scan of all 61 bc_EventActionQueue call sites found no -3 argument. Fix sketch: Add battle type 37 to the L1053 test: redirect the last compare call @0x1410c9ad0 (==int vs 0x58) to a C helper that returns true when the value is 88 or 37. Reasoning: The Codex promises the rule for bosses; the code's own boss list (instant kills) includes Zantai, the Timeline list does not. App note (unpatched game): In story Caliban, Nether Boss, Gate of the Gods and False God fights, any effect that moves an enemy down the Timeline only moves it down 1 place; Lord Zantai is not protected and can be sent to the bottom. Source: errata round 2 (2026-10-26). | Patched (batch K, 2026-10-26): bc_ExecuteEvents L1053's last battle-type compare (== 88 @0x1410c9ad0) -> hook_k_su0189_boss_type: true for 88 or 37 (Lord Zantai).",
+  "release_notes": {
+    "section": "Bosses & Nether bosses",
+    "effect": "Bosses moved down the Timeline (rule)",
+    "intended": "When a boss would be forced to move to the bottom of the Timeline, it is instead moved down 1 position only.",
+    "actual": "In the unpatched game, Lord Zantai was not covered: effects that send an enemy to the bottom of the Timeline sent him all the way down.",
+    "fix": "Now Lord Zantai is moved down 1 place only, like the other bosses.",
+    "impact": "weaker",
+    "flags": [
+      "boss"
+    ]
+  }
+}

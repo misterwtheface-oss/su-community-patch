@@ -1,0 +1,43 @@
+{
+  "id": "SU-0260",
+  "aliases": [
+    "B4#21a"
+  ],
+  "title": "Defer Pain",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Defer Pain",
+      "runtime_id": 501,
+      "text_key": "L_TRAIT_DESC_DEFERPAIN"
+    }
+  ],
+  "problem": "Damage the holder takes during its own turn isn't delayed at all. Examples: Burn and Poison ticks at its turn start, self-damage, and reflected or counter damage taken on its turn. The text says 90% of all damage it takes is delayed.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0260",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B4#21a"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: When this creature takes damage, 90% of the damage is delayed until the start of its next turn. Evidence: bc_EventDamage L6110 gate: scr_CritHasPassive(creature,501) @0x140f00b46, amount > 1 @0x140f00b96, creature != creatureturn @0x140f00be1 ([rsp+0xe700] = global.creatureturn, loaded @0x140cdaaa9), amount > 0 @0x140f00c22; L6112 pain += round(amount x 0.9); L6113 amount = round(amount x 0.1). Release: bc_CreatureStartOfTurn L1923-L1927, bc_EventDamage(-1, creature, pain, ..., dtype -1, subscript '(Defer Pain)') @0x140bb12f4. Fix sketch: The own-turn test can't just be removed. It is what stops the released damage, which arrives at the holder's own turn start, from being delayed again. Replace the creature != creatureturn compare at 0x140f00be1 with a hook that returns false only for the release hit. Set a flag on the creature in a hook at the release (bc_CreatureStartOfTurn L1926, where pain is zeroed, before the bc_EventDamage @0x140bb12f4), and have the L6110 hook read and clear it. Every other hit is delayed, including hits during its own turn. Keep the amount > 1 test. Reasoning: The text has no exception for the holder's own turn, so the own-turn test contradicts 'When this creature takes damage'. The exception exists so the released damage isn't delayed over and over, so the fix must exempt only that hit. App note (unpatched game): Defer Pain doesn't delay damage the creature takes during its own turn (for example Burn or Poison at its turn start); delayed damage comes back at its next turn start as one indirect hit with no source. Source: errata round 2 (2026-10-26). | Patched (batch I, 2026-10-26): the L6110 compare creature != creatureturn (runtime != @0x140f00be1) goes to hook_i_su0260_turn_ne: it returns true (delay) for every hit except the release hit, for which it returns the game's own compare. The release is the bc_EventDamage call at bc_CreatureStartOfTurn L1927 (0x140bb12f4, the only place pain is released; pain is only read there and in bc_EventDamage / bc_CleanUpBattle); bc_EventDamage computes the hit synchronously, so the hook recognises it by bc_EventDamage's own return address ([frame + 0x30488] == 0x140bb12f9; prologue verified: sub rsp, 0x30488 via __chkstk, no pushes). Hits nested inside the release (reactions) have their own frame and are delayed normally. The amount > 1 test is kept.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Defer Pain (trait)",
+    "intended": "When this creature takes damage, 90% of the damage is delayed until the start of its next turn.",
+    "actual": "In the unpatched game, nothing this creature took during its own turn was delayed, for example Burn or Poison at the start of its turn, self-damage, and counter or reflected damage taken on its turn.",
+    "fix": "Now damage taken during its own turn is delayed too. Only the delayed damage coming back at the start of its turn is taken in full, as before.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "id": "SU-0013",
+  "aliases": [
+    "A14",
+    "B4#2a",
+    "B4#2b",
+    "B4#2c"
+  ],
+  "title": "Shifting Brilliance, Enochian, Add to the Mix",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Shifting Brilliance",
+      "runtime_id": 2163,
+      "text_key": "L_TRAIT_DESC_SHIFTINGBRILLIANCE"
+    },
+    {
+      "kind": "trait",
+      "name": "Enochian",
+      "runtime_id": 2166,
+      "text_key": "L_TRAIT_DESC_ENOCHIAN"
+    },
+    {
+      "kind": "trait",
+      "name": "Add to the Mix",
+      "runtime_id": 2167,
+      "text_key": "L_TRAIT_DESC_ADDTOTHEMIX"
+    }
+  ],
+  "problem": "Compare the spell with the \"last spell\", which the cast already overwrote with itself: from the 4th spell on they never fire. Community also reports Add to the Mix as buggy.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0013",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§3",
+    "community:B4#2a",
+    "community:B4#2b",
+    "community:B4#2c"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Shifting Brilliance / Enochian / Add to the Mix: cast 5+ spells alternating classes; each spell of a different class than the one before triggers, a same-class repeat does not (needs SU-0123 on). Fix: H: compare with the previous spell",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Shifting Brilliance, Enochian and Add to the Mix (traits)",
+    "intended": "These trigger when a spell is of a different class than the last spell cast.",
+    "actual": "The game compared against the wrong spell (the current one or the battle's first), so from about the fourth spell on they stopped triggering.",
+    "fix": "Now each cast is compared with the spell cast just before it. Requires SU-0123 (Xyrxzy's Subversion) to be on.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

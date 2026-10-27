@@ -1,0 +1,43 @@
+{
+  "id": "SU-0303",
+  "aliases": [
+    "B6#19b"
+  ],
+  "title": "Savior (new finding: halves damage to itself)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Savior",
+      "runtime_id": 66,
+      "text_key": "L_TRAIT_DESC_SAVIOR"
+    }
+  ],
+  "problem": "Text: the Savior takes 50% of the damage \"in place of your other creatures\". The code halves every attack or spell hit on any creature of the side, the Savior included, and only afterwards checks whether the damaged creature is the Savior before forwarding the other half. When the Savior itself is hit, half the damage simply disappears: the Savior takes 50% less damage from attacks and spells.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0303",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:errata-round2 (found decoding B6#19)"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: This creature takes 50% of the damage in place of your other creatures from attacks and spells. This trait does not stack. Evidence: bc_EventDamage L7149: (slot == 0 && scr_AnyEnemyHasPassive(66) @0x140f7c7f4) || (slot > 0 && scr_AnyAllyHasPassive(66) @0x140f7c9f4), no self test; L7151 amount = amount x 0.5 @0x140f7cc46 (varset amount @0x140f7cc77); L7154 / L7158 holder = Any*HasPassive(66) @0x140f7ce68 / 0x140f7cff3 into [rsp+0x23718]; L7160 `if (holder != creature)` @0x140f7d04e, je @0x140f7d058 skips the forward. Fix sketch: Call-site hook on the four Any*HasPassive(66) calls of this block (0x140f7c7f4, 0x140f7c9f4, 0x140f7ce68, 0x140f7cff3): return the first holder on that side that is not the damaged creature (var creature 0x1499e3228), or the \"none\" value if there is none. Then L7149 fails when the only holder is the damaged creature (no halving), and L7154/L7158 pick the other holder when there are two. A plain byte edit is not enough because the halving runs before the holder is known. Reasoning: \"Your other creatures\" excludes the bearer (ruling 5), and nothing in the text gives the Savior damage reduction. The halving and the self-check are in the wrong order, which deletes half of every attack/spell hit on the Savior. App note (unpatched game): In the unpatched game a Savior creature takes only 50% of the damage from attacks and spells that hit it directly; the other half is lost. Source: errata round 2 (2026-10-26). | Patched (batch I, 2026-10-26): the four holder lookups of the block (L7149 gate scr_AnyEnemyHasPassive(66) @0x140f7c7f4 / scr_AnyAllyHasPassive(66) @0x140f7c9f4, L7154 / L7158 holder @0x140f7ce68 / @0x140f7cff3) go to hook_i_su0303_enemy / _ally: when the game's first holder is the damaged creature, the next holder on that side (enemies[1..6] / crits[1..6], > -1, scr_CritHasPassive(c, 66)) is returned, else the lookup's own 'none' value (bool false). So L7149 no longer halves a hit on the only Savior, and L7154 / L7158 forward to the other Savior when there are two.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Savior (trait)",
+    "intended": "This creature takes 50% of the damage in place of your other creatures from attacks and spells.",
+    "actual": "In the unpatched game, every attack or spell hit on the Savior's side was halved before the game checked who was hit, so when the Savior itself was hit, half of the damage was simply lost: the Savior took 50% less damage from attacks and spells.",
+    "fix": "Now hits on the Savior itself are not halved. With two Saviors on a side, a hit on one of them is shared with the other.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "SU-0233",
+  "aliases": [
+    "B3#16"
+  ],
+  "title": "Ice Bolt",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Ice Bolt",
+      "runtime_id": 95,
+      "text_key": "L_SD_ICEBOLT"
+    }
+  ],
+  "problem": "The text always afflicts Frozen. The code only applies Frozen when the spell's calculated damage on that target is above 0, everywhere (not just in the Arena). A target whose Defense soaks the whole hit is never frozen. Frost Arrow has no such check.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0233",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#16"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Target takes a small amount of damage and is afflicted with {CONDNAME_DEBUFF_FROZEN}. Evidence: bc_CreatureCast L15535 bc_SpellDamage per target @0x1409bd92e; L15548 `damage[k] > 0` (>int @0x1409be07d, je 0x1409be616 @0x1409be087, bytes 0F 84 89 05 00 00) gates bc_EventDebuff(21) at L15550. Fix sketch: Byte edit: NOP the 6-byte je at 0x1409be087 (0F 84 89 05 00 00 -> 66 0F 1F 44 00 00) so L15549-L15550 (Frozen) runs for every target. Frozen still goes through bc_EventDebuff, so immunity and resist rolls keep working. Reasoning: The text makes an unconditional claim (afflicted with Frozen); the code adds a damage > 0 condition the text never mentions, and the sibling Frost Arrow has none. Removing the test makes the code match the text. App note (unpatched game): Ice Bolt only freezes a target if its calculated damage on that target is above 0, so a target whose Defense blocks the whole hit is not frozen. Source: errata round 2 (2026-10-26). | Patch (batch L): byte edit, bc_CreatureCast L15548 je @0x1409be087 (6 bytes) -> 6-byte NOP, so L15549-L15550 (bc_EventDebuff 21) run for every target. No code is skipped.",
+  "release_notes": {
+    "section": "Spells",
+    "effect": "Ice Bolt (spell)",
+    "intended": "The target takes a small amount of damage and is afflicted with Frozen.",
+    "actual": "In the unpatched game, the target was only afflicted with Frozen if the spell's damage on it was above 0, so a target whose Defense absorbed the whole hit was never frozen.",
+    "fix": "Now the target is always afflicted with Frozen (immunity and resists still apply).",
+    "impact": "stronger",
+    "flags": []
+  }
+}

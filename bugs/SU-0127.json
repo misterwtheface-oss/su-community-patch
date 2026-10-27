@@ -1,0 +1,44 @@
+{
+  "id": "SU-0127",
+  "aliases": [
+    "B2#4"
+  ],
+  "title": "Bolster (Hell Knight)",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Bolster",
+      "runtime_id": 58,
+      "key": "BOLSTER",
+      "text_key": "L_P_BOLSTER_DESC"
+    }
+  ],
+  "problem": "Text: \"less damage from attacks and spells\". The block has no damage-type test, so it cuts every hit your creature takes, including indirect damage (Burning, Poison, reflected damage...). Good for the player, but not what the text says.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0127",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B2#4"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Affects all damage, not just attacks and spells. Evidence: bc_EventDamage L2092-2095: creature.slot > 0 (@0x140e061b0) && perk 58 (@0x140e06372) -> amount x (1 - hp / hpmax) (@0x140e063c6-0x140e0664b); no dtype read. Fix sketch: T: \"less damage\" (all damage), or H: add a damage-type test Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. Reduces all damage types, indirect included. 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"less damage from attacks and spells\". Fix: H: call-site hook on the perk-58 gate at bc_EventDamage L2092-2095 (@0x140e06372) returning false when dtype == -1 (indirect). vs bugged: weaker (no longer cuts indirect damage). Hook batch R (loader/hooks_R.c, research/hooks_R.json). In-game test: Bolster at low Health: Burning / Poison (indirect) damage is no longer reduced; attacks and spells still are.",
+  "release_notes": {
+    "section": "Perks",
+    "effect": "Bolster (perk)",
+    "intended": "Your creatures take 1% less damage from attacks and spells for every 1% Health they're missing.",
+    "actual": "In the unpatched game, indirect damage (Burning, Poison, reflected damage) was reduced too.",
+    "fix": "Now only attacks and spells are reduced.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

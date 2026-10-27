@@ -1,0 +1,35 @@
+{
+  "id": "SU-0241",
+  "aliases": [
+    "B3#34"
+  ],
+  "title": "Efreet cards (power 2)",
+  "subjects": [
+    {
+      "kind": "card",
+      "name": "Efreet cards",
+      "runtime_id": "card family 41, power 2",
+      "text_key": "L_CARD_EFREET2"
+    }
+  ],
+  "problem": "The bonus applies only to Burning that one of your creatures applies (a source on your side). 'Always have Burning' effects add Burning with no source creature, so they get no bonus, which fits 'debuffs your creatures apply'.",
+  "category": "not-a-bug",
+  "confidence": "high",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "community:B3#34"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Increases the amount of {STAT_intelligence} added to the {CONDNAME_DEBUFF_BURNED} debuffs your creatures apply by 50%. Evidence: bc_EventDebuff @0x140fe1168 (`source > -1`, debuff 18). Reasoning: Sourceless Burning is not applied by one of your creatures; the text's scope matches the code. App note (unpatched game): The Efreet 4-card bonus only boosts Burning applied by one of your creatures, not 'always Burning' effects. Source: errata round 2 (2026-10-26).",
+  "reason": "works as its text says"
+}

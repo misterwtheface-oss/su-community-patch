@@ -1,0 +1,43 @@
+{
+  "id": "SU-0219",
+  "aliases": [
+    "B2#22"
+  ],
+  "title": "Sacrifice (Bloodmage) with artifact Health",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Sacrifice (Bloodmage) with artifact Health",
+      "runtime_id": 240,
+      "text_key": "L_P_SACRIFICE_DESC (artifact Health: L_ARTMOD_HEALTH / L_CODD_ARTIFACTS_STAT_SLOTS)"
+    }
+  ],
+  "problem": "Sacrifice sets Health to 50% of max in the Buffs/Debuffs phase, and later start-of-battle Health gains raise max and current Health. Relic, Synergy and Pit Guard add the same amount to both, so the creature stays exactly 50% of the old max short (this matches the community). Artifact Health is different: the game raises max Health first, then adds to current Health a share of the NEW max. So current Health gains p x (1 + p) of the old max while max gains only p. With a 70% artifact the creature ends at 1.69 of the old max out of 1.70, about 1% short, so Sacrifice is almost cancelled (the community's '70% -> no reduction'). The text says Health is set to 50%, and the artifact block contradicts itself by adding more current Health than max Health.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0219",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B2#22"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: At the start of battle, your creatures' {STAT_health} is set to 50% and they gain <1>  random buff(s). Evidence: Sacrifice: bc_StartupBuffsDebuffs L1698-L1704, perk 240 @0x1416bfc6c, hp = round(hpmax x 0.5) @0x1416bffef-0x1416c0154. Artifact Health: bc_StartupStatGain L1123: hpmax (var 0x1499e0b68) = hpmax + floor(crit_hpmax_adj x pct) (crit_hpmax_adj @0x14174b3b5, varset @0x14174b4b8); L1124: hp (var 0x1499e0a88) = hp + floor(crit_hpmax_adj x pct), with crit_hpmax_adj re-read AFTER the max write (@0x14174b6dd, varset @0x14174b7e0). For contrast, the Relic Health block computes once and adds the same value to both (@0x14174a637-0x14174a6d6). STAT_ROUNDING.md row 123 ('hp += add') is wrong on this point. Fix sketch: bc_StartupStatGain L1123/L1124: swap the two var-id loads so the current-Health line runs first; then both lines read the unchanged max. Byte edits (8b 15 disp32): 0x14174b346 8b151c582908 -> 8b153c572908 and 0x14174b4aa 8b15b8562908 -> 8b15d8552908 (block 1 now writes hp); 0x14174b66e 8b1514542908 -> 8b15f4542908 and 0x14174b7d2 8b15b0522908 -> 8b1590532908 (block 2 now writes hpmax). Result: both gain floor(old max x pct), and Sacrifice ends 50% of the old max short, like the other Health sources. Reasoning: The code explains both community observations (70% artifact -> no reduction; Synergy/Pit Guard -> 50% of raw max): only the artifact block re-reads max Health after raising it. That is a block contradicting itself, not an ordering rule, and it defeats Sacrifice's stated 50%. Side note: for a full-Health creature this block would push current Health above max; no such overflow is seen in play, but the cap site was not traced. App note (unpatched game): With Sacrifice, artifact Health % largely refills the Health Sacrifice removes (a 70% artifact leaves the creature about 1% short), while Relic, Synergy and Pit Guard Health leave it 50% of its earlier max short. Source: errata round 2 (2026-10-26). | Patched (batch K, 2026-10-26): byte edits in bc_StartupStatGain L1123 / L1124 swap the two lines' target variables (var-id disp32 of the get and set: 0x14174b348 / 0x14174b4ac hpmax -> hp, 0x14174b670 / 0x14174b7d4 hp -> hpmax). The current-Health line now runs first, so both lines read the unchanged max through crit_hpmax_adj (which returns the live hpmax) and add floor(old max x pct). No hook.",
+  "release_notes": {
+    "section": "Spell gems & items",
+    "effect": "Artifact Health (artifact stat)",
+    "intended": "An artifact's Health % raises Max Health; with Sacrifice your creatures start battle at 50% Health.",
+    "actual": "In the unpatched game, artifact Health added more to current Health than to Max Health (a share of the already raised maximum), so with Sacrifice a 70% Health artifact left the creature only about 1% below full Health.",
+    "fix": "Now current and Max Health rise by the same amount, so Sacrifice leaves the creature 50% of its earlier Max Health short, as with Relic, Synergy or Pit Guard Health.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "SU-0154",
+  "aliases": [
+    "B6#5"
+  ],
+  "title": "Perishing Salvo (1704)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Perishing Salvo",
+      "runtime_id": 1704,
+      "text_key": "L_TRAIT_DESC_PERISHINGSALVO"
+    }
+  ],
+  "problem": "Damage = 15% of Intelligence × (artifact Attack total ÷ 100). The total only counts the pure Attack slot (property 1), not the four hybrid slots that also give Attack (54, 58, 59, 60). Honed Blades and the stat formulas do count all five. A creature with no artifact skips the multiply and deals a flat 15% of Intelligence.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0154",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B6#5"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Perishing Salvo with a hybrid-stat artifact (Intelligence via a hybrid slot): the on-death damage counts the hybrid Intelligence. Community claim: Hybrid stat slots don't count. Evidence: bc_OnDeath L365-L370: Intelligence × 0.15 @0x1414825b8; artifact check @0x141482653; inv_ArtifactStatTotal(item, 1) @0x141482857, ÷100 @0x14148286f. Fix sketch: H: also add properties 54/58/59/60, as Honed Blades does. Or T: say \"pure Attack slots\". Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. Only the pure Attack stat slot counts. 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"multiplied by the Attack increases granted by its Artifact's Stat Slots\". Fix: H: include the hybrid Attack slots 54/58/59/60 in the total (bc_OnDeath L365-L370, inv_ArtifactStatTotal(item,1) @0x141482857), as Honed Blades does; with no artifact the text implies 0 (code: flat 15% of Int). vs bugged: stronger with hybrid slots; weaker with no artifact.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Perishing Salvo (trait)",
+    "intended": "After death, the creature deals damage equal to 15% of its Intelligence times the Attack increases from its Artifact's stat slots.",
+    "actual": "In the unpatched game, only the pure Attack slot counted (not hybrid slots that also give Attack), and a creature with no Artifact dealt a flat 15% of Intelligence.",
+    "fix": "Now every Attack-granting stat slot counts, and a creature without an Artifact deals no damage.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

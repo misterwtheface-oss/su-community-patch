@@ -1,0 +1,43 @@
+{
+  "id": "SU-0225",
+  "aliases": [
+    "B2#42"
+  ],
+  "title": "Materium, Shifting Gem of Aurum rank 30",
+  "subjects": [
+    {
+      "kind": "relic",
+      "name": "Materium, Shifting Gem of Aurum rank 30",
+      "runtime_id": "relic 15, perk 3 (rank 30)",
+      "text_key": "L_RELIC_AURUM3"
+    }
+  ],
+  "problem": "Rank 30 sits inside the game's 'not a strong hit' branch. On neutral hits it halves the damage, which is correct (as if the bearer were strong). On hits from a class that is strong against the bearer, and on forced-strong hits, that branch is skipped, so the bearer still takes double damage instead of half.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0225",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B2#42"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: The bearer takes damage as if it is strong against the enemy's class. Evidence: bc_EventDamage L3951: if strength (var 0x1499c8598) == -1, else jump to 0x140e6e02e (je @0x140e6c3b9), which skips L3952-L4001. Inside that branch, L3995-L3997: scr_CritHasRelicPerk(creature, 15, 3) @0x140e6dd59 (gate je @0x140e6dd78) -> bonus = amount x 0.5 @0x140e6df72, strength = 0; then amount -= bonus @0x140e6e008. Strong path L3905-L3949: strength = 1, amount += bonus (x2). Details Matter has the same shape and is already fixed by SU-0057 (hook_su0057_details at L4006 @0x140e6e63c). Fix sketch: Reuse SU-0057's 'defender strong' logic instead of a parallel copy. (1) Disable rank 30's own block: turn the gate at 0x140e6dd78 (je 0x140e6dfc2, 6 bytes) into an unconditional jmp to 0x140e6dfc2 (e9 + rel32 + 90). (2) Redirect the Details Matter gate call at L4005 0x140e6e414 (scr_AnyAllyHasPassive(1167), your-side branch) to a C hook that returns orig || scr_CritHasRelicPerk(damaged creature, 15, 3); the damaged creature is the instance read at L3995. hook_su0057_details then gives half of a neutral hit for strong, neutral and weak hits alike. Requires SU-0057. But the decode shows a text contradiction the vet missed: 'as if it is strong against the enemy's class' fails exactly on the hits that matter most. SU-0012 covers rank 100, and SU-0057 fixed the same pattern for Details Matter, so this extends that shared fix. App note (unpatched game): Materium rank 30 halves every hit on its bearer, sourceless ones included, except hits from a class that is strong against the bearer, which still deal double damage. Source: errata round 2 (2026-10-26). | Patched (batch I, 2026-10-26) as its own patch, not through SU-0057 (so it works with Details Matter's fix on or off). The game's rank-30 block (neutral branch L3995-L3997) already gives the right result for neutral hits, and weak hits are already at x0.5; only strong hits (strength 1) skipped it. The Details Matter lookups at L4005 (scr_AnyEnemyHasPassive(1167) @0x140e6e214 / scr_AnyAllyHasPassive(1167) @0x140e6e414; exactly one of them runs for every hit that reaches the class step's end) go to hook_i_su0225_enemy / _ally: if the hit is strong and the damaged creature has scr_CritHasRelicPerk(15, 3), amount -= big_mult(amount, 0.75) and strength = 0 (marked weak, as the neutral branch does), then the original lookup runs. With Details Matter as well, SU-0057's cut sees strength 0 and cuts nothing, so the two don't stack (same as the game's neutral case). Strong-hit variants other than x2 are treated as x2, as in SU-0057.",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "Materium, Shifting Gem of Aurum (relic, rank 30)",
+    "intended": "The bearer takes damage as if it is strong against the enemy's class.",
+    "actual": "In the unpatched game, this only worked on hits from a neutral class (halved). Hits from a class that is strong against the bearer still dealt double damage.",
+    "fix": "Now hits from a class that is strong against the bearer also end at half of a neutral hit, as if the bearer were strong against the attacker.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

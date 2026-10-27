@@ -1,0 +1,35 @@
+{
+  "id": "SU-0237",
+  "aliases": [
+    "B3#29"
+  ],
+  "title": "Sudden Death (cast by Cana / Pallida)",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Sudden Death",
+      "runtime_id": 191,
+      "text_key": "L_TRAIT_DESC_CANA; L_TRAIT_DESC_PALLIDA; L_SD_SUDDENDEATH"
+    }
+  ],
+  "problem": "Sudden Death deals damage to enemies, so it is a damaging Spell Gem and Cana / Pallida cast it as their text says. Killing one of your own creatures at the start of battle is part of the spell.",
+  "category": "not-a-bug",
+  "confidence": "high",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "community:B3#29"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Cana: \"This creature's first 3 permanent, damaging Spell Gems each have a 50% chance to be {ACTION_cast} automatically at the start of battle.\" | Pallida: \"Your creatures' first 3 ... Evidence: Spell DB tag of 191 = \"DAMAGE\"; bc_StartupCasting L101 / L215 (DAMAGE tag; START_OF_BATTLE_FINDINGS rows 482 / 487). Reasoning: The trait texts promise damaging spells and Sudden Death is one; nothing contradicts. App note (unpatched game): Cana and Pallida can cast Sudden Death at the start of battle, which kills one of your creatures. Source: errata round 2 (2026-10-26).",
+  "reason": "works as its text says"
+}

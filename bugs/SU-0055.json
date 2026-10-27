@@ -1,0 +1,70 @@
+{
+  "id": "SU-0055",
+  "aliases": [
+    "B18",
+    "B6#45"
+  ],
+  "title": "Redirected attacks (Guardian, Vigilance, Pocket Tank)",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Redirected attacks"
+    },
+    {
+      "kind": "trait",
+      "name": "Guardian",
+      "runtime_id": 234,
+      "text_key": "L_TRAIT_DESC_GUARDIAN"
+    },
+    {
+      "kind": "trait",
+      "name": "Vigilance",
+      "runtime_id": 59,
+      "text_key": "L_TRAIT_DESC_VIGILANCE"
+    },
+    {
+      "kind": "trait",
+      "name": "Pocket Tank",
+      "runtime_id": 1830,
+      "text_key": "L_TRAIT_DESC_POCKETTANK"
+    }
+  ],
+  "problem": "Use the original target's Defense. Community confirms for Vigilance.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0055",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§5",
+    "community:B6#45"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true,
+      "history": [
+        {
+          "date": "2026-10-26",
+          "by": "user",
+          "result": "heavy=1 confirmed active (log: SU-0055 applied); Vigilance intercepts in battle: no crash. Damage-vs-Defense behavior not yet checked."
+        }
+      ]
+    }
+  },
+  "notes": "Fix: H | 2026-10-26 realign (text is the contract): text claims \"This creature intercepts attacks on its adjacent allies (Guardian / Vigilance / Pocket Tank)\". H: the attack-step interceptors should compute the hit with the interceptor's Defense (bc_CreatureAttack reads the original target's at L187). vs bugged: depends on Defense. | Left needs-hook (batch C): the interceptor's Defense must replace the original target's for the whole defense step (bc_CreatureAttack L181-L405 read once for the first target, before the redirect is resolved). A correct fix re-runs that phase for the new target, and the function calls itself (Pull the Strings), so a global switch is not nesting-safe. Needs a dedicated re-entrant hook design. Round-2 C2 2026-10-26: still needs-hook. The target snapshot is not rescalable: [rsp+0x3d8] (target Defense, L187) is reassigned at L198 / L245 / L399 / L453, has adds (L249) and many `-=` products (L253-L404), and is floored at L472-L476; a ratio rescale after the intercepts (L515-L674) would be wrong. A correct fix must re-run the L182-L476 snapshot for the final target (no call boundary to re-enter); candidate: move the intercept resolution before the snapshot (needs the intercept blocks L515-L674 duplicated in C). Round-3 F2: still needs-hook. Rechecked: the target's Defense snapshot (bc_CreatureAttack L182-L476, [rsp+0x3d8]) is built before the intercepts resolve (L515-L674) and is modified in place many times, so it can't be swapped afterwards; fixing it needs the intercept resolution moved before the snapshot (the six intercept blocks re-implemented in C) or the snapshot re-run for the new target, and bc_CreatureAttack recurses (Pull the Strings). Too risky for the most common battle path in this round. | 2026-10-26 patched (hooks_H, SU-0055, group heavy): bc_CreatureAttack now re-runs its defense step for the creature that is really hit. Four line-marker detours (L182 / L407 / L478 / L696, cave code, no C): L182 remembers the first target; at L696, if an intercept (Provoke pull, CAWW!, Barbed Vines, Vigilance, Pearl Keeper, Pocket Tank, Pedigree Safeguard, Guardian) changed it, L182-L476 run once more for the new target (its Defense snapshot, flat cuts and floors), skipping the already-resolved re-targets (Hoodwink / Invisible, L407-L447) and the intercepts themselves, then the attack continues at L696. Also fixes the same stale Defense after a Hoodwink / Invisible re-target that is then intercepted. The replay re-rolls the one random check in L182-L406 (L342, 35%, relic 25 rank 80) for the new target: same odds. State is keyed by the attack's stack frame, so a nested attack only falls back to the unpatched behaviour. Checked: no jump leaves the replayed segments or enters the window except at L182, no call in the window can start another attack; every stub path emulated (straight, redirect, nested). In-game test: let an enemy attack a low-Defense creature next to a high-Defense Guardian / Vigilance holder (or a Pocket Tank, or pull it with Provoke onto a tank): the interceptor's damage taken now follows its own Defense (much less than before against a tanky interceptor; more if the interceptor has lower Defense than the original target); attacks that are not intercepted are unchanged. Crash risk to watch: any crash or freeze the moment an attack is intercepted (Guardian / Vigilance / Pocket Tank / Provoke / Barbed Vines / Pearl Keeper / CAWW!), a duplicated 'intercept' floater, or an attack that hits twice; set heavy=0 in suucp.ini to compare.",
+  "release_notes": {
+    "section": "Combat rules",
+    "effect": "Redirected attacks (Guardian, Vigilance, Pocket Tank, Provoke and other intercepts)",
+    "intended": "The creature that intercepts an attack takes damage based on its own Defense.",
+    "actual": "In the unpatched game, the damage was based on the original target's Defense.",
+    "fix": "Now the interceptor's own Defense is used; attacks that aren't intercepted are unchanged.",
+    "impact": "neutral",
+    "flags": [
+      "heavy"
+    ]
+  }
+}

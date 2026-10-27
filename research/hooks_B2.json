@@ -1,0 +1,470 @@
+{
+ "patches": [
+  {
+   "id": "SU-0087",
+   "bug": "SU-0087",
+   "default": 1,
+   "title": "Amalgam ranks 50 / 60 / 100: work only on an enemy's Inverted, as the texts say (code: your own Inverted creatures healed enemies twice, kept and regained their Inverted)",
+   "edits": [
+    {
+     "va": "0x1488bfaf0",
+     "expect": "000000000000",
+     "write": "ff25da896101",
+     "note": "trampoline: jmp [slot] -> hook_su0087_damage (loader/hooks_B2.c) (cave code)"
+    },
+    {
+     "va": "0x1488bfaf8",
+     "expect": "000000000000",
+     "write": "ff25da896101",
+     "note": "trampoline: jmp [slot] -> hook_su0087_heal (loader/hooks_B2.c) (cave code)"
+    },
+    {
+     "va": "0x140fadc12",
+     "expect": "eaf90701",
+     "write": "da1e9107",
+     "note": "bc_EventDamage L7685 (R60 extra heal): scr_CritHasRelicPerk -> false when the Inverted source is on the bearer's side"
+    },
+    {
+     "va": "0x140fae98a",
+     "expect": "72ec0701",
+     "write": "62119107",
+     "note": "bc_EventDamage L7698 (R50 potency kept): scr_CritHasRelicPerk -> false when the Inverted source is on the bearer's side"
+    },
+    {
+     "va": "0x140faf71c",
+     "expect": "e0de0701",
+     "write": "d0039107",
+     "note": "bc_EventDamage L7711 (R100 re-apply): scr_CritHasRelicPerk -> false when the Inverted source is on the bearer's side"
+    },
+    {
+     "va": "0x141044b7b",
+     "expect": "818afe00",
+     "write": "79af8707",
+     "note": "bc_EventHeal L401 (R50 potency kept): scr_CritHasRelicPerk -> false when the Inverted source is on the bearer's side"
+    },
+    {
+     "va": "0x1410450b3",
+     "expect": "4985fe00",
+     "write": "41aa8707",
+     "note": "bc_EventHeal L427 (R100 re-apply): scr_CritHasRelicPerk -> false when the Inverted source is on the bearer's side"
+    }
+   ],
+   "runtime_hooks": [
+    {
+     "slot_va": "0x149ed84d0",
+     "symbol": "hook_su0087_damage"
+    },
+    {
+     "slot_va": "0x149ed84d8",
+     "symbol": "hook_su0087_heal"
+    }
+   ]
+  },
+  {
+   "id": "SU-0088",
+   "bug": "SU-0088",
+   "default": 1,
+   "title": "On-attack relic follow-ups ('this relic attacks that target / the enemy'): skipped when the bearer hits its own side (code: a Confused bearer's relic attacked the ally too)",
+   "edits": [
+    {
+     "va": "0x1488bfb00",
+     "expect": "000000000000",
+     "write": "ff25da896101",
+     "note": "trampoline: jmp [slot] -> hook_su0088_relic_attack (loader/hooks_B2.c) (cave code)"
+    },
+    {
+     "va": "0x141325412",
+     "expect": "ea81d000",
+     "write": "eaa65907",
+     "note": "bc_OnAttack L1047: scr_CritHasRelicPerk -> false when attacker and target share a side"
+    },
+    {
+     "va": "0x141325831",
+     "expect": "cb7dd000",
+     "write": "cba25907",
+     "note": "bc_OnAttack L1051: scr_CritHasRelicPerk -> false when attacker and target share a side"
+    },
+    {
+     "va": "0x141336dd9",
+     "expect": "2368cf00",
+     "write": "238d5807",
+     "note": "bc_OnAttack L1259: scr_CritHasRelicPerk -> false when attacker and target share a side"
+    },
+    {
+     "va": "0x141337a36",
+     "expect": "c65bcf00",
+     "write": "c6805807",
+     "note": "bc_OnAttack L1270: scr_CritHasRelicPerk -> false when attacker and target share a side"
+    },
+    {
+     "va": "0x141337e55",
+     "expect": "a757cf00",
+     "write": "a77c5807",
+     "note": "bc_OnAttack L1274: scr_CritHasRelicPerk -> false when attacker and target share a side"
+    },
+    {
+     "va": "0x141338274",
+     "expect": "8853cf00",
+     "write": "88785807",
+     "note": "bc_OnAttack L1278: scr_CritHasRelicPerk -> false when attacker and target share a side"
+    }
+   ],
+   "runtime_hooks": [
+    {
+     "slot_va": "0x149ed84e0",
+     "symbol": "hook_su0088_relic_attack"
+    }
+   ]
+  },
+  {
+   "id": "SU-0030",
+   "bug": "SU-0030",
+   "default": 1,
+   "title": "Fable rank 50: the bearer's on-debuff effects activate 1 additional time, as on-buff ones already do (code: only Unbound Hatred repeated them)",
+   "edits": [
+    {
+     "va": "0x1488bfb08",
+     "expect": "000000000000",
+     "write": "ff25da896101",
+     "note": "trampoline: jmp [slot] -> hook_su0030_perk_level (loader/hooks_B2.c) (cave code)"
+    },
+    {
+     "va": "0x1410f018c",
+     "expect": "80af3f05",
+     "write": "78f97c07",
+     "note": "bc_ExecuteEvents debuff case L1744: Unbound Hatred repeat bound -> +1 for a Fable 50 bearer"
+    }
+   ],
+   "runtime_hooks": [
+    {
+     "slot_va": "0x149ed84e8",
+     "symbol": "hook_su0030_perk_level"
+    }
+   ]
+  },
+  {
+   "id": "SU-0131",
+   "bug": "SU-0131",
+   "default": 1,
+   "title": "Impending Victory: the 50% highest-stat blend also applies to healing and stat Arsenal spells (code: damage spells only)",
+   "edits": [
+    {
+     "va": "0x1488bfb10",
+     "expect": "000000000000",
+     "write": "ff25da896101",
+     "note": "trampoline: jmp [slot] -> hook_su0131_healing (loader/hooks_B2.c) (cave code)"
+    },
+    {
+     "va": "0x141645ea0",
+     "expect": "6c981800",
+     "write": "6c9c2707",
+     "note": "bc_SpellHealing L16: potency stat crit_intelligence -> 50% highest stat with perk 596 and an Arsenal spell"
+    },
+    {
+     "va": "0x1488bfb18",
+     "expect": "000000000000",
+     "write": "ff25da896101",
+     "note": "trampoline: jmp [slot] -> hook_su0131_stat (loader/hooks_B2.c) (cave code)"
+    },
+    {
+     "va": "0x141652ca6",
+     "expect": "66ca1700",
+     "write": "6ece2607",
+     "note": "bc_SpellStat L22: potency stat crit_intelligence -> 50% highest stat with perk 596 and an Arsenal spell"
+    }
+   ],
+   "runtime_hooks": [
+    {
+     "slot_va": "0x149ed84f0",
+     "symbol": "hook_su0131_healing"
+    },
+    {
+     "slot_va": "0x149ed84f8",
+     "symbol": "hook_su0131_stat"
+    }
+   ]
+  },
+  {
+   "id": "SU-0170",
+   "bug": "SU-0170",
+   "default": 1,
+   "title": "Master of Stags: Prism uses 200% of the potency-modifier stats for an all-Stag party with the Master (user ruling: 100% more effective doubles the numbers). Christmas Is Canceled not built",
+   "edits": [
+    {
+     "va": "0x1488bfb20",
+     "expect": "000000000000",
+     "write": "ff25da896101",
+     "note": "trampoline: jmp [slot] -> hook_su0170_prism_enemy (loader/hooks_B2.c) (cave code)"
+    },
+    {
+     "va": "0x1488bfb28",
+     "expect": "000000000000",
+     "write": "ff25da896101",
+     "note": "trampoline: jmp [slot] -> hook_su0170_prism_ally (loader/hooks_B2.c) (cave code)"
+    },
+    {
+     "va": "0x1488bfb30",
+     "expect": "000000000000",
+     "write": "ff25da896101",
+     "note": "trampoline: jmp [slot] -> hook_su0170_prism_assign (loader/hooks_B2.c) (cave code)"
+    },
+    {
+     "va": "0x1415ab0af",
+     "expect": "1d029600",
+     "write": "6d4a3107",
+     "note": "bc_SpellDamage Prism gate (enemy side): note Master of Stags"
+    },
+    {
+     "va": "0x1415ab284",
+     "expect": "18f69500",
+     "write": "a0483107",
+     "note": "bc_SpellDamage Prism gate (your side): note Master of Stags"
+    },
+    {
+     "va": "0x1415ab2d9",
+     "expect": "3311cefe",
+     "write": "53483107",
+     "note": "bc_SpellDamage Prism: stat = modifier stat, doubled under Master of Stags"
+    },
+    {
+     "va": "0x1415abe9d",
+     "expect": "2ff49500",
+     "write": "7f3c3107",
+     "note": "bc_SpellDamage Prism gate (enemy side): note Master of Stags"
+    },
+    {
+     "va": "0x1415ac072",
+     "expect": "2ae89500",
+     "write": "b23a3107",
+     "note": "bc_SpellDamage Prism gate (your side): note Master of Stags"
+    },
+    {
+     "va": "0x1415ac0c7",
+     "expect": "4503cefe",
+     "write": "653a3107",
+     "note": "bc_SpellDamage Prism: stat = modifier stat, doubled under Master of Stags"
+    },
+    {
+     "va": "0x1415acc8b",
+     "expect": "41e69500",
+     "write": "912e3107",
+     "note": "bc_SpellDamage Prism gate (enemy side): note Master of Stags"
+    },
+    {
+     "va": "0x1415ace60",
+     "expect": "3cda9500",
+     "write": "c42c3107",
+     "note": "bc_SpellDamage Prism gate (your side): note Master of Stags"
+    },
+    {
+     "va": "0x1415aceb5",
+     "expect": "57f5cdfe",
+     "write": "772c3107",
+     "note": "bc_SpellDamage Prism: stat = modifier stat, doubled under Master of Stags"
+    },
+    {
+     "va": "0x1415ada79",
+     "expect": "53d89500",
+     "write": "a3203107",
+     "note": "bc_SpellDamage Prism gate (enemy side): note Master of Stags"
+    },
+    {
+     "va": "0x1415adc4e",
+     "expect": "4ecc9500",
+     "write": "d61e3107",
+     "note": "bc_SpellDamage Prism gate (your side): note Master of Stags"
+    },
+    {
+     "va": "0x1415adca3",
+     "expect": "69e7cdfe",
+     "write": "891e3107",
+     "note": "bc_SpellDamage Prism: stat = modifier stat, doubled under Master of Stags"
+    },
+    {
+     "va": "0x141648fff",
+     "expect": "cd228c00",
+     "write": "1d6b2707",
+     "note": "bc_SpellHealing Prism gate (enemy side): note Master of Stags"
+    },
+    {
+     "va": "0x1416490aa",
+     "expect": "f2178c00",
+     "write": "7a6a2707",
+     "note": "bc_SpellHealing Prism gate (your side): note Master of Stags"
+    },
+    {
+     "va": "0x1416493e1",
+     "expect": "2b30c4fe",
+     "write": "4b672707",
+     "note": "bc_SpellHealing Prism: stat = modifier stat, doubled under Master of Stags"
+    },
+    {
+     "va": "0x1416494d2",
+     "expect": "fa1d8c00",
+     "write": "4a662707",
+     "note": "bc_SpellHealing Prism gate (enemy side): note Master of Stags"
+    },
+    {
+     "va": "0x14164957f",
+     "expect": "1d138c00",
+     "write": "a5652707",
+     "note": "bc_SpellHealing Prism gate (your side): note Master of Stags"
+    },
+    {
+     "va": "0x1416498b6",
+     "expect": "562bc4fe",
+     "write": "76622707",
+     "note": "bc_SpellHealing Prism: stat = modifier stat, doubled under Master of Stags"
+    },
+    {
+     "va": "0x1416499a7",
+     "expect": "25198c00",
+     "write": "75612707",
+     "note": "bc_SpellHealing Prism gate (enemy side): note Master of Stags"
+    },
+    {
+     "va": "0x141649a54",
+     "expect": "480e8c00",
+     "write": "d0602707",
+     "note": "bc_SpellHealing Prism gate (your side): note Master of Stags"
+    },
+    {
+     "va": "0x141649d8b",
+     "expect": "8126c4fe",
+     "write": "a15d2707",
+     "note": "bc_SpellHealing Prism: stat = modifier stat, doubled under Master of Stags"
+    },
+    {
+     "va": "0x141649e7c",
+     "expect": "50148c00",
+     "write": "a05c2707",
+     "note": "bc_SpellHealing Prism gate (enemy side): note Master of Stags"
+    },
+    {
+     "va": "0x141649f29",
+     "expect": "73098c00",
+     "write": "fb5b2707",
+     "note": "bc_SpellHealing Prism gate (your side): note Master of Stags"
+    },
+    {
+     "va": "0x141649f4d",
+     "expect": "bf24c4fe",
+     "write": "df5b2707",
+     "note": "bc_SpellHealing Prism: stat = modifier stat, doubled under Master of Stags"
+    },
+    {
+     "va": "0x141656adc",
+     "expect": "f0478b00",
+     "write": "40902607",
+     "note": "bc_SpellStat Prism gate (enemy side): note Master of Stags"
+    },
+    {
+     "va": "0x141656b87",
+     "expect": "153d8b00",
+     "write": "9d8f2607",
+     "note": "bc_SpellStat Prism gate (your side): note Master of Stags"
+    },
+    {
+     "va": "0x141656ebb",
+     "expect": "5155c3fe",
+     "write": "718c2607",
+     "note": "bc_SpellStat Prism: stat = modifier stat, doubled under Master of Stags"
+    },
+    {
+     "va": "0x141656faa",
+     "expect": "22438b00",
+     "write": "728b2607",
+     "note": "bc_SpellStat Prism gate (enemy side): note Master of Stags"
+    },
+    {
+     "va": "0x141657057",
+     "expect": "45388b00",
+     "write": "cd8a2607",
+     "note": "bc_SpellStat Prism gate (your side): note Master of Stags"
+    },
+    {
+     "va": "0x14165738b",
+     "expect": "8150c3fe",
+     "write": "a1872607",
+     "note": "bc_SpellStat Prism: stat = modifier stat, doubled under Master of Stags"
+    },
+    {
+     "va": "0x14165747a",
+     "expect": "523e8b00",
+     "write": "a2862607",
+     "note": "bc_SpellStat Prism gate (enemy side): note Master of Stags"
+    },
+    {
+     "va": "0x141657527",
+     "expect": "75338b00",
+     "write": "fd852607",
+     "note": "bc_SpellStat Prism gate (your side): note Master of Stags"
+    },
+    {
+     "va": "0x14165785b",
+     "expect": "b14bc3fe",
+     "write": "d1822607",
+     "note": "bc_SpellStat Prism: stat = modifier stat, doubled under Master of Stags"
+    },
+    {
+     "va": "0x14165794a",
+     "expect": "82398b00",
+     "write": "d2812607",
+     "note": "bc_SpellStat Prism gate (enemy side): note Master of Stags"
+    },
+    {
+     "va": "0x1416579f7",
+     "expect": "a52e8b00",
+     "write": "2d812607",
+     "note": "bc_SpellStat Prism gate (your side): note Master of Stags"
+    },
+    {
+     "va": "0x141657a1a",
+     "expect": "f249c3fe",
+     "write": "12812607",
+     "note": "bc_SpellStat Prism: stat = modifier stat, doubled under Master of Stags"
+    }
+   ],
+   "runtime_hooks": [
+    {
+     "slot_va": "0x149ed8500",
+     "symbol": "hook_su0170_prism_enemy"
+    },
+    {
+     "slot_va": "0x149ed8508",
+     "symbol": "hook_su0170_prism_ally"
+    },
+    {
+     "slot_va": "0x149ed8510",
+     "symbol": "hook_su0170_prism_assign"
+    }
+   ]
+  },
+  {
+   "id": "SU-0176",
+   "bug": "SU-0176",
+   "default": 1,
+   "title": "Touch of Red: +25% for each attack in the chain, the first one included (code: each additional attack)",
+   "edits": [
+    {
+     "va": "0x1488bfb38",
+     "expect": "000000000000",
+     "write": "ff25da896101",
+     "note": "trampoline: jmp [slot] -> hook_su0176_hits (loader/hooks_B2.c) (cave code)"
+    },
+    {
+     "va": "0x1406d7eea",
+     "expect": "02c9beff",
+     "write": "4a7c1e08",
+     "note": "bc_CreatureAttack L1253: hits - 1 -> hits when hits > 1"
+    }
+   ],
+   "runtime_hooks": [
+    {
+     "slot_va": "0x149ed8518",
+     "symbol": "hook_su0176_hits"
+    }
+   ]
+  }
+ ]
+}

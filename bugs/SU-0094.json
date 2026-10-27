@@ -1,0 +1,43 @@
+{
+  "id": "SU-0094",
+  "aliases": [
+    "D:Madness And Other Ideals"
+  ],
+  "title": "Madness And Other Ideals",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Madness And Other Ideals",
+      "runtime_id": 641,
+      "text_key": "L_TRAIT_DESC_MADNESSANDOTHERIDEALS"
+    }
+  ],
+  "problem": "one-sided by design (CROSS ruling)",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0094",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:TRIAGE D"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "| 2026-10-26 realign (text is the contract): text claims \"Effects that activate when creatures defend are ignored\". Fix: H: bc_OnDefend first block: exit for every defender, not only the opposing side. vs bugged: mixed (also cancels your own on-defend effects). USER DECISION: reverses the earlier 'one-sided by design' (CROSS) reading; the global version also cancels the holder's own side's effects User 2026-10-26: global, as the text reads (no prior design ruling by the user). Fix = extend the trait's existing side test to the bearer's side too; no other changes (e.g. Life And Other Illusions: no extra handling of defenders' when-attacked effects). 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Madness And Other Ideals on your creature; Defend with a creature that has an on-defend trait: it should not activate (and enemies' on-defend effects too).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Madness And Other Ideals (trait)",
+    "intended": "Effects that activate when creatures defend are ignored.",
+    "actual": "In the unpatched game, only the effects of the side opposing the holder were ignored.",
+    "fix": "Now on-defend effects are ignored for both sides, whichever side holds the trait.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

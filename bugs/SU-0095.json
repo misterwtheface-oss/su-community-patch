@@ -1,0 +1,43 @@
+{
+  "id": "SU-0095",
+  "aliases": [
+    "D:Forgiveness And Other Blunders"
+  ],
+  "title": "Forgiveness And Other Blunders",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Forgiveness And Other Blunders",
+      "runtime_id": 642,
+      "text_key": "L_TRAIT_DESC_FORGIVENESSANDOTHERBLUNDERS"
+    }
+  ],
+  "problem": "one-sided by design (CROSS ruling)",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0095",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:TRIAGE D"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "| 2026-10-26 realign (text is the contract): text claims \"Effects that activate when creatures provoke are ignored\". Fix: H: bc_OnProvoke first block: exit for every provoker. vs bugged: mixed. USER DECISION: reverses the earlier 'one-sided by design' (CROSS) reading; the global version also cancels the holder's own side's effects User 2026-10-26: global, as the text reads (no prior design ruling by the user). Fix = extend the trait's existing side test to the bearer's side too; no other changes (e.g. Life And Other Illusions: no extra handling of defenders' when-attacked effects). 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Forgiveness And Other Blunders on your creature; Provoke with a creature that has an on-provoke trait: it should not activate.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Forgiveness And Other Blunders (trait)",
+    "intended": "Effects that activate when creatures provoke are ignored.",
+    "actual": "In the unpatched game, only the effects of the side opposing the holder were ignored.",
+    "fix": "Now on-provoke effects are ignored for both sides, whichever side holds the trait.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

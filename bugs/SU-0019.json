@@ -1,0 +1,45 @@
+{
+  "id": "SU-0019",
+  "aliases": [
+    "A21",
+    "B6#24"
+  ],
+  "title": "SKREEE!!",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "SKREEE!!",
+      "runtime_id": 282,
+      "text_key": "L_TRAIT_DESC_SKREEE!!"
+    }
+  ],
+  "problem": "Rolls Confused at the start *and* end of each enemy turn (text: start only). Community confirms.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0019",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§14",
+    "community:B6#24"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: S: skip the end-of-turn block — in patch (byte-verified)",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "SKREEE!! (trait)",
+    "intended": "At the start of each enemy's turn, there is a 20% chance to make it Confused.",
+    "actual": "The game also rolled the chance at the end of enemy turns.",
+    "fix": "Now it only rolls at the start of each enemy's turn.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

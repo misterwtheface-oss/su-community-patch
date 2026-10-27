@@ -1,0 +1,43 @@
+{
+  "id": "SU-0261",
+  "aliases": [
+    "B4#23"
+  ],
+  "title": "Devotion",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Devotion",
+      "runtime_id": 449,
+      "text_key": "L_TRAIT_DESC_DEVOTION"
+    }
+  ],
+  "problem": "Devotion counts the Imlers and Imlings actually on the side and ignores Odd One, Shackler's Mastery and Forest Pact. Odd One's text says: 'Your creatures' traits ... that are affected by the number of creatures that belong to a certain race act as if they have 2 more of those creatures' (L_TRAIT_DESC_ODDONE; Shackler's Mastery and Forest Pact say the same). Taken together, those texts would make 'only one Imler and one Imling' impossible, so Devotion could never work alongside them. The code keeps Devotion working.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0261",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B4#23"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "User 2026-10-26: fix the code: Devotion respects Odd One, Shackler's Mastery and Forest Pact. Text: If you only have one {RACE_Imler} and one {RACE_Imling} fighting on your side, both creatures take 65% less damage. This trait does not stack. Evidence: bc_EventDamage L2764 scr_CritHasPassive(449) @0x140e283a3; L2768-L2777 count by reading each creature's race field directly, not through bc_CountRace (where Odd One 1080 / Shackler's Mastery 585 add their +2); L2779 amount x 0.65 cut @0x140e289bd. Fix sketch: Text only. The code's behaviour is the sensible one: making the count changers apply would switch Devotion off completely. Smallest edit: append to L_TRAIT_DESC_DEVOTION ' Effects that change how many creatures of a race you have do not apply.' A strict reading of ruling 2 would put the exception on the three count-changing texts instead (L_TRAIT_DESC_ODDONE, L_TRAIT_DESC_SHACKLER'SMASTERY, L_P_FORESTPACT_DESC). The user decides which text carries it. Reasoning: The two sets of texts only clash when combined. The count changers claim to affect every race-count effect, while Devotion needs exactly one of each. The code follows Devotion. The natural fix is a short exception clause on Devotion. This is flagged for the user because ruling 2 says to fix the text the code doesn't follow, which here is the count-changing texts. App note (unpatched game): Devotion checks the Imlers and Imlings you actually have; Odd One, Shackler's Mastery and Forest Pact don't affect it. Source: errata round 2 (2026-10-26). | Patched (batch J, 2026-10-26; user ruling: the code respects Odd One / Shackler's Mastery / Forest Pact): the two 'count == 1' compares at bc_EventDamage L2777 (@0x140e285f5 Imler, @0x140e28612 Imling) -> hook_j_su0261_count: once the Devotion holder was found in the ally list, bc_CountRace(allies, race) == 1 on the same bc_GetAlliesOf(creature, true, true) list. No text change.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Devotion (trait)",
+    "intended": "If you only have one Imler and one Imling fighting on your side, both creatures take 65% less damage. Odd One, Shackler's Mastery and Forest Pact make race-count effects act as if you had more creatures of that race.",
+    "actual": "In the unpatched game, Devotion counted your Imlers and Imlings itself, so Odd One, Shackler's Mastery and Forest Pact never affected it.",
+    "fix": "Now Devotion uses the same race count as every other race effect, so Odd One, Shackler's Mastery and Forest Pact count toward it (with them, you no longer have 'only one' of each and the damage cut stops).",
+    "impact": "weaker",
+    "flags": []
+  }
+}

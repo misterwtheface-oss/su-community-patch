@@ -1,0 +1,583 @@
+{
+  "patches": [
+    {
+      "id": "SU-0172",
+      "bug": "SU-0172",
+      "default": 1,
+      "title": "Necronomicon: only the holder's own Death spells act as if it has 50% less Intelligence (code: every Death spell of its side)",
+      "edits": [
+        {
+          "va": "0x1488bfc00",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8600] -> hook_su0172_dmg (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x1415a207a",
+          "expect": "52929600",
+          "write": "82db3107",
+          "note": "bc_SpellDamage Necronomicon side test -> caster holds 115"
+        },
+        {
+          "va": "0x1415a2243",
+          "expect": "59869600",
+          "write": "b9d93107",
+          "note": "bc_SpellDamage Necronomicon side test -> caster holds 115"
+        },
+        {
+          "va": "0x1488bfc08",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8608] -> hook_su0172_heal (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x1416468b5",
+          "expect": "174a8c00",
+          "write": "4f932707",
+          "note": "bc_SpellHealing Necronomicon side test -> caster holds 115"
+        },
+        {
+          "va": "0x14164695c",
+          "expect": "403f8c00",
+          "write": "a8922707",
+          "note": "bc_SpellHealing Necronomicon side test -> caster holds 115"
+        },
+        {
+          "va": "0x1488bfc10",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8610] -> hook_su0172_stat (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x1416543f1",
+          "expect": "db6e8b00",
+          "write": "1bb82607",
+          "note": "bc_SpellStat Necronomicon side test -> caster holds 115"
+        },
+        {
+          "va": "0x141654498",
+          "expect": "04648b00",
+          "write": "74b72607",
+          "note": "bc_SpellStat Necronomicon side test -> caster holds 115"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8600",
+          "symbol": "hook_su0172_dmg"
+        },
+        {
+          "slot_va": "0x149ed8608",
+          "symbol": "hook_su0172_heal"
+        },
+        {
+          "slot_va": "0x149ed8610",
+          "symbol": "hook_su0172_stat"
+        }
+      ]
+    },
+    {
+      "id": "SU-0059",
+      "bug": "SU-0059",
+      "default": 1,
+      "title": "Time Fracture Resonance: works only while the holder itself is at the bottom of the Timeline (code: any creature of its side)",
+      "edits": [
+        {
+          "va": "0x1488bfc18",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8618] -> hook_su0059_cast (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x140758816",
+          "expect": "b62a7b01",
+          "write": "fe731608",
+          "note": "Time Fracture Resonance side test -> the bottom creature holds 2061"
+        },
+        {
+          "va": "0x140758a8e",
+          "expect": "0e1e7b01",
+          "write": "86711608",
+          "note": "Time Fracture Resonance side test -> the bottom creature holds 2061"
+        },
+        {
+          "va": "0x1488bfc20",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8620] -> hook_su0059_damage (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x140ec4f6a",
+          "expect": "62630401",
+          "write": "b2ac9f07",
+          "note": "Time Fracture Resonance side test -> the bottom creature holds 2061"
+        },
+        {
+          "va": "0x140ec51e2",
+          "expect": "ba560401",
+          "write": "3aaa9f07",
+          "note": "Time Fracture Resonance side test -> the bottom creature holds 2061"
+        },
+        {
+          "va": "0x1488bfc28",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8628] -> hook_su0059_spelldmg (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x14162f76f",
+          "expect": "5dbb8d00",
+          "write": "b5042907",
+          "note": "Time Fracture Resonance side test -> the bottom creature holds 2061"
+        },
+        {
+          "va": "0x14162f9e7",
+          "expect": "b5ae8d00",
+          "write": "3d022907",
+          "note": "Time Fracture Resonance side test -> the bottom creature holds 2061"
+        },
+        {
+          "va": "0x1488bfc30",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8630] -> hook_su0059_heal (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x14164c6e7",
+          "expect": "e5eb8b00",
+          "write": "45352707",
+          "note": "Time Fracture Resonance side test -> the bottom creature holds 2061"
+        },
+        {
+          "va": "0x14164c837",
+          "expect": "65e08b00",
+          "write": "f5332707",
+          "note": "Time Fracture Resonance side test -> the bottom creature holds 2061"
+        },
+        {
+          "va": "0x1488bfc38",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8638] -> hook_su0059_stat (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x14165b5ff",
+          "expect": "cdfc8a00",
+          "write": "35462607",
+          "note": "Time Fracture Resonance side test -> the bottom creature holds 2061"
+        },
+        {
+          "va": "0x14165b74f",
+          "expect": "4df18a00",
+          "write": "e5442607",
+          "note": "Time Fracture Resonance side test -> the bottom creature holds 2061"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8618",
+          "symbol": "hook_su0059_cast"
+        },
+        {
+          "slot_va": "0x149ed8620",
+          "symbol": "hook_su0059_damage"
+        },
+        {
+          "slot_va": "0x149ed8628",
+          "symbol": "hook_su0059_spelldmg"
+        },
+        {
+          "slot_va": "0x149ed8630",
+          "symbol": "hook_su0059_heal"
+        },
+        {
+          "slot_va": "0x149ed8638",
+          "symbol": "hook_su0059_stat"
+        }
+      ]
+    },
+    {
+      "id": "SU-0021",
+      "bug": "SU-0021",
+      "default": 1,
+      "title": "Creationism: only damaging Nature spells get the Intelligence contributions (code: every damaging spell)",
+      "edits": [
+        {
+          "va": "0x1488bfc40",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8640] -> hook_su0021_creationism (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x1415a8894",
+          "expect": "283aa800",
+          "write": "a8733107",
+          "note": "bc_SpellDamage L397 Creationism holder test -> also requires a Nature gem"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8640",
+          "symbol": "hook_su0021_creationism"
+        }
+      ]
+    },
+    {
+      "id": "SU-0041",
+      "bug": "SU-0041",
+      "default": 1,
+      "title": "Focused Magicks: Ethereal gems ignore 30% of Defense plus 10% per missing creature (code: 30% x 10% x missing, 0 with a full party)",
+      "edits": [
+        {
+          "va": "0x1488bfc48",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8648] -> hook_su0041_focused (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x14159f12f",
+          "expect": "8d1bcffe",
+          "write": "150b3207",
+          "note": "bc_SpellDamage L169 (0.3 x Def) x (0.1 x missing) -> 0.3 x Def + Def x 0.1 x missing"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8648",
+          "symbol": "hook_su0041_focused"
+        }
+      ]
+    },
+    {
+      "id": "SU-0167",
+      "bug": "SU-0167",
+      "default": 1,
+      "title": "Master of Dumplings: the Dreamsicle (Caliban) skin gets Caliban's Avatar Ultimate, Awakened Nether Orbs (code: a random Ultimate)",
+      "edits": [
+        {
+          "va": "0x1488bfc50",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8650] -> hook_su0167_eq (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x141707400",
+          "expect": "ec54b8fe",
+          "write": "4c881b07",
+          "note": "bc_StartupGems L1597 `ultimate == -1` -> skin 133 gets 442"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8650",
+          "symbol": "hook_su0167_eq"
+        }
+      ]
+    },
+    {
+      "id": "SU-0171",
+      "bug": "SU-0171",
+      "default": 1,
+      "title": "Master of Wolpertingers: the 50% extra Scourge cast can repeat while it keeps succeeding (code: one roll)",
+      "edits": [
+        {
+          "va": "0x1488bfc58",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8658] -> hook_su0171_add (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x140747eb5",
+          "expect": "77c3baff",
+          "write": "9f7d1708",
+          "note": "bc_CreatureCast L807 count += 1 -> += 1 + further 50% successes"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8658",
+          "symbol": "hook_su0171_add"
+        }
+      ]
+    },
+    {
+      "id": "SU-0154",
+      "bug": "SU-0154",
+      "default": 1,
+      "title": "Perishing Salvo: damage = 15% of Intelligence x every Attack stat slot on its Artifact, hybrids included; no Artifact = no damage (code: pure Attack slot only; flat 15% with no Artifact)",
+      "edits": [
+        {
+          "va": "0x1488bfc60",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8660] -> hook_su0154_total (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x141482858",
+          "expect": "64cb8600",
+          "write": "04d44307",
+          "note": "bc_OnDeath L370 inv_ArtifactStatTotal(item, 1) -> sum of properties 1/54/58/59/60, 0 with no artifact"
+        },
+        {
+          "va": "0x14148265d",
+          "expect": "0f848f020000",
+          "write": "660f1f440000",
+          "note": "bc_OnDeath L368: always take the artifact path (the hook returns 0 for no artifact)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8660",
+          "symbol": "hook_su0154_total"
+        }
+      ]
+    },
+    {
+      "id": "SU-0137",
+      "bug": "SU-0137",
+      "default": 1,
+      "title": "Astral Dimension: the gem can't be Sealed (code: nothing implemented it)",
+      "edits": [
+        {
+          "va": "0x1488bfc68",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8668] -> hook_su0137_sealed (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x140cc3acd",
+          "expect": "9f82bf06",
+          "write": "97c1bf07",
+          "note": "bc_CritCanCastSpell L16 gem.sealed read -> spell 288 reads as not sealed"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8668",
+          "symbol": "hook_su0137_sealed"
+        }
+      ]
+    },
+    {
+      "id": "SU-0139",
+      "bug": "SU-0139",
+      "default": 1,
+      "title": "Corpse Explosion: small damage x (1 + dead creatures) (code: moderate x dead count, 0 with none dead)",
+      "edits": [
+        {
+          "va": "0x1488bfc70",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8670] -> hook_su0139_mul (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x14161925b",
+          "expect": "617ac7fe",
+          "write": "116a2a07",
+          "note": "bc_SpellDamage L1684 (amount + Int x potency) x dead -> x (dead + 1)"
+        },
+        {
+          "va": "0x1416190c4",
+          "expect": "30593a08",
+          "write": "b0583a08",
+          "note": "bc_SpellDamage L1684 global DMG_MODERATE -> DMG_SMALL (var-id slot)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8670",
+          "symbol": "hook_su0139_mul"
+        }
+      ]
+    },
+    {
+      "id": "SU-0011",
+      "bug": "SU-0011",
+      "default": 1,
+      "title": "Shapeshifter card powers 2/3: your creatures take 10% (20%) less damage from attackers strong against their class (code: more damage from attackers weak against them)",
+      "edits": [
+        {
+          "va": "0x1488bfc78",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8678] -> hook_su0011_add (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x140e6c347",
+          "expect": "e50242ff",
+          "write": "2d39a507",
+          "note": "bc_EventDamage L3949 strong branch amount += bonus -> then x0.9 / x0.8 for your creature with power 2 / 3"
+        },
+        {
+          "va": "0x140e6d87c",
+          "expect": "0f8497020000",
+          "write": "e99802000090",
+          "note": "bc_EventDamage L3987: skip the weak-branch Shapeshifter block (L3987-L3992) -> L3995"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8678",
+          "symbol": "hook_su0011_add"
+        }
+      ]
+    },
+    {
+      "id": "SU-0155-cap",
+      "bug": "SU-0155",
+      "default": 1,
+      "title": "Phasers: the restored charge never exceeds the gem's maximum (code: no cap)",
+      "edits": [
+        {
+          "va": "0x1488bfc80",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8680] -> hook_su0155_set (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x140ed78e1",
+          "expect": "7b499e06",
+          "write": "9b839e07",
+          "note": "bc_EventDamage L5966 gem.charges write -> clamp to charges_max"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8680",
+          "symbol": "hook_su0155_set"
+        }
+      ]
+    },
+    {
+      "id": "SU-0123",
+      "bug": "SU-0123",
+      "default": 1,
+      "title": "Xyrxzy's Subversion: fires only after the holder's manual casts, so it can't re-trigger itself (code: after every cast, looping to the cast limit)",
+      "edits": [
+        {
+          "va": "0x1488bfc88",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8688] -> hook_su0123_oncast (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x140a8ed23",
+          "expect": "590a5f00",
+          "write": "610fe307",
+          "note": "bc_CreatureCast L19803 on-cast pass -> remembers whether this cast is manual"
+        },
+        {
+          "va": "0x1488bfc90",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot 0x149ed8690] -> hook_su0123_gate (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x141454fd1",
+          "expect": "eb72bd00",
+          "write": "bbac4607",
+          "note": "bc_OnCast L537 Xyrxzy's Subversion gate -> only for a manual cast"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8688",
+          "symbol": "hook_su0123_oncast"
+        },
+        {
+          "slot_va": "0x149ed8690",
+          "symbol": "hook_su0123_gate"
+        }
+      ]
+    },
+    {
+      "id": "SU-0013",
+      "bug": "SU-0013",
+      "default": 1,
+      "edits": [],
+      "title": "Shifting Brilliance / Enochian / Add to the Mix: compare with the spell cast just before (code: the current spell or the battle's first). Needs SU-0123 (shared on-cast hook)",
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed86a0",
+          "symbol": "hook_su0013_flag"
+        }
+      ]
+    },
+    {
+      "id": "SU-0014",
+      "bug": "SU-0014",
+      "default": 1,
+      "title": "Master of Dragons: your Dragons' Dynamic Dragon Scales activates 1 additional time (code tested the enemy caster's race and side, so your Dragons never got it)",
+      "edits": [
+        {
+          "va": "0x140a4e39d",
+          "expect": "0f841f100000",
+          "write": "660f1f440000",
+          "note": "bc_CreatureCast L18846: drop the caster.race == Dragon test (the Scales holders are the caster's opponents)"
+        },
+        {
+          "va": "0x140a4e56a",
+          "expect": "62cd4b01",
+          "write": "32c34b01",
+          "note": "bc_CreatureCast L18847 Master of Dragons side test: scr_AnyEnemyHasPassive -> scr_AnyAllyHasPassive (the holders' side)"
+        },
+        {
+          "va": "0x140a4e73f",
+          "expect": "5dc14b01",
+          "write": "8dcb4b01",
+          "note": "bc_CreatureCast L18847 Master of Dragons side test: scr_AnyAllyHasPassive -> scr_AnyEnemyHasPassive (the holders' side)"
+        }
+      ],
+      "runtime_hooks": []
+    },
+    {
+      "id": "SU-0017",
+      "bug": "SU-0017",
+      "default": 1,
+      "title": "Incoming Tide: 50% chance to cast Submerge at the start of the holder's turn (code: empty statement, never cast)",
+      "edits": [
+        {
+          "va": "0x1488bfc98",
+          "expect": "000000000000",
+          "write": "ff250a8a6101",
+          "note": "trampoline: jmp [slot 0x149ed86a8] -> hook_su0017_tide (loader/hooks_S.c) (cave code)"
+        },
+        {
+          "va": "0x140c65152",
+          "expect": "6a713c01",
+          "write": "42abc507",
+          "note": "bc_CreatureStartOfTurn L4159 Incoming Tide test -> also rolls 50% and casts Submerge (551)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed86a8",
+          "symbol": "hook_su0017_tide"
+        }
+      ]
+    },
+    {
+      "id": "SU-0031",
+      "bug": "SU-0031",
+      "default": 1,
+      "title": "Single Discipline: +10% Intelligence per time the spell was cast at once (code: +10% x count on every execution, i.e. count squared)",
+      "edits": [
+        {
+          "va": "0x140a3a122",
+          "expect": "4c8d842420030300",
+          "write": "4c8d0547ebea0890",
+          "note": "bc_CreatureCast L18470: (Int x 0.1) x count -> x static 1.0 (each execution gives 10%)"
+        }
+      ],
+      "runtime_hooks": []
+    }
+  ],
+  "cave_code_used": [
+    "0x1488bfc00",
+    "0x1488bfca0"
+  ],
+  "data_used": [
+    "0x149ed8600",
+    "0x149ed86b0"
+  ]
+}

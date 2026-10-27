@@ -1,0 +1,42 @@
+{
+  "id": "SU-0071",
+  "aliases": [
+    "C05"
+  ],
+  "title": "Frozen",
+  "subjects": [
+    {
+      "kind": "condition",
+      "name": "Frozen",
+      "id": 21
+    }
+  ],
+  "problem": "Code: First thaw roll already doubled: at most one lost turn. Text: (not stated).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0071",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:COMBAT_RULES \"Frozen\""
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Ruling 2026-10-26: align the code to the text. Fix: text is silent: hold, no change | 2026-10-26 realign (text is the contract): text claims \"25% chance to thaw at the start of their turn. This chance doubles after each of their turns\". Fix: H (or S if the age/roll order can be swapped): roll the thaw chance before aging lifespan in bc_CreatureStartOfTurn (condition-21 block @0x140c7c0f6..0x140c7cab1; COMBAT_RULES 'Frozen'), so the first roll is 25%. vs bugged: stronger debuff (Frozen lasts longer). | In-game test: Freeze an enemy for several turns repeatedly: about 1 in 4 thaw on the first turn (25%), as the text says.",
+  "release_notes": {
+    "section": "Conditions & minions",
+    "effect": "Frozen (debuff)",
+    "intended": "25% chance to thaw at the start of the creature's turn, doubling after each of its turns.",
+    "actual": "In the unpatched game, the first roll already used the doubled chance, so a Frozen creature lost at most one turn.",
+    "fix": "Now the first thaw roll is 25%, then it doubles each turn.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

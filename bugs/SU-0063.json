@@ -1,0 +1,43 @@
+{
+  "id": "SU-0063",
+  "aliases": [
+    "B26"
+  ],
+  "title": "Rune Damage Cap",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Rune Damage Cap"
+    }
+  ],
+  "problem": "A hit above 10% is cut to 5%; 5–10% goes through.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0063",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§8 item 7"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test:  Fix: S 2026-10-26 (user: decide from code, no test): text 'False God can't take more damage than 5% of Health'; threshold fixed 0.1 -> 0.05.",
+  "release_notes": {
+    "section": "Bosses & Nether bosses",
+    "effect": "False God damage cap rune",
+    "intended": "A False God can't take more damage than 5% of its Health from a hit.",
+    "actual": "In the unpatched game, hits of 5% to 10% went through uncapped; only bigger hits were cut.",
+    "fix": "Now every hit is capped at 5% of Health.",
+    "impact": "stronger",
+    "flags": [
+      "boss"
+    ]
+  }
+}

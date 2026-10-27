@@ -1,0 +1,41 @@
+{
+  "id": "SU-0125",
+  "aliases": [
+    "B1#45"
+  ],
+  "title": "Leviathan",
+  "subjects": [
+    {
+      "kind": "condition",
+      "name": "Leviathan (minion)"
+    }
+  ],
+  "problem": "Same as Beelzebub: only \"killer has Leviathan\" is checked, no side test, so killing an ally also gives the 5 stacks of each Lesser Demon. Text says \"kills an enemy\".",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0125",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#45"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Triggers when the master kills any creature, not only an enemy; works with Anger Management. Evidence: bc_OnDeath L981 @0x1414c1cd0: [killer] > -1 @0x1414c1cf0 && scr_CritHasCondition(killer, 57) @0x1414c1e7d. Fix sketch: T: \"kills a creature\", or H: add side test Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. Triggers on any kill (no side test). 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"master kills an enemy\". Fix: H: same as SU-0124 on scr_CritHasCondition(killer, 57) in bc_OnDeath L981 (@0x1414c1e7d). vs bugged: weaker. 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Master with Leviathan; kill an ALLY: no Lesser Demon stacks. Kill an enemy: 5 stacks of each Lesser Demon.",
+  "release_notes": {
+    "section": "Conditions & minions",
+    "effect": "Leviathan (minion)",
+    "intended": "Triggers when its master kills an enemy.",
+    "actual": "In the unpatched game, any kill triggered it, allies included.",
+    "fix": "Now only kills of enemies trigger it.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

@@ -1,0 +1,1357 @@
+{
+  "patches": [
+    {
+      "id": "SU-0216",
+      "bug": "SU-0216",
+      "default": 1,
+      "title": "Forsaken Wonder: the Relic buffs given at the start of battle (Arbiter, Ferro, Prime & Ventus, Salus, Triumvir, Whisper) and Bloodseeker's 'always has' buffs spread to your other creatures and last forever; with Primordial Curse, Blazefury 40's start-of-battle Burning lasts forever (code: no spread, no permanence for these direct adds)",
+      "edits": [
+        {
+          "va": "0x14a343900",
+          "expect": "000000000000",
+          "write": "ff25ea50b9ff",
+          "note": "trampoline -> hook_k_su0216_start (cave code)"
+        },
+        {
+          "va": "0x14a343906",
+          "expect": "000000000000",
+          "write": "ff25ec50b9ff",
+          "note": "trampoline -> hook_k_su0216_always (cave code)"
+        },
+        {
+          "va": "0x14169ad43",
+          "expect": "f9ab9700",
+          "write": "b98bca08",
+          "note": "bc_StartupBuffsDebuffs L877 Whisper rank 10 (Invisible): scr_CritAddCondition -> hook (forever + spread under the perks)"
+        },
+        {
+          "va": "0x14169b4a3",
+          "expect": "99a49700",
+          "write": "5984ca08",
+          "note": "bc_StartupBuffsDebuffs L883 Triumvir rank 10 (Arcane): scr_CritAddCondition -> hook (forever + spread under the perks)"
+        },
+        {
+          "va": "0x14169bc03",
+          "expect": "399d9700",
+          "write": "f97cca08",
+          "note": "bc_StartupBuffsDebuffs L889 Blazefury rank 40 (Burning on the bearer: Primordial Curse permanence only): scr_CritAddCondition -> hook (forever + spread under the perks)"
+        },
+        {
+          "va": "0x14169c363",
+          "expect": "d9959700",
+          "write": "9975ca08",
+          "note": "bc_StartupBuffsDebuffs L895 Salus rank 10 (Mending): scr_CritAddCondition -> hook (forever + spread under the perks)"
+        },
+        {
+          "va": "0x14169d223",
+          "expect": "19879700",
+          "write": "d966ca08",
+          "note": "bc_StartupBuffsDebuffs L907 Ferro rank 10 (Proficient): scr_CritAddCondition -> hook (forever + spread under the perks)"
+        },
+        {
+          "va": "0x14169d983",
+          "expect": "b97f9700",
+          "write": "795fca08",
+          "note": "bc_StartupBuffsDebuffs L913 Arbiter rank 10 (Shelled): scr_CritAddCondition -> hook (forever + spread under the perks)"
+        },
+        {
+          "va": "0x14169e0e3",
+          "expect": "59789700",
+          "write": "1958ca08",
+          "note": "bc_StartupBuffsDebuffs L919 Prime & Ventus rank 10 (Agile): scr_CritAddCondition -> hook (forever + spread under the perks)"
+        },
+        {
+          "va": "0x14169e769",
+          "expect": "d3719700",
+          "write": "9351ca08",
+          "note": "bc_StartupBuffsDebuffs L922 Prime & Ventus rank 50 (Savage): scr_CritAddCondition -> hook (forever + spread under the perks)"
+        },
+        {
+          "va": "0x1412bbb13",
+          "expect": "299ed500",
+          "write": "ef7d0809",
+          "note": "bc_MaintainPermanentEffects L675 Bloodseeker rank 30 'always has': scr_CritAddCondition -> hook (spread after a real gain under Forsaken Wonder)"
+        },
+        {
+          "va": "0x1412bbe98",
+          "expect": "a49ad500",
+          "write": "6a7a0809",
+          "note": "bc_MaintainPermanentEffects L681 Bloodseeker rank 60 'always has': scr_CritAddCondition -> hook (spread after a real gain under Forsaken Wonder)"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a343900",
+          "end": "0x14a343905",
+          "what": "trampoline -> hook_k_su0216_start"
+        },
+        {
+          "start": "0x149ed89f0",
+          "end": "0x149ed89f7",
+          "what": "hook pointer hook_k_su0216_start"
+        },
+        {
+          "start": "0x14a343906",
+          "end": "0x14a34390b",
+          "what": "trampoline -> hook_k_su0216_always"
+        },
+        {
+          "start": "0x149ed89f8",
+          "end": "0x149ed89ff",
+          "what": "hook pointer hook_k_su0216_always"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed89f0",
+          "symbol": "hook_k_su0216_start"
+        },
+        {
+          "slot_va": "0x149ed89f8",
+          "symbol": "hook_k_su0216_always"
+        }
+      ]
+    },
+    {
+      "id": "SU-0218",
+      "bug": "SU-0218",
+      "default": 1,
+      "title": "Photosynthesis: buffs and minions your Herbling receives at the start of battle count, like the ones it receives later (code: only in-battle grants counted). Start-of-battle stat gains not built",
+      "edits": [
+        {
+          "va": "0x14a34390c",
+          "expect": "000000000000",
+          "write": "ff25ee50b9ff",
+          "note": "trampoline -> hook_k_su0218_add (cave code)"
+        },
+        {
+          "va": "0x14166916e",
+          "expect": "cec79a00",
+          "write": "9aa7cd08",
+          "note": "bc_StartupBuffsDebuffs L112: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416697fe",
+          "expect": "3ec19a00",
+          "write": "0aa1cd08",
+          "note": "bc_StartupBuffsDebuffs L119: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141669e8e",
+          "expect": "aeba9a00",
+          "write": "7a9acd08",
+          "note": "bc_StartupBuffsDebuffs L126: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14166a886",
+          "expect": "b6b09a00",
+          "write": "8290cd08",
+          "note": "bc_StartupBuffsDebuffs L137: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14166ae0e",
+          "expect": "2eab9a00",
+          "write": "fa8acd08",
+          "note": "bc_StartupBuffsDebuffs L142: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14166b396",
+          "expect": "a6a59a00",
+          "write": "7285cd08",
+          "note": "bc_StartupBuffsDebuffs L147: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14166b91e",
+          "expect": "1ea09a00",
+          "write": "ea7fcd08",
+          "note": "bc_StartupBuffsDebuffs L152: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14166bea6",
+          "expect": "969a9a00",
+          "write": "627acd08",
+          "note": "bc_StartupBuffsDebuffs L157: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14166c42e",
+          "expect": "0e959a00",
+          "write": "da74cd08",
+          "note": "bc_StartupBuffsDebuffs L162: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14166c9b6",
+          "expect": "868f9a00",
+          "write": "526fcd08",
+          "note": "bc_StartupBuffsDebuffs L167: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14166cdb4",
+          "expect": "888b9a00",
+          "write": "546bcd08",
+          "note": "bc_StartupBuffsDebuffs L168: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14166d33c",
+          "expect": "00869a00",
+          "write": "cc65cd08",
+          "note": "bc_StartupBuffsDebuffs L173: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14166d8c4",
+          "expect": "78809a00",
+          "write": "4460cd08",
+          "note": "bc_StartupBuffsDebuffs L178: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14166de4c",
+          "expect": "f07a9a00",
+          "write": "bc5acd08",
+          "note": "bc_StartupBuffsDebuffs L183: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14166e844",
+          "expect": "f8709a00",
+          "write": "c450cd08",
+          "note": "bc_StartupBuffsDebuffs L195: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14166edcc",
+          "expect": "706b9a00",
+          "write": "3c4bcd08",
+          "note": "bc_StartupBuffsDebuffs L200: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14166f354",
+          "expect": "e8659a00",
+          "write": "b445cd08",
+          "note": "bc_StartupBuffsDebuffs L205: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14166f8dc",
+          "expect": "60609a00",
+          "write": "2c40cd08",
+          "note": "bc_StartupBuffsDebuffs L210: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14166fe64",
+          "expect": "d85a9a00",
+          "write": "a43acd08",
+          "note": "bc_StartupBuffsDebuffs L215: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416703ec",
+          "expect": "50559a00",
+          "write": "1c35cd08",
+          "note": "bc_StartupBuffsDebuffs L220: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141670974",
+          "expect": "c84f9a00",
+          "write": "942fcd08",
+          "note": "bc_StartupBuffsDebuffs L225: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141670d72",
+          "expect": "ca4b9a00",
+          "write": "962bcd08",
+          "note": "bc_StartupBuffsDebuffs L226: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416712fa",
+          "expect": "42469a00",
+          "write": "0e26cd08",
+          "note": "bc_StartupBuffsDebuffs L231: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141671882",
+          "expect": "ba409a00",
+          "write": "8620cd08",
+          "note": "bc_StartupBuffsDebuffs L236: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141671e0a",
+          "expect": "323b9a00",
+          "write": "fe1acd08",
+          "note": "bc_StartupBuffsDebuffs L241: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416727b0",
+          "expect": "8c319a00",
+          "write": "5811cd08",
+          "note": "bc_StartupBuffsDebuffs L253: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141672d4d",
+          "expect": "ef2b9a00",
+          "write": "bb0bcd08",
+          "note": "bc_StartupBuffsDebuffs L256: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416736f3",
+          "expect": "49229a00",
+          "write": "1502cd08",
+          "note": "bc_StartupBuffsDebuffs L266: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141673c90",
+          "expect": "ac1c9a00",
+          "write": "78fccc08",
+          "note": "bc_StartupBuffsDebuffs L269: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14167441b",
+          "expect": "21159a00",
+          "write": "edf4cc08",
+          "note": "bc_StartupBuffsDebuffs L277: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141674b0b",
+          "expect": "310e9a00",
+          "write": "fdedcc08",
+          "note": "bc_StartupBuffsDebuffs L285: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14167575a",
+          "expect": "e2019a00",
+          "write": "aee1cc08",
+          "note": "bc_StartupBuffsDebuffs L300: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141675def",
+          "expect": "4dfb9900",
+          "write": "19dbcc08",
+          "note": "bc_StartupBuffsDebuffs L308: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416761ed",
+          "expect": "4ff79900",
+          "write": "1bd7cc08",
+          "note": "bc_StartupBuffsDebuffs L309: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14167696a",
+          "expect": "d2ef9900",
+          "write": "9ecfcc08",
+          "note": "bc_StartupBuffsDebuffs L317: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416770e7",
+          "expect": "55e89900",
+          "write": "21c8cc08",
+          "note": "bc_StartupBuffsDebuffs L324: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14167793f",
+          "expect": "fddf9900",
+          "write": "c9bfcc08",
+          "note": "bc_StartupBuffsDebuffs L332: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141678197",
+          "expect": "a5d79900",
+          "write": "71b7cc08",
+          "note": "bc_StartupBuffsDebuffs L339: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416789ef",
+          "expect": "4dcf9900",
+          "write": "19afcc08",
+          "note": "bc_StartupBuffsDebuffs L347: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141679247",
+          "expect": "f5c69900",
+          "write": "c1a6cc08",
+          "note": "bc_StartupBuffsDebuffs L354: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141679d1e",
+          "expect": "1ebc9900",
+          "write": "ea9bcc08",
+          "note": "bc_StartupBuffsDebuffs L368: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14167a65b",
+          "expect": "e1b29900",
+          "write": "ad92cc08",
+          "note": "bc_StartupBuffsDebuffs L376: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14167af98",
+          "expect": "a4a99900",
+          "write": "7089cc08",
+          "note": "bc_StartupBuffsDebuffs L384: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14167b8d5",
+          "expect": "67a09900",
+          "write": "3380cc08",
+          "note": "bc_StartupBuffsDebuffs L392: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14167c212",
+          "expect": "2a979900",
+          "write": "f676cc08",
+          "note": "bc_StartupBuffsDebuffs L400: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14167c977",
+          "expect": "c58f9900",
+          "write": "916fcc08",
+          "note": "bc_StartupBuffsDebuffs L407: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14167d0dc",
+          "expect": "60889900",
+          "write": "2c68cc08",
+          "note": "bc_StartupBuffsDebuffs L414: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14167d7b5",
+          "expect": "87819900",
+          "write": "5361cc08",
+          "note": "bc_StartupBuffsDebuffs L422: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14167de8e",
+          "expect": "ae7a9900",
+          "write": "7a5acc08",
+          "note": "bc_StartupBuffsDebuffs L430: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14167e70e",
+          "expect": "2e729900",
+          "write": "fa51cc08",
+          "note": "bc_StartupBuffsDebuffs L438: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14167ef8e",
+          "expect": "ae699900",
+          "write": "7a49cc08",
+          "note": "bc_StartupBuffsDebuffs L445: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14167f80e",
+          "expect": "2e619900",
+          "write": "fa40cc08",
+          "note": "bc_StartupBuffsDebuffs L452: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14167fe9e",
+          "expect": "9e5a9900",
+          "write": "6a3acc08",
+          "note": "bc_StartupBuffsDebuffs L460: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14168052e",
+          "expect": "0e549900",
+          "write": "da33cc08",
+          "note": "bc_StartupBuffsDebuffs L467: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141680e49",
+          "expect": "f34a9900",
+          "write": "bf2acc08",
+          "note": "bc_StartupBuffsDebuffs L477: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141681769",
+          "expect": "d3419900",
+          "write": "9f21cc08",
+          "note": "bc_StartupBuffsDebuffs L487: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141681dfe",
+          "expect": "3e3b9900",
+          "write": "0a1bcc08",
+          "note": "bc_StartupBuffsDebuffs L496: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14168248e",
+          "expect": "ae349900",
+          "write": "7a14cc08",
+          "note": "bc_StartupBuffsDebuffs L503: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141683073",
+          "expect": "c9289900",
+          "write": "9508cc08",
+          "note": "bc_StartupBuffsDebuffs L515: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416839d0",
+          "expect": "6c1f9900",
+          "write": "38ffcb08",
+          "note": "bc_StartupBuffsDebuffs L519: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141684207",
+          "expect": "35179900",
+          "write": "01f7cb08",
+          "note": "bc_StartupBuffsDebuffs L526: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141684b64",
+          "expect": "d80d9900",
+          "write": "a4edcb08",
+          "note": "bc_StartupBuffsDebuffs L530: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141685749",
+          "expect": "f3019900",
+          "write": "bfe1cb08",
+          "note": "bc_StartupBuffsDebuffs L545: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416860a6",
+          "expect": "96f89800",
+          "write": "62d8cb08",
+          "note": "bc_StartupBuffsDebuffs L549: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416868dd",
+          "expect": "5ff09800",
+          "write": "2bd0cb08",
+          "note": "bc_StartupBuffsDebuffs L556: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14168723a",
+          "expect": "02e79800",
+          "write": "cec6cb08",
+          "note": "bc_StartupBuffsDebuffs L560: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141687bb7",
+          "expect": "85dd9800",
+          "write": "51bdcb08",
+          "note": "bc_StartupBuffsDebuffs L575: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141688534",
+          "expect": "08d49800",
+          "write": "d4b3cb08",
+          "note": "bc_StartupBuffsDebuffs L585: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141688bec",
+          "expect": "50cd9800",
+          "write": "1cadcb08",
+          "note": "bc_StartupBuffsDebuffs L592: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416896e2",
+          "expect": "5ac29800",
+          "write": "26a2cb08",
+          "note": "bc_StartupBuffsDebuffs L600: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141689d7e",
+          "expect": "bebb9800",
+          "write": "8a9bcb08",
+          "note": "bc_StartupBuffsDebuffs L602: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14168a874",
+          "expect": "c8b09800",
+          "write": "9490cb08",
+          "note": "bc_StartupBuffsDebuffs L610: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14168af10",
+          "expect": "2caa9800",
+          "write": "f889cb08",
+          "note": "bc_StartupBuffsDebuffs L612: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14168b8e3",
+          "expect": "59a09800",
+          "write": "2580cb08",
+          "note": "bc_StartupBuffsDebuffs L625: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14168c2bb",
+          "expect": "81969800",
+          "write": "4d76cb08",
+          "note": "bc_StartupBuffsDebuffs L637: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14168ce60",
+          "expect": "dc8a9800",
+          "write": "a86acb08",
+          "note": "bc_StartupBuffsDebuffs L648: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14168da05",
+          "expect": "377f9800",
+          "write": "035fcb08",
+          "note": "bc_StartupBuffsDebuffs L660: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14168e556",
+          "expect": "e6739800",
+          "write": "b253cb08",
+          "note": "bc_StartupBuffsDebuffs L672: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14168f0a7",
+          "expect": "95689800",
+          "write": "6148cb08",
+          "note": "bc_StartupBuffsDebuffs L682: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14168fb22",
+          "expect": "1a5e9800",
+          "write": "e63dcb08",
+          "note": "bc_StartupBuffsDebuffs L694: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14169059d",
+          "expect": "9f539800",
+          "write": "6b33cb08",
+          "note": "bc_StartupBuffsDebuffs L706: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416910aa",
+          "expect": "92489800",
+          "write": "5e28cb08",
+          "note": "bc_StartupBuffsDebuffs L720: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416917bb",
+          "expect": "81419800",
+          "write": "4d21cb08",
+          "note": "bc_StartupBuffsDebuffs L730: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141692651",
+          "expect": "eb329800",
+          "write": "b712cb08",
+          "note": "bc_StartupBuffsDebuffs L742: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141692ceb",
+          "expect": "512c9800",
+          "write": "1d0ccb08",
+          "note": "bc_StartupBuffsDebuffs L751: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14169337b",
+          "expect": "c1259800",
+          "write": "8d05cb08",
+          "note": "bc_StartupBuffsDebuffs L758: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141693e83",
+          "expect": "b91a9800",
+          "write": "85faca08",
+          "note": "bc_StartupBuffsDebuffs L772: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141694561",
+          "expect": "db139800",
+          "write": "a7f3ca08",
+          "note": "bc_StartupBuffsDebuffs L781: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141694e5a",
+          "expect": "e20a9800",
+          "write": "aeeaca08",
+          "note": "bc_StartupBuffsDebuffs L790: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141695753",
+          "expect": "e9019800",
+          "write": "b5e1ca08",
+          "note": "bc_StartupBuffsDebuffs L799: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14169604c",
+          "expect": "f0f89700",
+          "write": "bcd8ca08",
+          "note": "bc_StartupBuffsDebuffs L808: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141696945",
+          "expect": "f7ef9700",
+          "write": "c3cfca08",
+          "note": "bc_StartupBuffsDebuffs L817: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14169723e",
+          "expect": "fee69700",
+          "write": "cac6ca08",
+          "note": "bc_StartupBuffsDebuffs L826: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141697917",
+          "expect": "25e09700",
+          "write": "f1bfca08",
+          "note": "bc_StartupBuffsDebuffs L835: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x141699afe",
+          "expect": "3ebe9700",
+          "write": "0a9eca08",
+          "note": "bc_StartupBuffsDebuffs L862: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14169a1e5",
+          "expect": "57b79700",
+          "write": "2397ca08",
+          "note": "bc_StartupBuffsDebuffs L869: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14169a5e3",
+          "expect": "59b39700",
+          "write": "2593ca08",
+          "note": "bc_StartupBuffsDebuffs L870: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14169cac3",
+          "expect": "798e9700",
+          "write": "456eca08",
+          "note": "bc_StartupBuffsDebuffs L901: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x14169f47d",
+          "expect": "bf649700",
+          "write": "8b44ca08",
+          "note": "bc_StartupBuffsDebuffs L933: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a01f7",
+          "expect": "45579700",
+          "write": "1137ca08",
+          "note": "bc_StartupBuffsDebuffs L957: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a0837",
+          "expect": "05519700",
+          "write": "d130ca08",
+          "note": "bc_StartupBuffsDebuffs L959: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a0dd1",
+          "expect": "6b4b9700",
+          "write": "372bca08",
+          "note": "bc_StartupBuffsDebuffs L967: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a13da",
+          "expect": "62459700",
+          "write": "2e25ca08",
+          "note": "bc_StartupBuffsDebuffs L971: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a19e8",
+          "expect": "543f9700",
+          "write": "201fca08",
+          "note": "bc_StartupBuffsDebuffs L977: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a1de6",
+          "expect": "563b9700",
+          "write": "221bca08",
+          "note": "bc_StartupBuffsDebuffs L978: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a21e4",
+          "expect": "58379700",
+          "write": "2417ca08",
+          "note": "bc_StartupBuffsDebuffs L979: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a25e2",
+          "expect": "5a339700",
+          "write": "2613ca08",
+          "note": "bc_StartupBuffsDebuffs L980: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a2bf0",
+          "expect": "4c2d9700",
+          "write": "180dca08",
+          "note": "bc_StartupBuffsDebuffs L985: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a2fee",
+          "expect": "4e299700",
+          "write": "1a09ca08",
+          "note": "bc_StartupBuffsDebuffs L986: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a33ec",
+          "expect": "50259700",
+          "write": "1c05ca08",
+          "note": "bc_StartupBuffsDebuffs L987: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a37ea",
+          "expect": "52219700",
+          "write": "1e01ca08",
+          "note": "bc_StartupBuffsDebuffs L988: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a3be8",
+          "expect": "541d9700",
+          "write": "20fdc908",
+          "note": "bc_StartupBuffsDebuffs L989: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a3fe6",
+          "expect": "56199700",
+          "write": "22f9c908",
+          "note": "bc_StartupBuffsDebuffs L990: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a43e4",
+          "expect": "58159700",
+          "write": "24f5c908",
+          "note": "bc_StartupBuffsDebuffs L991: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a47e2",
+          "expect": "5a119700",
+          "write": "26f1c908",
+          "note": "bc_StartupBuffsDebuffs L992: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a4be0",
+          "expect": "5c0d9700",
+          "write": "28edc908",
+          "note": "bc_StartupBuffsDebuffs L993: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a4fde",
+          "expect": "5e099700",
+          "write": "2ae9c908",
+          "note": "bc_StartupBuffsDebuffs L994: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a53dc",
+          "expect": "60059700",
+          "write": "2ce5c908",
+          "note": "bc_StartupBuffsDebuffs L995: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a57da",
+          "expect": "62019700",
+          "write": "2ee1c908",
+          "note": "bc_StartupBuffsDebuffs L996: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a639b",
+          "expect": "a1f59600",
+          "write": "6dd5c908",
+          "note": "bc_StartupBuffsDebuffs L1006: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a6fa1",
+          "expect": "9be99600",
+          "write": "67c9c908",
+          "note": "bc_StartupBuffsDebuffs L1017: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a7b87",
+          "expect": "b5dd9600",
+          "write": "81bdc908",
+          "note": "bc_StartupBuffsDebuffs L1032: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a8641",
+          "expect": "fbd29600",
+          "write": "c7b2c908",
+          "note": "bc_StartupBuffsDebuffs L1042: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416a9174",
+          "expect": "c8c79600",
+          "write": "94a7c908",
+          "note": "bc_StartupBuffsDebuffs L1053: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416aa04b",
+          "expect": "f1b89600",
+          "write": "bd98c908",
+          "note": "bc_StartupBuffsDebuffs L1102: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416aa6e0",
+          "expect": "5cb29600",
+          "write": "2892c908",
+          "note": "bc_StartupBuffsDebuffs L1110: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416aafce",
+          "expect": "6ea99600",
+          "write": "3a89c908",
+          "note": "bc_StartupBuffsDebuffs L1129: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416ab826",
+          "expect": "16a19600",
+          "write": "e280c908",
+          "note": "bc_StartupBuffsDebuffs L1137: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416ac07e",
+          "expect": "be989600",
+          "write": "8a78c908",
+          "note": "bc_StartupBuffsDebuffs L1144: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416aca6a",
+          "expect": "d28e9600",
+          "write": "9e6ec908",
+          "note": "bc_StartupBuffsDebuffs L1153: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416ad456",
+          "expect": "e6849600",
+          "write": "b264c908",
+          "note": "bc_StartupBuffsDebuffs L1162: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416adae6",
+          "expect": "567e9600",
+          "write": "225ec908",
+          "note": "bc_StartupBuffsDebuffs L1172: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416adee4",
+          "expect": "587a9600",
+          "write": "245ac908",
+          "note": "bc_StartupBuffsDebuffs L1173: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416ae2e2",
+          "expect": "5a769600",
+          "write": "2656c908",
+          "note": "bc_StartupBuffsDebuffs L1174: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416ae6e0",
+          "expect": "5c729600",
+          "write": "2852c908",
+          "note": "bc_StartupBuffsDebuffs L1175: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416af92d",
+          "expect": "0f609600",
+          "write": "db3fc908",
+          "note": "bc_StartupBuffsDebuffs L1237: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416b0b7f",
+          "expect": "bd4d9600",
+          "write": "892dc908",
+          "note": "bc_StartupBuffsDebuffs L1299: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416b1e25",
+          "expect": "173b9600",
+          "write": "e31ac908",
+          "note": "bc_StartupBuffsDebuffs L1361: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416b27ae",
+          "expect": "8e319600",
+          "write": "5a11c908",
+          "note": "bc_StartupBuffsDebuffs L1369: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416b3132",
+          "expect": "0a289600",
+          "write": "d607c908",
+          "note": "bc_StartupBuffsDebuffs L1375: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416b3ab6",
+          "expect": "861e9600",
+          "write": "52fec808",
+          "note": "bc_StartupBuffsDebuffs L1381: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416b443a",
+          "expect": "02159600",
+          "write": "cef4c808",
+          "note": "bc_StartupBuffsDebuffs L1387: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416b4e9c",
+          "expect": "a00a9600",
+          "write": "6ceac808",
+          "note": "bc_StartupBuffsDebuffs L1407: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416b7340",
+          "expect": "fce59500",
+          "write": "c8c5c808",
+          "note": "bc_StartupBuffsDebuffs L1531: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416b7e4c",
+          "expect": "f0da9500",
+          "write": "bcbac808",
+          "note": "bc_StartupBuffsDebuffs L1539: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416b859b",
+          "expect": "a1d39500",
+          "write": "6db3c808",
+          "note": "bc_StartupBuffsDebuffs L1547: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416b8f6c",
+          "expect": "d0c99500",
+          "write": "9ca9c808",
+          "note": "bc_StartupBuffsDebuffs L1562: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416b993d",
+          "expect": "ffbf9500",
+          "write": "cb9fc808",
+          "note": "bc_StartupBuffsDebuffs L1576: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416ba30e",
+          "expect": "2eb69500",
+          "write": "fa95c808",
+          "note": "bc_StartupBuffsDebuffs L1589: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416bacdf",
+          "expect": "5dac9500",
+          "write": "298cc808",
+          "note": "bc_StartupBuffsDebuffs L1603: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416bb6b0",
+          "expect": "8ca29500",
+          "write": "5882c808",
+          "note": "bc_StartupBuffsDebuffs L1616: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416bbdbc",
+          "expect": "809b9500",
+          "write": "4c7bc808",
+          "note": "bc_StartupBuffsDebuffs L1624: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416bcb32",
+          "expect": "0a8e9500",
+          "write": "d66dc808",
+          "note": "bc_StartupBuffsDebuffs L1645: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416bcefc",
+          "expect": "408a9500",
+          "write": "0c6ac808",
+          "note": "bc_StartupBuffsDebuffs L1649: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416bd7f1",
+          "expect": "4b819500",
+          "write": "1761c808",
+          "note": "bc_StartupBuffsDebuffs L1660: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416be0e1",
+          "expect": "5b789500",
+          "write": "2758c808",
+          "note": "bc_StartupBuffsDebuffs L1668: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416be771",
+          "expect": "cb719500",
+          "write": "9751c808",
+          "note": "bc_StartupBuffsDebuffs L1675: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416bee01",
+          "expect": "3b6b9500",
+          "write": "074bc808",
+          "note": "bc_StartupBuffsDebuffs L1682: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416bfab8",
+          "expect": "845e9500",
+          "write": "503ec808",
+          "note": "bc_StartupBuffsDebuffs L1693: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416c0ac7",
+          "expect": "754e9500",
+          "write": "412ec808",
+          "note": "bc_StartupBuffsDebuffs L1715: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416c14fa",
+          "expect": "42449500",
+          "write": "0e24c808",
+          "note": "bc_StartupBuffsDebuffs L1728: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        },
+        {
+          "va": "0x1416c1ef4",
+          "expect": "483a9500",
+          "write": "141ac808",
+          "note": "bc_StartupBuffsDebuffs L1738: scr_CritAddCondition -> hook (Herbling counts the buff / minion)"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a34390c",
+          "end": "0x14a343911",
+          "what": "trampoline -> hook_k_su0218_add"
+        },
+        {
+          "start": "0x149ed8a00",
+          "end": "0x149ed8a07",
+          "what": "hook pointer hook_k_su0218_add"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8a00",
+          "symbol": "hook_k_su0218_add"
+        }
+      ],
+      "group": "heavy"
+    },
+    {
+      "id": "SU-0206",
+      "bug": "SU-0206",
+      "default": 1,
+      "title": "Misery (Nemesis): your creatures cannot gain buffs from direct adds either (start-of-battle, 'always has', in-battle direct grants), as from buff events (code: only the buff event refused). Start-of-battle stat gains not built",
+      "edits": [
+        {
+          "va": "0x14a343912",
+          "expect": "000000000000",
+          "write": "ff25d050b9ff",
+          "note": "trampoline -> hook_k_su0206_realm_prop (cave code)"
+        },
+        {
+          "va": "0x14a343918",
+          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
+          "write": "803de950b9ff00740cc605e050b9ff00e9202dcdf7c744246030000000e9842b",
+          "note": "SU-0206 stub (scr_CritAddCondition L48): refusal armed -> the game's L51 refusal exit (cave code)"
+        },
+        {
+          "va": "0x14a343938",
+          "expect": "0000",
+          "write": "cdf7",
+          "note": "SU-0206 stub (scr_CritAddCondition L48): refusal armed -> the game's L51 refusal exit (cave code)"
+        },
+        {
+          "va": "0x1420164a2",
+          "expect": "ba3a6204",
+          "write": "6cd43208",
+          "note": "scr_CritAddCondition L46 (your creature, a buff): scr_RealmHasProperty(31) -> hook (true and arms the refusal under Misery)"
+        },
+        {
+          "va": "0x1420164b6",
+          "expect": "c744246030000000",
+          "write": "e95dd43208909090",
+          "note": "scr_CritAddCondition L48 marker -> SU-0206 stub"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a343912",
+          "end": "0x14a343917",
+          "what": "trampoline -> hook_k_su0206_realm_prop"
+        },
+        {
+          "start": "0x149ed89e8",
+          "end": "0x149ed89ef",
+          "what": "hook pointer hook_k_su0206_realm_prop"
+        },
+        {
+          "start": "0x14a343918",
+          "end": "0x14a343939",
+          "what": "SU-0206 stub (scr_CritAddCondition L48)"
+        },
+        {
+          "start": "0x149ed8a08",
+          "end": "0x149ed8a0f",
+          "what": "SU-0206 refusal flag (byte)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed89e8",
+          "symbol": "hook_k_su0206_realm_prop"
+        }
+      ]
+    },
+    {
+      "id": "SU-0219",
+      "bug": "SU-0219",
+      "default": 1,
+      "title": "Artifact Health %: current and Max Health gain the same amount (code: current Health gained a share of the already raised Max Health, which nearly cancelled Sacrifice)",
+      "edits": [
+        {
+          "va": "0x14174b348",
+          "expect": "1c582908",
+          "write": "3c572908",
+          "note": "bc_StartupStatGain L1123 artifact Health: read hpmax -> hp"
+        },
+        {
+          "va": "0x14174b4ac",
+          "expect": "b8562908",
+          "write": "d8552908",
+          "note": "bc_StartupStatGain L1123 artifact Health: write hpmax -> hp"
+        },
+        {
+          "va": "0x14174b670",
+          "expect": "14542908",
+          "write": "f4542908",
+          "note": "bc_StartupStatGain L1124 artifact Health: read hp -> hpmax"
+        },
+        {
+          "va": "0x14174b7d4",
+          "expect": "b0522908",
+          "write": "90532908",
+          "note": "bc_StartupStatGain L1124 artifact Health: write hp -> hpmax"
+        }
+      ],
+      "reserves": [],
+      "runtime_hooks": []
+    },
+    {
+      "id": "SU-0183",
+      "bug": "SU-0183",
+      "default": 1,
+      "title": "Hymn of Panic: the Timeline is shuffled into a uniformly random order (code: a coin flip into two groups with a fixed order inside each)",
+      "edits": [
+        {
+          "va": "0x14a34393a",
+          "expect": "000000000000",
+          "write": "ff25a050b9ff",
+          "note": "trampoline -> hook_k_su0183_key (cave code)"
+        },
+        {
+          "va": "0x14069aa5a",
+          "expect": "d21abfff",
+          "write": "dc8eca09",
+          "note": "bc_CreateCreatureList L196 Hymn of Panic: key = 1 -> random key"
+        },
+        {
+          "va": "0x14069aabc",
+          "expect": "2097c5ff",
+          "write": "7a8eca09",
+          "note": "bc_CreateCreatureList L200 Hymn of Panic: key = 1999999999999098 -> random key"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a34393a",
+          "end": "0x14a34393f",
+          "what": "trampoline -> hook_k_su0183_key"
+        },
+        {
+          "start": "0x149ed89e0",
+          "end": "0x149ed89e7",
+          "what": "hook pointer hook_k_su0183_key"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed89e0",
+          "symbol": "hook_k_su0183_key"
+        }
+      ]
+    },
+    {
+      "id": "SU-0189",
+      "bug": "SU-0189",
+      "default": 1,
+      "title": "Lord Zantai's battle: forced 'move to the bottom of the Timeline' moves him down 1 place, like the other bosses (code: the boss list missed battle type 37)",
+      "edits": [
+        {
+          "va": "0x14a343940",
+          "expect": "000000000000",
+          "write": "ff258a50b9ff",
+          "note": "trampoline -> hook_k_su0189_boss_type (cave code)"
+        },
+        {
+          "va": "0x1410c9ad1",
+          "expect": "1b2e1cff",
+          "write": "6b9e2709",
+          "note": "bc_ExecuteEvents L1053: battletype == 88 -> 88 or 37 (Lord Zantai)"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a343940",
+          "end": "0x14a343945",
+          "what": "trampoline -> hook_k_su0189_boss_type"
+        },
+        {
+          "start": "0x149ed89d0",
+          "end": "0x149ed89d7",
+          "what": "hook pointer hook_k_su0189_boss_type"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed89d0",
+          "symbol": "hook_k_su0189_boss_type"
+        }
+      ]
+    },
+    {
+      "id": "SU-0310",
+      "bug": "SU-0310",
+      "default": 1,
+      "title": "'Cannot be resurrected' (Burn Their Corpses, Endwalker, Feast and Famine, End On a High Note, Epigraphy, Disintegrating Arrow) also stops resurrections queued before the death (Terminus, Defy the Gods, Reincarnation, Genesis) (code: checked only when queued)",
+      "edits": [
+        {
+          "va": "0x14a343946",
+          "expect": "000000000000",
+          "write": "ff258c50b9ff",
+          "note": "trampoline -> hook_k_su0310_dead (cave code)"
+        },
+        {
+          "va": "0x1410da5f4",
+          "expect": "d82f1eff",
+          "write": "4e932609",
+          "note": "bc_ExecuteEvents L1312 resurrect case: hp <= 0 -> also can_resurrect (queue-time exemptions kept)"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a343946",
+          "end": "0x14a34394b",
+          "what": "trampoline -> hook_k_su0310_dead"
+        },
+        {
+          "start": "0x149ed89d8",
+          "end": "0x149ed89df",
+          "what": "hook pointer hook_k_su0310_dead"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed89d8",
+          "symbol": "hook_k_su0310_dead"
+        }
+      ]
+    },
+    {
+      "id": "SU-0204",
+      "bug": "SU-0204",
+      "default": 1,
+      "title": "Realm 'Next battle' boosts work in the next battle of any kind (code: switched off in boss and special battles but still used up there)",
+      "edits": [
+        {
+          "va": "0x1466302c6",
+          "expect": "750f",
+          "write": "eb0f",
+          "note": "scr_RealmBoostExists: scr_BattleType != 0 -> return false: jne -> jmp"
+        }
+      ],
+      "reserves": [],
+      "runtime_hooks": []
+    }
+  ]
+}

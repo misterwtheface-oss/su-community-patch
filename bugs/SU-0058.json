@@ -1,0 +1,45 @@
+{
+  "id": "SU-0058",
+  "aliases": [
+    "B21",
+    "B6#40"
+  ],
+  "title": "Unbreakable",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Unbreakable",
+      "runtime_id": 343,
+      "text_key": "L_TRAIT_DESC_UNBREAKABLE"
+    }
+  ],
+  "problem": "Flat extra −50% whatever the Class Strength value (even 0), for any creature with an Artifact; community_vet_B6 confirms.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0058",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§6 item 7",
+    "community:B6#40"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test:  Fix: H | 2026-10-26 realign (text is the contract): text claims \"Class Strength Artifact properties prevent 50% more damage from that class\". H: Unbreakable (bc_EventDamage L1816-L1844): +50% of the creature's Class Strength property for the attacker's class instead of a flat extra 50%. vs bugged: weaker (no flat 50% with 0 Class Strength). | In-game test: Unbreakable with an Artifact without a Class Strength property: no extra reduction; with a property: its reduction grows by 50% against that class only.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Unbreakable (trait)",
+    "intended": "Your creatures' Class Strength Artifact properties prevent 50% more damage from that class.",
+    "actual": "In the unpatched game, any creature with an Artifact got a flat extra 50% reduction, with or without a Class Strength property.",
+    "fix": "Now the bonus raises the Class Strength property's own reduction by 50%, against that class only.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

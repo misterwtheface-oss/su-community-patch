@@ -1,0 +1,776 @@
+{
+  "patches": [
+    {
+      "id": "SU-0038",
+      "bug": "SU-0038",
+      "default": 1,
+      "title": "Multi-hit attacks: every hit gets each '% more damage' bonus once (the pool no longer piles up hit after hit); also stops the Confused chance leaking into damage (SU-0033)",
+      "edits": [
+        {
+          "va": "0x1488bfe00",
+          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
+          "write": "8b8424c403000083e01f89c1b801000000d3e0a946000000751748c78424b803",
+          "note": "bc_CreatureAttack L1077 (top of each hit): bonus pool = 0 (cave code)"
+        },
+        {
+          "va": "0x1488bfe20",
+          "expect": "000000000000000000000000000000000000000000000000000000000000",
+          "write": "000000000000c78424c403000000000000c744244035040000e99307e1f7",
+          "note": "bc_CreatureAttack L1077 (top of each hit): bonus pool = 0 (cave code)"
+        },
+        {
+          "va": "0x1406d05c9",
+          "expect": "c744244035040000",
+          "write": "e932f81e08909090",
+          "note": "bc_CreatureAttack L1077 (top of each hit): bonus pool = 0 (detour)"
+        }
+      ]
+    },
+    {
+      "id": "SU-0040",
+      "bug": "SU-0040",
+      "default": 1,
+      "title": "Mindbender: an avoided spell deals no damage at all (its bonus damage no longer lands)",
+      "edits": [
+        {
+          "va": "0x140ea3b3c",
+          "expect": "c784247801030039130000",
+          "write": "e9385a0e00909090909090",
+          "note": "bc_EventDamage L4921 (Mindbender avoid branch): -> L7287 amount = 0; L7288 return the event"
+        }
+      ]
+    },
+    {
+      "id": "SU-0071",
+      "bug": "SU-0071",
+      "default": 1,
+      "title": "Frozen: 25% chance to thaw on the first turn (50% if resistant), doubling after each turn (code started at 50%)",
+      "edits": [
+        {
+          "va": "0x140c7c615",
+          "expect": "01",
+          "write": "02",
+          "note": "bc_CreatureStartOfTurn L4425: doubling loop starts at i = 2"
+        }
+      ]
+    },
+    {
+      "id": "SU-0115",
+      "bug": "SU-0115",
+      "default": 1,
+      "title": "No Head Necessary: each dead holder has its own 50% chance to attack (code: one roll for all)",
+      "edits": [
+        {
+          "va": "0x140cafb9b",
+          "expect": "0f8477070000",
+          "write": "660f1f440000",
+          "note": "bc_CreatureStartOfTurn L5076: shared 50% roll -> always pass"
+        },
+        {
+          "va": "0x1488bfe40",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0115_attack (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x140cb030f",
+          "expect": "edbe9eff",
+          "write": "2dfbc007",
+          "note": "L5080: bc_CreatureAttack -> hook (50% roll per dead holder)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8800",
+          "symbol": "hook_su0115_attack"
+        }
+      ]
+    },
+    {
+      "id": "SU-0148",
+      "bug": "SU-0148",
+      "default": 1,
+      "title": "Colony: only your living Griffons defend as well (code: dead ones too)",
+      "edits": [
+        {
+          "va": "0x1488bfe48",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0148_defend (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x14153e51b",
+          "expect": "711e57ff",
+          "write": "29193807",
+          "note": "bc_OnDefend L456: bc_CreatureDefend -> hook (living Griffons only)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8808",
+          "symbol": "hook_su0148_defend"
+        }
+      ]
+    },
+    {
+      "id": "SU-0161",
+      "bug": "SU-0161",
+      "default": 1,
+      "title": "Greybeard's Blessing: your creatures' heals on enemies with Blighted are doubled (code: every heal on them, the enemies' own and Mending included)",
+      "edits": [
+        {
+          "va": "0x1488bfe50",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0161_enemy_gate (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x14103cbde",
+          "expect": "eee6ec00",
+          "write": "6e328807",
+          "note": "bc_EventHeal Greybeard gate (enemy holder) -> hook: healer must be an enemy"
+        },
+        {
+          "va": "0x1488bfe58",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0161_ally_gate (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x14103ccaf",
+          "expect": "eddbec00",
+          "write": "a5318807",
+          "note": "bc_EventHeal Greybeard gate (your holder) -> hook: healer must be yours"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8810",
+          "symbol": "hook_su0161_enemy_gate"
+        },
+        {
+          "slot_va": "0x149ed8818",
+          "symbol": "hook_su0161_ally_gate"
+        }
+      ]
+    },
+    {
+      "id": "SU-0016",
+      "bug": "SU-0016",
+      "default": 1,
+      "title": "Celestial Nexus: takes hits for your other creatures while IT has Barrier or Shell (code tested the creature that was hit)",
+      "edits": [
+        {
+          "va": "0x140d4a63c",
+          "expect": "e8ef3b57ff",
+          "write": "b001909090",
+          "note": "bc_EventDamage L395: Barrier||Shell on the hit creature -> always true (al = 1)"
+        },
+        {
+          "va": "0x1488bfe60",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0016_nexus_holder (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x140d4ab43",
+          "expect": "79172e01",
+          "write": "1953b707",
+          "note": "L398: scr_CritHasPassive(ally, 1710) -> hook: holder must have Barrier or Shell"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8820",
+          "symbol": "hook_su0016_nexus_holder"
+        }
+      ]
+    },
+    {
+      "id": "SU-0165",
+      "bug": "SU-0165",
+      "default": 1,
+      "title": "Kiichi's Persistence: the extra hit is not modified by effects that affect Bleeding (code applied Master of Pilwizes, the Pilwiz cards and other Bleed modifiers)",
+      "edits": [
+        {
+          "va": "0x1488bfe68",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0165_bleed (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x140acec39",
+          "expect": "f332baff",
+          "write": "2b12df07",
+          "note": "bc_CreatureEndOfTurn: extra hit's bc_CalculateBleedDamage -> hook (modifiers off)"
+        },
+        {
+          "va": "0x1488bfe70",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0165_any_ally (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x1406724a4",
+          "expect": "f8838901",
+          "write": "c8d92408",
+          "note": "bc_CalculateBleedDamage Master of Pilwizes (1472) gate -> hook_su0165_any_ally (false during Persistence's hit)"
+        },
+        {
+          "va": "0x1488bfe78",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0165_any_enemy (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x14067267b",
+          "expect": "518c8901",
+          "write": "f9d72408",
+          "note": "bc_CalculateBleedDamage Master of Pilwizes (1472) gate -> hook_su0165_any_enemy (false during Persistence's hit)"
+        },
+        {
+          "va": "0x140672a60",
+          "expect": "6c888901",
+          "write": "14d42408",
+          "note": "bc_CalculateBleedDamage trait 1304 gate -> hook_su0165_any_enemy (false during Persistence's hit)"
+        },
+        {
+          "va": "0x140672ad1",
+          "expect": "fb878901",
+          "write": "a3d32408",
+          "note": "bc_CalculateBleedDamage trait 1305 gate -> hook_su0165_any_enemy (false during Persistence's hit)"
+        },
+        {
+          "va": "0x1488bfe80",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0165_card (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x140672da1",
+          "expect": "6b406801",
+          "write": "dbd02408",
+          "note": "bc_CalculateBleedDamage card power 3 gate -> hook_su0165_card (false during Persistence's hit)"
+        },
+        {
+          "va": "0x140672f43",
+          "expect": "89838901",
+          "write": "31cf2408",
+          "note": "bc_CalculateBleedDamage trait 2192 gate -> hook_su0165_any_enemy (false during Persistence's hit)"
+        },
+        {
+          "va": "0x1406731cc",
+          "expect": "d0768901",
+          "write": "a0cc2408",
+          "note": "bc_CalculateBleedDamage trait 2192 gate -> hook_su0165_any_ally (false during Persistence's hit)"
+        },
+        {
+          "va": "0x1488bfe88",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0165_relic (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x1406737cc",
+          "expect": "309e9b01",
+          "write": "b8c62408",
+          "note": "bc_CalculateBleedDamage relic rank gate -> hook_su0165_relic (false during Persistence's hit)"
+        },
+        {
+          "va": "0x140673980",
+          "expect": "1c6f8901",
+          "write": "ecc42408",
+          "note": "bc_CalculateBleedDamage trait 2045 gate -> hook_su0165_any_ally (false during Persistence's hit)"
+        },
+        {
+          "va": "0x140673a70",
+          "expect": "5c788901",
+          "write": "04c42408",
+          "note": "bc_CalculateBleedDamage trait 2045 gate -> hook_su0165_any_enemy (false during Persistence's hit)"
+        },
+        {
+          "va": "0x140673d0d",
+          "expect": "ff306801",
+          "write": "6fc12408",
+          "note": "bc_CalculateBleedDamage card power 1 gate -> hook_su0165_card (false during Persistence's hit)"
+        },
+        {
+          "va": "0x140673f25",
+          "expect": "e72e6801",
+          "write": "57bf2408",
+          "note": "bc_CalculateBleedDamage card power 2 gate -> hook_su0165_card (false during Persistence's hit)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8828",
+          "symbol": "hook_su0165_bleed"
+        },
+        {
+          "slot_va": "0x149ed8830",
+          "symbol": "hook_su0165_any_ally"
+        },
+        {
+          "slot_va": "0x149ed8838",
+          "symbol": "hook_su0165_any_enemy"
+        },
+        {
+          "slot_va": "0x149ed8840",
+          "symbol": "hook_su0165_card"
+        },
+        {
+          "slot_va": "0x149ed8848",
+          "symbol": "hook_su0165_relic"
+        }
+      ]
+    },
+    {
+      "id": "SU-0023",
+      "bug": "SU-0023",
+      "default": 1,
+      "title": "Book of the Arsonist: enemies' Burned debuffs it applies deal 30% more damage (code boosted every debuff it applied)",
+      "edits": [
+        {
+          "va": "0x1488bfe90",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0023_arsonist (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x140fe1f2d",
+          "expect": "8fa30401",
+          "write": "5fdf8d07",
+          "note": "bc_EventDebuff L246: scr_CritHasPassive(source, 404) -> hook (Burned on an enemy only)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8850",
+          "symbol": "hook_su0023_arsonist"
+        }
+      ]
+    },
+    {
+      "id": "SU-0047",
+      "bug": "SU-0047",
+      "default": 1,
+      "title": "Death flags ('cannot be resurrected') apply only to creatures that really died (on-death effects run on a living creature, e.g. Mortal Terror + Feast and Famine, no longer mark it)",
+      "edits": [
+        {
+          "va": "0x1488bfe98",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0047_deathflag (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x141467c9c",
+          "expect": "c0454506",
+          "write": "f8814507",
+          "note": "bc_OnDeath Epigraphy L76: can_resurrect = false -> hook (dead creatures only)"
+        },
+        {
+          "va": "0x1414731c0",
+          "expect": "9c904406",
+          "write": "d4cc4407",
+          "note": "bc_OnDeath End On a High Note L179: can_resurrect = false -> hook (dead creatures only)"
+        },
+        {
+          "va": "0x14147379e",
+          "expect": "be8a4406",
+          "write": "f6c64407",
+          "note": "bc_OnDeath Feast and Famine L185: can_resurrect = false -> hook (dead creatures only)"
+        },
+        {
+          "va": "0x141473bdb",
+          "expect": "81864406",
+          "write": "b9c24407",
+          "note": "bc_OnDeath Burn Their Corpses L190: can_resurrect = false -> hook (dead creatures only)"
+        },
+        {
+          "va": "0x141474018",
+          "expect": "44824406",
+          "write": "7cbe4407",
+          "note": "bc_OnDeath Endwalker L194: can_resurrect = false -> hook (dead creatures only)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8858",
+          "symbol": "hook_su0047_deathflag"
+        }
+      ]
+    },
+    {
+      "id": "SU-0057",
+      "bug": "SU-0057",
+      "default": 1,
+      "title": "Details Matter: hits on your creatures end at half of a neutral hit, as if they were strong against the attacker's class (code halved whatever the class step gave, so weak hits ended at a quarter and strong ones at full)",
+      "edits": [
+        {
+          "va": "0x1488bfea0",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0057_details (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x140e6e63c",
+          "expect": "30489300",
+          "write": "6018a507",
+          "note": "bc_EventDamage L4006: big_mult(amount, 0.5) -> hook (cut to half of a neutral hit)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8860",
+          "symbol": "hook_su0057_details"
+        }
+      ]
+    },
+    {
+      "id": "SU-0147",
+      "bug": "SU-0147",
+      "default": 1,
+      "title": "Braze: your creatures' Class Strength Artifact properties deal 50% more damage (code: a flat +50% of the hit for any creature with an Artifact, property or not)",
+      "edits": [
+        {
+          "va": "0x1488bfea8",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0147_term (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x140e6f817",
+          "expect": "55369300",
+          "write": "8d06a507",
+          "note": "bc_EventDamage L4039: Class Strength term big_mult -> record it"
+        },
+        {
+          "va": "0x1488bfeb0",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0147_braze (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x140e6fc9e",
+          "expect": "3e0947ff",
+          "write": "0e02a507",
+          "note": "bc_EventDamage L4041: Braze amount x 0.5 -> recorded term x 0.5"
+        },
+        {
+          "va": "0x140e70316",
+          "expect": "562b9300",
+          "write": "8efba407",
+          "note": "bc_EventDamage L4045: Class Strength term big_mult -> record it"
+        },
+        {
+          "va": "0x140e7079d",
+          "expect": "3ffe46ff",
+          "write": "0ff7a407",
+          "note": "bc_EventDamage L4047: Braze amount x 0.5 -> recorded term x 0.5"
+        },
+        {
+          "va": "0x140e70e15",
+          "expect": "57209300",
+          "write": "8ff0a407",
+          "note": "bc_EventDamage L4051: Class Strength term big_mult -> record it"
+        },
+        {
+          "va": "0x140e7129c",
+          "expect": "40f346ff",
+          "write": "10eca407",
+          "note": "bc_EventDamage L4053: Braze amount x 0.5 -> recorded term x 0.5"
+        },
+        {
+          "va": "0x140e71914",
+          "expect": "58159300",
+          "write": "90e5a407",
+          "note": "bc_EventDamage L4057: Class Strength term big_mult -> record it"
+        },
+        {
+          "va": "0x140e71d9b",
+          "expect": "41e846ff",
+          "write": "11e1a407",
+          "note": "bc_EventDamage L4059: Braze amount x 0.5 -> recorded term x 0.5"
+        },
+        {
+          "va": "0x140e72413",
+          "expect": "590a9300",
+          "write": "91daa407",
+          "note": "bc_EventDamage L4063: Class Strength term big_mult -> record it"
+        },
+        {
+          "va": "0x140e7289a",
+          "expect": "42dd46ff",
+          "write": "12d6a407",
+          "note": "bc_EventDamage L4065: Braze amount x 0.5 -> recorded term x 0.5"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8868",
+          "symbol": "hook_su0147_term"
+        },
+        {
+          "slot_va": "0x149ed8870",
+          "symbol": "hook_su0147_braze"
+        }
+      ]
+    },
+    {
+      "id": "SU-0058",
+      "bug": "SU-0058",
+      "default": 1,
+      "title": "Unbreakable: your creatures' Class Strength Artifact properties prevent 50% more damage (code: a flat extra 50% reduction for any creature with an Artifact, property or not)",
+      "edits": [
+        {
+          "va": "0x1488bfeb8",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0058_term (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x140df62bf",
+          "expect": "adcb9a00",
+          "write": "f59bac07",
+          "note": "bc_EventDamage L1818: Class Strength reduction big_mult -> record it"
+        },
+        {
+          "va": "0x1488bfec0",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0058_unbreakable (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x140df6792",
+          "expect": "4a9e4eff",
+          "write": "2a97ac07",
+          "note": "bc_EventDamage L1820: Unbreakable amount x 0.5 -> recorded term x 0.5"
+        },
+        {
+          "va": "0x140df6e56",
+          "expect": "16c09a00",
+          "write": "5e90ac07",
+          "note": "bc_EventDamage L1824: Class Strength reduction big_mult -> record it"
+        },
+        {
+          "va": "0x140df7329",
+          "expect": "b3924eff",
+          "write": "938bac07",
+          "note": "bc_EventDamage L1826: Unbreakable amount x 0.5 -> recorded term x 0.5"
+        },
+        {
+          "va": "0x140df79ed",
+          "expect": "7fb49a00",
+          "write": "c784ac07",
+          "note": "bc_EventDamage L1830: Class Strength reduction big_mult -> record it"
+        },
+        {
+          "va": "0x140df7ec0",
+          "expect": "1c874eff",
+          "write": "fc7fac07",
+          "note": "bc_EventDamage L1832: Unbreakable amount x 0.5 -> recorded term x 0.5"
+        },
+        {
+          "va": "0x140df8584",
+          "expect": "e8a89a00",
+          "write": "3079ac07",
+          "note": "bc_EventDamage L1836: Class Strength reduction big_mult -> record it"
+        },
+        {
+          "va": "0x140df8a57",
+          "expect": "857b4eff",
+          "write": "6574ac07",
+          "note": "bc_EventDamage L1838: Unbreakable amount x 0.5 -> recorded term x 0.5"
+        },
+        {
+          "va": "0x140df911b",
+          "expect": "519d9a00",
+          "write": "996dac07",
+          "note": "bc_EventDamage L1842: Class Strength reduction big_mult -> record it"
+        },
+        {
+          "va": "0x140df95ee",
+          "expect": "ee6f4eff",
+          "write": "ce68ac07",
+          "note": "bc_EventDamage L1844: Unbreakable amount x 0.5 -> recorded term x 0.5"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8878",
+          "symbol": "hook_su0058_term"
+        },
+        {
+          "slot_va": "0x149ed8880",
+          "symbol": "hook_su0058_unbreakable"
+        }
+      ]
+    },
+    {
+      "id": "SU-0149",
+      "bug": "SU-0149",
+      "default": 1,
+      "title": "Diabolic Link: each Diabolic Horde gets the others' Maximum Health (code also added its own again, so a lone one ended at 50% instead of 25%)",
+      "edits": [
+        {
+          "va": "0x1488bfec8",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0149_max (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x14175e6c7",
+          "expect": "65dfb2fe",
+          "write": "fd171607",
+          "note": "bc_StartupStatGain L1474: Max Health += total -> Max Health = total"
+        },
+        {
+          "va": "0x1488bfed0",
+          "expect": "000000000000",
+          "write": "ff25ba896101",
+          "note": "trampoline -> hook_su0149_hp (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x14175e77c",
+          "expect": "b0deb2fe",
+          "write": "50171607",
+          "note": "bc_StartupStatGain L1475: Health += total -> += total - own Max Health"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8888",
+          "symbol": "hook_su0149_max"
+        },
+        {
+          "slot_va": "0x149ed8890",
+          "symbol": "hook_su0149_hp"
+        }
+      ]
+    },
+    {
+      "id": "SU-0043",
+      "bug": "SU-0043",
+      "default": 1,
+      "title": "Cloak of Shadows, Immobility, Enchanted Arrows: activate once per turn (code: once per condition the creature had, and never with none)",
+      "edits": [
+        {
+          "va": "0x1488bfee0",
+          "expect": "000000000000000000000000000000000000000000000000000000000000",
+          "write": "803db1896101007505e9e09727f8c78424205d020047010000e9eb7427f8",
+          "note": "L327 (block top): inside the loop -> skip the block (cave code)"
+        },
+        {
+          "va": "0x140b373de",
+          "expect": "c78424205d020047010000",
+          "write": "e9fd8ad807909090909090",
+          "note": "L327 (block top): inside the loop -> skip the block (detour)"
+        },
+        {
+          "va": "0x1488bff00",
+          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
+          "write": "803d9189610100740cc6058889610100e9921128f8c78424205d020066010000",
+          "note": "L358 (block exit): after the once-per-turn run -> continue after the loop (cave code)"
+        },
+        {
+          "va": "0x1488bff20",
+          "expect": "0000000000",
+          "write": "e9b49727f8",
+          "note": "L358 (block exit): after the once-per-turn run -> continue after the loop (cave code)"
+        },
+        {
+          "va": "0x140b396ce",
+          "expect": "c78424205d020066010000",
+          "write": "e92d68d807909090909090",
+          "note": "L358 (block exit): after the once-per-turn run -> continue after the loop (detour)"
+        },
+        {
+          "va": "0x1488bff30",
+          "expect": "000000000000000000000000",
+          "write": "c6056189610101e9a27427f8",
+          "note": "loop exit: run the block once (cave code)"
+        },
+        {
+          "va": "0x140b341a9",
+          "expect": "e9f9ce0000",
+          "write": "e982bdd807",
+          "note": "L270 loop exit: -> once-per-turn block run"
+        }
+      ]
+    },
+    {
+      "id": "SU-0160",
+      "bug": "SU-0160",
+      "default": 1,
+      "title": "Grandiose: the +3 turn counter comes at the end of your creatures' turns, as the text says (code: at the start)",
+      "edits": [
+        {
+          "va": "0x140b24619",
+          "expect": "7474",
+          "write": "eb74",
+          "note": "bc_CreatureStartOfTurn L93: Grandiose +3 at the start of the turn -> skipped"
+        },
+        {
+          "va": "0x1488bff40",
+          "expect": "000000000000",
+          "write": "ff255a896101",
+          "note": "trampoline -> hook_su0160_end_of_turn (loader/hooks_C.c) (cave code)"
+        },
+        {
+          "va": "0x1408b6261",
+          "expect": "6bc81f00",
+          "write": "db9c0008",
+          "note": "bc_CreatureEndOfTurn call -> Grandiose +3 first"
+        },
+        {
+          "va": "0x1469d1c5a",
+          "expect": "720e0efa",
+          "write": "e2e2ee01",
+          "note": "bc_CreatureEndOfTurn call -> Grandiose +3 first"
+        },
+        {
+          "va": "0x1469d1e79",
+          "expect": "530c0efa",
+          "write": "c3e0ee01",
+          "note": "bc_CreatureEndOfTurn call -> Grandiose +3 first"
+        },
+        {
+          "va": "0x1469d21c1",
+          "expect": "0b090efa",
+          "write": "7bddee01",
+          "note": "bc_CreatureEndOfTurn call -> Grandiose +3 first"
+        },
+        {
+          "va": "0x1469d23da",
+          "expect": "f2060efa",
+          "write": "62dbee01",
+          "note": "bc_CreatureEndOfTurn call -> Grandiose +3 first"
+        },
+        {
+          "va": "0x1469d6408",
+          "expect": "c4c60dfa",
+          "write": "349bee01",
+          "note": "bc_CreatureEndOfTurn call -> Grandiose +3 first"
+        },
+        {
+          "va": "0x1469d64fb",
+          "expect": "d1c50dfa",
+          "write": "419aee01",
+          "note": "bc_CreatureEndOfTurn call -> Grandiose +3 first"
+        },
+        {
+          "va": "0x1469d65ee",
+          "expect": "dec40dfa",
+          "write": "4e99ee01",
+          "note": "bc_CreatureEndOfTurn call -> Grandiose +3 first"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed88a0",
+          "symbol": "hook_su0160_end_of_turn"
+        }
+      ]
+    }
+  ]
+}

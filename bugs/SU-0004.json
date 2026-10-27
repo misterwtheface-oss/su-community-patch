@@ -1,0 +1,50 @@
+{
+  "id": "SU-0004",
+  "aliases": [
+    "A04",
+    "B2#37"
+  ],
+  "title": "Arbiter rank 60",
+  "subjects": [
+    {
+      "kind": "relic",
+      "name": "Arbiter, Holy Shield of Surathli",
+      "relic_code_id": 0,
+      "rank": 60
+    }
+  ],
+  "problem": "\"Gives more healing\" checks the healed creature, so it boosts healing *received*.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0004",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:BR:arbiter_r60",
+    "community:B2#37"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true,
+      "verified_in_game": {
+        "date": "2026-10-26",
+        "by": "user",
+        "result": "works: healing given by the Arbiter bearer is increased (bug itself not observed before the patch)"
+      }
+    }
+  },
+  "notes": "Fix: S: read source instead of creature — in patch (byte-verified)",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "Arbiter, rank 60 (relic)",
+    "intended": "The bearer grants 100% more healing.",
+    "actual": "The game boosted the healing the bearer received instead of the healing it gave.",
+    "fix": "Now the bonus applies to heals the bearer gives.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

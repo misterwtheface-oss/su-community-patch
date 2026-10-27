@@ -1,0 +1,43 @@
+{
+  "id": "SU-0032",
+  "aliases": [
+    "A34"
+  ],
+  "title": "Master of Spelljugglers",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Master of Spelljugglers",
+      "runtime_id": 2198,
+      "text_key": "L_TRAIT_DESC_MASTER_SPELLJUGGLER"
+    }
+  ],
+  "problem": "Compares with the last spell cast by *anyone*, not by that creature.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0013",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§3"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: H | Batch S: left needs-hook. Needs a per-creature last-spell history (the game keeps only the battle-wide last_spell1-3) plus replicating the trait's comparisons; no safe call-site stand-in. User 2026-10-26: 'last one cast' = the last spell cast by anyone (battle-wide, which the game tracks in last_spell1). The only bug is the same as SU-0013 (the slot already holds the current cast); SU-0013's on-cast swap covers bc_OnCast (called directly by bc_EventOnCast), so this is fixed by SU-0013 (needs SU-0123 on). In-game test: all-Spelljuggler party, alternate spell classes: each class change triggers, a same-class repeat doesn't.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Master of Spelljugglers (trait)",
+    "intended": "Triggers when a spell is of a different class than the last spell cast by anyone.",
+    "actual": "The game compared against the wrong spell (the same fault as SU-0013), so the trigger stopped working after a few spells.",
+    "fix": "Now fixed together with SU-0013; requires SU-0013 and SU-0123 to be on.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "id": "SU-0027",
+  "aliases": [
+    "A29"
+  ],
+  "title": "Spell stat calculator",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Spell stat calculator (bc_SpellStat)"
+    }
+  ],
+  "problem": "Carries damage-only \"ignore Defense\" blocks that weaken Defense-based stat spells (Living Cloak etc.).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0027",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§4 item 6"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: S: skip those blocks 2026-10-26: built as byte patch SU-0027 (verified against the baseline exe; not yet run in game). | 2026-10-26 crash fix: the jump over L60-L104 also skipped the first set of the temp RValue [rbp+0x50]; the first line after L104 releases that temp before reuse, so stack garbage could be freed (user crash at battle start on an Animator save, fault in the spell-id switch of bc_SpellStat; bisected in game to this patch). The jump now goes through a cave stub that sets the temp to undefined (flags 0, kind 5), as the skipped block did. Audit of every jump-over patch for locals first set inside a skipped range: no other real case (SU-0043 / SU-0108 flags are saved-register or written-first slots). | 2026-10-26 crash fix, corrected cause (the temp alone did not fix it: same crash on retest): the skipped block is also where the compiler first sets r15 = 0 (its zero register; the L310 spell-id switch starts its index from r15d, so garbage indexed past the case table) and the cached constants xmm9 = 100.0, xmm12 = 0.25, xmm15 = 0.1, xmm13 = 0.3. The stub now sets those too. tools/skip_audit.py checks registers as well as stack slots (it flags the previous stub).",
+  "release_notes": {
+    "section": "Combat rules",
+    "effect": "Defense-based stat spells (e.g. Living Cloak)",
+    "intended": "Spells that grant stats based on the caster's Defense use its full Defense.",
+    "actual": "In the unpatched game, effects meant to ignore a target's Defense for damage also lowered the Defense these stat spells were based on.",
+    "fix": "Now 'ignore Defense' effects only affect damage, so these stat spells use the caster's full Defense.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

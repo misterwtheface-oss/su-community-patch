@@ -1,0 +1,53 @@
+{
+  "id": "SU-0193",
+  "aliases": [
+    "B1#34"
+  ],
+  "title": "Magnetic counts every copy",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Magnetic counts every copy",
+      "text_key": "L_ID_DUST_BERYL (vs L_SPMOD_MAGNETIC)"
+    }
+  ],
+  "problem": "Magnetic counts every gem of the same spell on your living creatures, caster included, including Ethereal copies (Generous copies, gems gained in battle) and sealed or empty gems. A creature carrying two copies counts twice. The property text ('for each of the same Spell Gem') matches; the Beryl dust text ('for each creature ... with that same spell') does not.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-text",
+  "status": "patched",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#34"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: This item can be taken to the Enchanter to add the following property to your Spell Gems:\\n\\nMagnetic: the spell's potency is increased by 15% for each creature in your party with ... Evidence: bc_SpellDamage L382 @0x1415a7b9c: 0.15 x bc_GetSameSpellCount(bc_GetAlliesOf(caster, false, true), spellid) [+3 Neodymium]; bc_GetSameSpellCount @0x1411851f0 -> bc_GetSpellGems(1,1,1) @0x14118577d walks spellgems then extragems @0x14118694e. Fix sketch: L_ID_DUST_BERYL: \"...Magnetic: the spell's potency is increased by 15% for each of the same Spell Gem equipped by your party.\" (align with L_SPMOD_MAGNETIC). Not part of SU-0121 / SU-0122, which only fix Aquamarine and Aventurine. Reasoning: Two game texts disagree in the two-copies case; the code follows the property text, so the dust text is corrected (ruling 2). Counting Ethereal copies is consistent with 'equipped'. App note (unpatched game): Magnetic counts every copy of the spell on your living creatures, including Ethereal copies such as Generous gems, so one Generous gem counts itself plus each copy it gives out. Source: errata round 2 (2026-10-26). | 2026-10-26: text correction shipped via localization_override (loader text module).",
+  "text_fix": [
+    {
+      "file": "items.csv",
+      "key": "L_ID_DUST_BERYL",
+      "en_find": "for each creature in your party with that same spell equipped.",
+      "en_proposed": "for each of the same Spell Gem equipped by your party.",
+      "en_current_sha256": "bf0cf3679ae74029a510bc6031d67a361b6cdd54499a2ff186223e40cc8511eb"
+    }
+  ],
+  "release_notes": {
+    "section": "Interface text",
+    "effect": "Beryl Dust (Magnetic)",
+    "intended": "Beryl Dust describes the Magnetic property.",
+    "actual": "In the unpatched game, Beryl Dust said Magnetic counts each creature with the spell, while the Magnetic property (and the game) count each copy of the Spell Gem.",
+    "fix": "Now Beryl Dust uses the property's wording.",
+    "impact": "neutral",
+    "flags": [
+      "text"
+    ]
+  }
+}

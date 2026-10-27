@@ -1,0 +1,45 @@
+{
+  "id": "SU-0076",
+  "aliases": [
+    "E03",
+    "B6#22"
+  ],
+  "title": "Seeth",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Seeth",
+      "runtime_id": 1101,
+      "text_key": "L_TRAIT_DESC_SEETH"
+    }
+  ],
+  "problem": "Text: 20% of the damage *it* has taken. Code: the target's damage taken (community misdiagnosed it as Sparktail / more damage taken).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0076",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:B6 #22",
+    "community:B6#22"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: K: creature → source — in patch (byte-verified)",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Seeth (trait)",
+    "intended": "Additional damage equal to 20% of the damage this creature has taken this battle.",
+    "actual": "The game used the damage the target had taken.",
+    "fix": "Now it uses the damage the holder has taken.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

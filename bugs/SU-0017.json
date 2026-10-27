@@ -1,0 +1,43 @@
+{
+  "id": "SU-0017",
+  "aliases": [
+    "A18"
+  ],
+  "title": "Incoming Tide",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Incoming Tide",
+      "runtime_id": 1660,
+      "text_key": "L_TRAIT_DESC_INCOMINGTIDE"
+    }
+  ],
+  "problem": "The statement is empty: the 50% Submerge cast never happens.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0017",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§2"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Incoming Tide: over ~10 turns the holder casts Submerge at the start of about half its turns. Fix: H: add the cast",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Incoming Tide (trait)",
+    "intended": "At the start of the holder's turn, it has a 50% chance to cast Submerge.",
+    "actual": "In the unpatched game, Submerge was never cast.",
+    "fix": "Now the 50% chance to cast Submerge works at the start of the holder's turn.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "id": "SU-0238",
+  "aliases": [
+    "B3#30"
+  ],
+  "title": "Virus",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Virus",
+      "runtime_id": 659,
+      "text_key": "L_SD_VIRUS; L_SPELLMOD_INCREASEDDAMAGE / L_SPMOD_INCREASEDDAMAGE; L_CODD_SPELLGEMS_ENCHANTING"
+    }
+  ],
+  "problem": "The base matches the text (2 x one Poison tick). Extra Poison ticks (Chronic Illness, Strangulation) and the Diagnosis cap aren't counted (hidden).",
+  "category": "bug",
+  "confidence": "high",
+  "decision": null,
+  "status": "open",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#30"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Virus: \"Enemies take damage equal to 2 turns of their {CONDNAME_DEBUFF_POISON} debuff.\" | Moonstone: \"Damage Increased By {1}%\" | Codex: \"If a Spell Gem doesn't work with a ... Evidence: bc_CreatureCast L17464-L17466 @0x140a0a126 (bc_CalculatePoisonDamage x 2 -> bc_EventDamage, dtype 1). Compat column 10 = 1 (DAMAGE tag); Moonstone only in bc_SpellDamage @0x14163dfea. Fix sketch: Same as B3#26 (fixed-amount family record). Reasoning: The amount itself is as written; the bug is the offered-but-dead gem properties (codex + property text). Ship in the family record with #26. App note (unpatched game): Virus deals 2x one Poison tick; it can crit and damage-taken bonuses apply, but spell-damage bonuses and damage / potency gem properties don't. Source: errata round 2 (2026-10-26)."
+}

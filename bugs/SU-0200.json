@@ -1,0 +1,45 @@
+{
+  "id": "SU-0200",
+  "aliases": [
+    "B1#44"
+  ],
+  "title": "Disarmed",
+  "subjects": [
+    {
+      "kind": "condition",
+      "name": "Disarmed",
+      "runtime_id": 31,
+      "text_key": "L_CDESC_DEBUFF_DISARMED"
+    }
+  ],
+  "problem": "Disarmed removes the Artifact's Attack/Intelligence/Defense/Speed (Nether Stone stat properties included), its trick slots, on-hit trick effects, Spell Slot and all Nether Stone spells. It does NOT remove the Artifact's Trait Slot trait, the Nether Stone's traits, or the Nether Stone's trick properties (dodge, crit, etc.). A socketed Nether Stone is part of the Artifact (Codex: socketed into the Artifact's Nether Slot), so the text says all of these should be lost, Health excepted.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0200",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#44"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: {CONDNAME_DEBUFF_DISARMED} creatures lose the benefits from their equipped Artifact, other than {STAT_health}. Evidence: Disarmed = condition 31. Stat getters skip inv_ArtifactStatTotal when Disarmed (crit_attack L409 @0x1417b2d02, same in defense/intelligence/speed, not Health). inv_ArtifactGetStat L12 @0x141ce0ddd zeroes non-stat artifact properties when Disarmed. inv_ArtifactStatTotal adds Nether props via inv_NetherStoneGetStat L38-L41 (call @0x141ceffa3) with no condition test. scr_CritHasPassive reads item.trait L60-L64 (@0x14202ce36..0x14202cee7) and item.nether traits L66-L69 (@0x14202cf3e..0x14202d163) with no condition call in the function. Fix sketch: Two hooks: (1) scr_CritHasPassive: detour at L60 (0x14202ce1a) that, when scr_CritHasCondition(creature, 31), jumps to L75 (0x14202d1ac), skipping the Artifact trait and Nether Stone trait checks. (2) inv_ArtifactStatTotal: detour around the Nether loop L38-L41 that skips Nether properties outside the stat ids (0-4, 54-63) when inv_ArtifactGetOwner(item) has condition 31, mirroring inv_ArtifactGetStat's L12-L17 rule (stats are already dropped by the four stat getters; Health stays). Reasoning: Text: lose all Artifact benefits but Health. Code-certain that the trait lookups and the Nether trick part have no Disarmed test, while the same Nether Stone's stats and spells are ... App note (unpatched game): Disarmed removes the Artifact's and Nether Stone's stats, trick slots and spells, but the Artifact's trait, the Nether Stone's traits and the Nether Stone's trick properties keep working. Source: errata round 2 (2026-10-26). | Patched (batch M, 2026-10-26; group heavy: a core trait lookup). (1) scr_CritHasPassive L60 read of creature.artifact (varget @0x14202ce41) -> hook_m_su0200_artifact: when the value is an item (not -1) and scr_CritHasCondition(creature, 31) is true, it reports -1, so the game's own `== -1` branch skips L62 (Artifact trait) and L66-L69 (Nether Stone traits) to L75. Costs one condition check per trait lookup on a creature with an Artifact. (2) inv_ArtifactStatTotal L41 inv_NetherStoneGetStat(stone, prop) @0x141ceffa3 -> hook_m_su0200_nether: 0 when prop is not a stat id (0-4, 54-63) and inv_ArtifactGetOwner(item) > -1, exists and has condition 31 (the same rule inv_ArtifactGetStat L12-L17 applies to the Artifact's own slots). Item = inv_ArtifactStatTotal [rsp+0x70].",
+  "release_notes": {
+    "section": "Conditions & minions",
+    "effect": "Disarmed (debuff)",
+    "intended": "Disarmed creatures lose the benefits from their equipped Artifact, other than Health.",
+    "actual": "In the unpatched game, Disarmed removed the Artifact's stats, trick slots and spells, but the trait in the Artifact's Trait Slot, the Nether Stone's traits and the Nether Stone's trick properties (dodge, critical chance and the like) kept working.",
+    "fix": "Now a Disarmed creature also loses its Artifact's trait, its Nether Stone's traits and the Nether Stone's trick properties. Health from the Artifact still stays.",
+    "impact": "stronger",
+    "flags": [
+      "heavy"
+    ]
+  }
+}

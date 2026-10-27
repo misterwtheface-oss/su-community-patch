@@ -1,0 +1,43 @@
+{
+  "id": "SU-0242",
+  "aliases": [
+    "B3#35"
+  ],
+  "title": "Smith cards (power 2)",
+  "subjects": [
+    {
+      "kind": "card",
+      "name": "Smith cards",
+      "runtime_id": "card family 112, power 2",
+      "text_key": "L_CARD_SMITH2"
+    }
+  ],
+  "problem": "The text only promises a better activation chance. The code adds +10% of the value to every trick group: the on-damage buff / debuff tricks (the ones that activate) but also the flat Dodge / Crit, Damage Reduction, Spell Potency, Attack Damage and Class Strength tricks (e.g. DR 29% -> 32%, class strength 64% -> 70%). The game's own wording elsewhere draws the same line: Blacksmith's Boon ('Trick Slots that apply buffs and debuffs have a 35% greater chance to activate') touches only those two groups, while Tools of the Trade ('Trick Slots are X% more powerful') touches all.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0242",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#35"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Your Artifacts' Trick Slots have a 10% greater chance to activate. Evidence: inv_ArtifactGetStat 0x141ce0b00: Smith p2 inv_CardSetPowerUnlocked sites group 2 @0x141ce284a, group 3 @0x141ce2d7f (keep); group 5 @0x141ce322c, 6 @0x141ce34f6, 7 @0x141ce37c4, 8 @0x141ce3a92, 9 @0x141ce3d5a, each followed by `test al,al; je` (ARTIFACTS.md per-group table). Fix sketch: Five byte edits, short je (74) -> jmp (EB) so the Smith p2 add is always skipped in the non-activating groups: 0x141ce323b, 0x141ce3505, 0x141ce37d3, 0x141ce3aa1, 0x141ce3d69. Groups 2 / 3 (0x141ce284a / 0x141ce2d7f) stay. Reasoning: The text claims an activation-chance bonus and the code gives a value bonus to non-activating tricks too. Rule 1 changes the code; the game's own Blacksmith's Boon / Tools of the Trade wording shows which tricks 'activate'. Dodge / Crit is a chance stat, not an activation, so it is excluded; if the user reads it as an activation, drop the 0x141ce323b edit. App note (unpatched game): The Smith 4-card bonus makes every Trick Slot value 10% stronger, including flat Dodge, Crit, Damage Reduction, Potency, Attack Damage and Class Strength tricks, not just activation chances. Source: errata round 2 (2026-10-26). | Patch (batch L): byte edits in inv_ArtifactGetStat, short je -> jmp after the Smith power-2 inv_CardSetPowerUnlocked test in trick groups 5-9 (@0x141ce323b, 0x141ce3505, 0x141ce37d3, 0x141ce3aa1, 0x141ce3d69); groups 2 / 3 (buff / debuff on damage) keep it. Each skipped block is only the temp multiply, add and release (the game's own 'card not unlocked' path). Dodge / Crit (group 5) is treated as a chance stat, not an activation, as the research proposed; drop the 0x141ce323b edit if that reading changes.",
+  "release_notes": {
+    "section": "Cards",
+    "effect": "Smith cards (power 2)",
+    "intended": "Your Artifacts' Trick Slots have a 10% greater chance to activate.",
+    "actual": "In the unpatched game, the bonus made every Trick Slot 10% stronger, including flat Dodge, Critical, Damage Reduction, Potency, Attack Damage and Class Strength trick slots that never 'activate'.",
+    "fix": "Now the bonus only applies to the Trick Slots that activate (the buff and debuff trick slots).",
+    "impact": "weaker",
+    "flags": []
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "SU-0226",
+  "aliases": [
+    "B3#5"
+  ],
+  "title": "Chaos Rift (cast by Velox / Lagopus)",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Chaos Rift",
+      "runtime_id": 22,
+      "text_key": "L_TRAIT_DESC_VELOX; L_TRAIT_DESC_LAGOPUS; L_SD_CHAOSRIFT"
+    }
+  ],
+  "problem": "Velox and Lagopus promise to cast stat-manipulating Spell Gems. Chaos Rift changes no stat (it gives a random trait), but its internal category is BOOST, so both traits cast it at the start of battle. The same tag also makes Temptation rank 100 ('stat-boosting spell') copy it and lets the Enchanter offer the Stat +/- property, which does nothing on it.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0226",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#5"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Velox: \"This creature's first 3 permanent, stat-manipulating Spell Gems each have a 50% chance to be {ACTION_cast} automatically at the start of battle.\" | Lagopus: \"Your ... Evidence: Spell DB field 4 of id 22 = \"BOOST\": scr_DatabaseSpellGems2 store @0x1459d9f73, value from `lea rdx,[rip]` @0x1459d9e17 -> string global 0x149dd4940 (initialized to \"BOOST\" @0x1401843c7). Velox filter bc_StartupCasting L153 @0x1416c634d, Lagopus L293 @0x1416c8f5d (BOOST/DEBOOST tag test; START_OF_BATTLE_FINDINGS rows 484 / 489). Other BOOST readers: Temptation R100, scr_FixSpellGemProps column 20 (Malachite). Fix sketch: Constant repoint: the 7-byte `lea rdx,[rip+rel32]` at 0x1459d9e17 (scr_DatabaseSpellGems2, Chaos Rift's spell[22][4] store @0x1459d9f73) points at string global 0x149dd4940 (\"BOOST\"); repoint rel32 to 0x149dd43e0 (string global initialized to \"UTILITY\" @0x1401832b7). One edit fixes Velox, Lagopus and Temptation R100 together and drops the dead Malachite offer (scr_FixSpellGemProps recomputes column 20 from the tag at startup). Gems already enchanted with Malachite keep an inert property. Reasoning: The trait text names a spell kind; the code decides it by the hidden category tag, and Chaos Rift's tag doesn't match what the spell does. Under 'text is the contract' that is a code bug. Retagging is the smallest edit and is consistent for every BOOST reader, all of which describe stat spells. App note (unpatched game): Velox and Lagopus also cast Chaos Rift at the start of battle, because the game files it as a stat spell. Source: errata round 2 (2026-10-26). | Patch (batch L): one rel32 repoint in scr_DatabaseSpellGems2 L1879 (lea rdx @0x1459d9e17): the BOOST string global 0x149dd4940 -> the UTILITY string global 0x149dd43e0 (both static-initialised; L1859 / L1860 of the same spell block store L_SN_CHAOSRIFT / L_SD_CHAOSRIFT). Gems already enchanted with the Stat +/- property keep an inert property.",
+  "release_notes": {
+    "section": "Spells",
+    "effect": "Chaos Rift (spell)",
+    "intended": "Velox and Lagopus cast stat-manipulating Spell Gems; Chaos Rift gives a random trait and changes no stat.",
+    "actual": "In the unpatched game, Chaos Rift was filed as a stat-boosting spell, so Velox and Lagopus cast it at the start of battle, Temptation rank 100 copied it, and the Enchanter offered a Stat +/- property that did nothing on it.",
+    "fix": "Now Chaos Rift is filed as a utility spell, so none of these pick it.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

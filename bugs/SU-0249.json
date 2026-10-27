@@ -1,0 +1,33 @@
+{
+  "id": "SU-0249",
+  "aliases": [
+    "B3#47"
+  ],
+  "title": "Battle music (Battle Music option OFF: realm music in battle)",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Battle music",
+      "text_key": "L_MENU_DESC_BATTLEMUSIC"
+    }
+  ],
+  "problem": "With Battle Music OFF, the text says the realm music keeps playing in battle. In 17 realms (Death, Sorcery, Forest, Chaos, Life, Dungeon, Island, Desert, Underwater, Space, Foreign, Jungle, Void, Reactor, Purgatory, Autumn, Overgrown Temple) the realm track is a short intro (1-33 s) that plays once and is then swapped for its looping second part. The swap happens only outside battle, and the battle's own music restarter only knows the 8 battle tracks. So if a battle starts while the intro is still playing, the music stops when the intro ends and stays silent until the battle is over. With Battle Music ON nothing cuts out: battle tracks loop and are restarted every step. Other audio paths (focus mute, Turbo, stop-all calls, pause) were checked and cleared.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "test-first",
+  "status": "test-first",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#47"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: This option allows you to determine whether battle music is played in realms. When this option is set to \"OFF\", the normal realm music will continue to play in battle. Evidence: scr_StartBattle L1330-L1334 (@0x1466fc228/@0x1466fc265): option OFF -> global.battlemusic = -1. scr_HandleMusic plays realm intros with loop=false (e.g. L14 DeathTheme, @0x14636695c); scr_PlayMusic L69 audio_play_sound(arg0,1,arg1) @0x14653e0fe. obj_controller_Step_0 L296-L372 swaps intro -> '2' loop part with loop=true (e.g. L316-L318 @0x146b800f6), gated by L294 'room != battle && !instance_exists(obj_battlecontroller)' (je @0x146b7dc29 and @0x146b7de84 -> 0x146b858ec). obj_battlecontroller_Step_0 restarter L436-L492 (@0x1469c0711..@0x1469c1878) only matches 8 battle tracks; with battlemusic = -1 no branch matches. bc_CleanUpBattle L737-L739 calls scr_HandleMusic only when battle_music is true (@0x1406892f5). Fix sketch: Hook at the two gate branches of obj_controller_Step_0 L294 (je @0x146b7dc29 'room == battle' and je @0x146b7de84 'obj_battlecontroller exists', both to 0x146b858ec): redirect to a C hook that falls through into the music block (L296 onward) when instance_exists(obj_battlecontroller) && global.battlemusic == -1, and keeps the skip otherwise. A plain byte edit removing the gate is unsafe (with Battle Music ON, L376 would start realm music over the battle theme). Alternative: in obj_battlecontroller_Step_0 at the L436 restarter, when battlemusic == -1 and currentmusic is one of the 17 intro tracks and neither it nor its '2' track is playing, call scr_PlayMusic('2' track, true), using the same 17 pairs as obj_controller_Step_0 L296-L372. Reasoning: The option text promises realm music continues in battle; the code leaves the realm's one-shot intro playing but disables the only intro->loop swap while in battle, and the battle restarter ignores battlemusic = -1. Code-certain mechanism. That it is exactly what the community saw is an inference, but it is the only static cut-out path; optional confirmation: Battle Music OFF, enter the Sorcery realm, start a battle within ~10 s, music should stop ~20-30 s later and stay off. App note (unpatched game): With Battle Music set to OFF, a battle started within the first seconds after entering certain realms (intro tracks up to about 33 s) goes silent once the realm's intro ends, until the battle is over. Source: errata round 2 (2026-10-26). | Not built (batch M, 2026-10-26): the recorded mechanism does not hold in the code. obj_controller_Step_0 L294 is `if ((room != rm 46 && !instance_exists(obj_battlecontroller)) || global.battle_music == false)`: [rsp+0x1f2] = the room/instance part, and when it is false [rsp+0x1b3] = (*[rsp+0x9468] == false), where [rsp+0x9468] is the value pointer of global battle_music (var slot 0x1499e1b18, fetched @0x146b74575), the option scr_StartBattle L1330 tests. So with Battle Music OFF the intro -> loop swap (L296-L372) already runs during battles; the two je @0x146b7dc29 / @0x146b7de84 are not the cut-out. No other static cut-out path is known, so a patch would be a guess. Needs an in-game test first (Battle Music OFF, enter the Sorcery realm, start a battle within ~10 s, wait ~30 s); if the music does stop, the cause is elsewhere (for example obj_controller not stepping during battle) and needs fresh research."
+}

@@ -1,0 +1,43 @@
+{
+  "id": "SU-0035",
+  "aliases": [
+    "A37"
+  ],
+  "title": "Grimoire card refund floater",
+  "subjects": [
+    {
+      "kind": "card",
+      "name": "Grimoire card refund floater"
+    }
+  ],
+  "problem": "Names the wrong card (display only).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0035",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§3"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: S: string ref 2026-10-26: built as byte patch SU-0035 (verified against the baseline exe; not yet run in game).",
+  "release_notes": {
+    "section": "Interface text",
+    "effect": "Grimoire card set refund (battle text)",
+    "intended": "The floating text names the Grimoire card set.",
+    "actual": "In the unpatched game, the floating text said Apocalypse.",
+    "fix": "Now the floating text names Grimoire.",
+    "impact": "neutral",
+    "flags": [
+      "text"
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "SU-0183",
+  "aliases": [
+    "B1#16"
+  ],
+  "title": "Hymn of Panic",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Hymn of Panic",
+      "runtime_id": 649,
+      "text_key": "L_TRAIT_DESC_HYMNOFPANIC"
+    }
+  ],
+  "problem": "Not a shuffle. Each creature (both sides) gets a coin flip: just under 'start at top', or 'bottom'. Inside each of the two groups every creature has the same sort value, and the tie-break routine the game has for this (bc_FixTurnSpeedTies) is never called, so the order inside each group is whatever the engine's sort leaves for equal values: fixed, not random. Most orders can never happen (e.g. if everyone lands in the top group the order is the same every time).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0183",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#16"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: At the start of battle, the {TIMELINE} is shuffled randomly. Evidence: bc_CreateCreatureList override 16: L194 scr_Roll(50) @0x14069aa38; L196 turnspeed = 1 (intset @0x14069aa59) / L200 turnspeed = 1999999999999098 (@0x14069aabb); write @0x14069ab19. L219 ds_grid_sort @0x14069b05d. bc_FixTurnSpeedTies @0x141139320 has no call site in the exe (no E8 caller; only its script-table entry @0x149969450, which nothing references), and its own L39 rebuild via bc_CreateCreatureList would recompute turnspeed from scratch anyway. Fix sketch: Give each creature a random sort key in the Hymn branch: redirect the two value setters in bc_CreateCreatureList (intset call @0x14069aa59, L196, and the 0x1402f41e0 call @0x14069aabb, L200) to one C hook that stores a uniform random real in (2, 1999999999999098) into the same local. All creatures then sort into a uniform random order (real-valued ties are practically impossible), still below the explicit TOP overrides that run later (rune 23). Reasoning: The text claims a random shuffle; the code is a 50/50 split with deterministic order inside each half because ties are left to the sort (the coin-flip tie-breaker is dead code). Claimed result differs from coded result, so ruling 1 applies. App note (unpatched game): Hymn of Panic splits creatures by a coin flip into a top group and a bottom group, but the order inside each group is fixed, so it is not a true random shuffle. Source: errata round 2 (2026-10-26). | Patched (batch K, 2026-10-26): the two sort-key setters of bc_CreateCreatureList's Hymn branch (L196 int set 1 @0x14069aa59, L200 int64 set 1999999999999098 @0x14069aabb) -> hook_k_su0183_key: the key becomes 2 + irandom_range(0, 999999999999999) from the game's RNG (exact as a real; ties practically impossible), so the ds_grid sort gives a uniform random order. Explicit 'start at the top' keys set later still win. The branch runs whenever the game rebuilds the list with Hymn in play, as before.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Hymn of Panic (trait)",
+    "intended": "At the start of battle, the Timeline is shuffled randomly.",
+    "actual": "In the unpatched game, each creature went by a coin flip into a top or a bottom group, and the order inside each group was always the same, so most orders could never happen.",
+    "fix": "Now the Timeline is shuffled into a truly random order.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

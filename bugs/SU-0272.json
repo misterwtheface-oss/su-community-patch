@@ -1,0 +1,43 @@
+{
+  "id": "SU-0272",
+  "aliases": [
+    "B4#39"
+  ],
+  "title": "Giftwrapped Army",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Giftwrapped Army",
+      "runtime_id": 1298,
+      "text_key": "L_TRAIT_DESC_GIFTWRAPPEDARMY"
+    }
+  ],
+  "problem": "Each roll can pick a buff the Mimic already has, so it often ends up with fewer buffs than there are Mimics on the side: a repeat just lands on the buff it already has. The text promises one buff per Mimic. The game's other random-buff effects pass the creature receiving the buff, so buffs it already has are skipped; this one passes 'no creature'.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0272",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B4#39"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: At the start of battle, your {RACE_Mimic} creatures gain a random buff for each {RACE_Mimic} fighting on your side. This trait does not stack. Evidence: bc_StartupBuffsDebuffs L1000 gate scr_AnyAllyHasPassive(1298) @0x1416a593a; L1003 bc_CountRace @0x1416a5d09; L1005 argument -1 (lea 0x1498f7290 = -1.0 @0x1416a5e97, copied by call 0x14028c4a0 @0x1416a5ea1) -> bc_GetRandomBuff @0x1416a5f08; L1006 scr_CritAddCondition @0x1416a639a. bc_GetRandomBuff L18-L22 re-picks while the target already has the buff, but only when its argument is not -1. Fix sketch: Pass the Mimic instead of -1. Redirect the RValue copy at 0x1416a5ea1 to a hook that writes global.crits[i] into the argument slot [rsp+0x140], where i is the loop index used at L1006 (read with the same varget as @0x1416a6020). Reasoning: 'A random buff for each Mimic' promises a count, and repeats quietly reduce it. The game's own usual pattern (bc_GetRandomBuff given the receiver) already avoids repeats, so the fix is one argument. App note (unpatched game): Giftwrapped Army can give a Mimic the same buff more than once, so it may end up with fewer buffs than there are Mimics. Source: errata round 2 (2026-10-26). | Patch (batch L): bc_StartupBuffsDebuffs L1005 bc_GetRandomBuff(-1) @0x1416a5f08 goes to a hook that passes global.crits[i] (i = the loop index at [rsp+0x48], the one the L1006 add uses); bc_GetRandomBuff then re-picks while the creature already has the buff (up to 50 tries).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Giftwrapped Army (trait)",
+    "intended": "At the start of battle, your Mimic creatures gain a random buff for each Mimic fighting on your side.",
+    "actual": "In the unpatched game, a roll could land on a buff the Mimic already had, so it often ended up with fewer buffs than there are Mimics.",
+    "fix": "Now each roll skips buffs the Mimic already has, as the game's other random-buff effects do.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

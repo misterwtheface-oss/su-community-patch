@@ -1,0 +1,35 @@
+{
+  "id": "SU-0306",
+  "aliases": [
+    "B6#25"
+  ],
+  "title": "Skyttels",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Skyttels",
+      "runtime_id": 1048,
+      "text_key": "L_TRAIT_DESC_SKYTTELS"
+    }
+  ],
+  "problem": "The copies are full copies: all three property (enchantment) slots and the tier are copied, then the copy is marked temporary and free. Ultimate gems are not copied, which matches the Codex rule that Ultimate spells are exclusive to Avatar creatures. Sealed or empty gems would be copied too (rare at battle start).",
+  "category": "not-a-bug",
+  "confidence": "code-certain",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "community:B6#25"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: At the start of battle, this creature gains copies of your other creatures' permanent Spell Gems. This trait does not work on creatures that also have this trait. Evidence: bc_StartupGems L1649-L1667: allies @0x141709d3d, skip holders L1653 @0x141709f7f, bc_GetSpellGems @0x14170a1c9, temp == false L1657, inv_CreateSpellGem @0x14170a4a9, properties_type[1..3] copy loop @0x14170a633 (index 0 = slot count stays at the new gem's default 3), tier @0x14170a6f0, temp = true L1664, free = true L1665, extragems append L1666-L1667. Reasoning: \"Copies\" includes their properties; nothing in the text says enchantments are stripped. Ultimates are left out in line with the Codex. App note (unpatched game): Skyttels' copies keep the original gems' enchantments and tier. Source: errata round 2 (2026-10-26).",
+  "reason": "works as its text says"
+}

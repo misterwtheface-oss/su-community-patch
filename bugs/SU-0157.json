@@ -1,0 +1,35 @@
+{
+  "id": "SU-0157",
+  "aliases": [
+    "B6#38"
+  ],
+  "title": "Touch of Red (664)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Touch of Red",
+      "runtime_id": 664,
+      "text_key": "L_TRAIT_DESC_TOUCHOFRED"
+    }
+  ],
+  "problem": "Each hit adds 25% × (hits − 1) of the base damage to the attack's bonus pool. The pool is only cleared before the first hit, so hit k gets k times that bonus. The community numbers are exact. The text implies the same bonus on every hit.",
+  "category": "not-a-bug",
+  "confidence": "high",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "community:B6#38"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: First hit gets +25% per extra attack, each later hit adds the same again (320 base, +2 attacks: 480 / 640 / 800). Evidence: bc_CreatureAttack L1253 @0x1406d7c00: (hits − 1) × 0.25, pool += @0x1406d801b; pool cleared only at L10 / L88. Fix sketch: H: clear the pool at the start of each hit. This changes every multi-hit \"more damage\" term, so it is a balance decision. Triage 2026-10-26: merged into SU-0038.",
+  "reason": "duplicate of SU-0038 (multi-hit bonus pile-up), which is now fixed (normalized, user ruling 2026-10-26); Touch of Red's own term is SU-0176."
+}

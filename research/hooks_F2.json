@@ -1,0 +1,192 @@
+{
+  "patches": [
+    {
+      "id": "SU-0108",
+      "bug": "SU-0108",
+      "default": 1,
+      "title": "True Ending: all on-death effects are ignored except Born Again (code still ran everything above its exit at L163)",
+      "edits": [
+        {
+          "va": "0x1488bf980",
+          "expect": "000000000000",
+          "write": "ff259a8b6101",
+          "note": "trampoline -> hook_su0108_l14 (cave code)"
+        },
+        {
+          "va": "0x141463ea2",
+          "expect": "7a83e2fe",
+          "write": "daba4507",
+          "note": "bc_OnDeath L14: temp release -> True Ending decision (hook)"
+        },
+        {
+          "va": "0x1488bf990",
+          "expect": "000000000000000000000000000000000000000000000000000000000000",
+          "write": "803dc98b6101007510c78424904e010010000000e90845baf8e9f282baf8",
+          "note": "True Ending skip L16 -> L80 (cave code)"
+        },
+        {
+          "va": "0x141463ea6",
+          "expect": "c78424904e010010000000",
+          "write": "e9e5ba4507909090909090",
+          "note": "bc_OnDeath: detour at 0x141463ea6 (True Ending: L16 -> L80)"
+        },
+        {
+          "va": "0x1488bf9c0",
+          "expect": "000000000000000000000000000000000000000000000000000000000000",
+          "write": "803d998b6101007510c78424904e010054000000e9b284baf8e9758ebaf8",
+          "note": "True Ending skip L84 -> L90 Born Again (cave code)"
+        },
+        {
+          "va": "0x141467e80",
+          "expect": "c78424904e010054000000",
+          "write": "e93b7b4507909090909090",
+          "note": "bc_OnDeath: detour at 0x141467e80 (True Ending: L84 -> L90 Born Again)"
+        },
+        {
+          "va": "0x1488bfb40",
+          "expect": "000000000000000000000000000000000000000000000000000000000000",
+          "write": "803d198a6101007510c78424904e01005f000000e91297baf8e94908bbf8",
+          "note": "True Ending skip L95 -> L162 exit (cave code)"
+        },
+        {
+          "va": "0x141469260",
+          "expect": "c78424904e01005f000000",
+          "write": "e9db684507909090909090",
+          "note": "bc_OnDeath: detour at 0x141469260 (True Ending: L95 -> L162 exit)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8520",
+          "symbol": "hook_su0108_l14"
+        }
+      ]
+    },
+    {
+      "id": "SU-0024",
+      "bug": "SU-0024",
+      "default": 1,
+      "title": "Demonologist with anointed Undying Loyalty / Eternal Guardian: minions (UL) and buffs (EG) persist through death as their texts say, demon minions stay; UL + EG together keep both",
+      "edits": [
+        {
+          "va": "0x1488bfb70",
+          "expect": "0000000000000000000000000000000000000000",
+          "write": "4c892df98961014c893dfa896101ff25a4896101",
+          "note": "trampoline (saves self=r13 / other=r15) -> hook_su0024_demon (cave code)"
+        },
+        {
+          "va": "0x1488bfb90",
+          "expect": "000000000000",
+          "write": "ff259a896101",
+          "note": "trampoline -> hook_su0024_isbuff (cave code)"
+        },
+        {
+          "va": "0x1488bfb98",
+          "expect": "000000000000",
+          "write": "ff259a896101",
+          "note": "trampoline -> hook_su0024_isminion (cave code)"
+        },
+        {
+          "va": "0x1412a445f",
+          "expect": "0d206006",
+          "write": "0db76107",
+          "note": "bc_HandleDeath L91: playertype == 35 compare -> Demonologist step only without UL / EG"
+        },
+        {
+          "va": "0x1412a4f6e",
+          "expect": "defccf00",
+          "write": "1eac6107",
+          "note": "bc_HandleDeath L110 (Undying Loyalty step): IsBuff -> false when Eternal Guardian also applies"
+        },
+        {
+          "va": "0x1412a53c5",
+          "expect": "4702d000",
+          "write": "cfa76107",
+          "note": "bc_HandleDeath L120 (Eternal Guardian step): IsMinion -> false for demon minions 56-62 for a Demonologist"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8528",
+          "symbol": "hook_su0024_demon"
+        },
+        {
+          "slot_va": "0x149ed8530",
+          "symbol": "hook_su0024_isbuff"
+        },
+        {
+          "slot_va": "0x149ed8538",
+          "symbol": "hook_su0024_isminion"
+        }
+      ]
+    },
+    {
+      "id": "SU-0046",
+      "bug": "SU-0046",
+      "default": 1,
+      "title": "Master of Rift Dancers on deaths: the extra on-death pass is Dark Dance activating 1 additional time, so it needs Dark Dance on the master's side (code: any all-Rift-Dancer side with the Master)",
+      "edits": [
+        {
+          "va": "0x1488bfba0",
+          "expect": "000000000000",
+          "write": "ff259a896101",
+          "note": "trampoline -> hook_su0046_enemy (cave code)"
+        },
+        {
+          "va": "0x1488bfba8",
+          "expect": "000000000000",
+          "write": "ff259a896101",
+          "note": "trampoline -> hook_su0046_ally (cave code)"
+        },
+        {
+          "va": "0x1410a6932",
+          "expect": "6ab455ff",
+          "write": "6a928107",
+          "note": "bc_ExecuteEvents L448 (death repeats): enemy side all Rift Dancers -> and holds Dark Dance"
+        },
+        {
+          "va": "0x1410a6c8c",
+          "expect": "10b155ff",
+          "write": "188f8107",
+          "note": "bc_ExecuteEvents L448 (death repeats): your side all Rift Dancers -> and holds Dark Dance"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8540",
+          "symbol": "hook_su0046_enemy"
+        },
+        {
+          "slot_va": "0x149ed8548",
+          "symbol": "hook_su0046_ally"
+        }
+      ]
+    },
+    {
+      "id": "SU-0025",
+      "bug": "SU-0025",
+      "default": 1,
+      "title": "Instant kills: on-death effects also repeat for a Fable rank 80 bearer and Master of Rift Dancers, as damage deaths do",
+      "edits": [
+        {
+          "va": "0x1488bfbb0",
+          "expect": "000000000000",
+          "write": "ff259a896101",
+          "note": "trampoline -> hook_su0025_ohko (cave code)"
+        },
+        {
+          "va": "0x1410c78e5",
+          "expect": "d7b43900",
+          "write": "c7827f07",
+          "note": "bc_ExecuteEvents L986 (instant kill, base on-death pass) -> + Fable 80 / Master of Rift Dancers passes"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8550",
+          "symbol": "hook_su0025_ohko"
+        }
+      ]
+    }
+  ]
+}

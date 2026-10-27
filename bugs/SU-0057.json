@@ -1,0 +1,45 @@
+{
+  "id": "SU-0057",
+  "aliases": [
+    "B20",
+    "B4#22"
+  ],
+  "title": "Details Matter",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Details Matter",
+      "runtime_id": 1167,
+      "text_key": "L_TRAIT_DESC_DETAILSMATTER"
+    }
+  ],
+  "problem": "Halves every hit, even weak ones, and blocks the attacker's Capitalize / Judgment Day. Community: \"just 50% DR\".",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0057",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§7",
+    "community:B4#22"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test:  Fix: H | 2026-10-26 realign (text is the contract): text claims \"always take damage as if they are strong against their enemy's class\". H: Details Matter (bc_EventDamage L4005-L4008): set the class result to 'defender strong' (x0.5 of the neutral hit) instead of halving every hit and zeroing strength (which also blocks Capitalize / Judgment Day). vs bugged: mixed. | In-game test: Details Matter team takes a hit the attacker is weak on: damage is not quartered (ends at half of a neutral hit, same as strong-on-them hits).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Details Matter (trait)",
+    "intended": "Your creatures always take damage as if they were strong against the attacker's class.",
+    "actual": "The game halved whatever the class matchup gave: hits from attackers strong against your creature ended at normal damage, hits it already resisted ended at a quarter, and it blocked effects such as Capitalize.",
+    "fix": "Now every hit on your creatures is treated as a 'strong against' hit: half of a neutral hit.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

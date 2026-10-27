@@ -1,0 +1,44 @@
+{
+  "id": "SU-0138",
+  "aliases": [
+    "B3#3"
+  ],
+  "title": "Blindside",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Blindside",
+      "runtime_id": 353,
+      "key": "BLINDSIDE",
+      "text_key": "L_SD_BLINDSIDE"
+    }
+  ],
+  "problem": "Damage = caster Speed × Small (90%), with the target's Defense ignored. There is no Intelligence part. The text says nothing about Speed, so it reads as Intelligence.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0138",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#3"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Damage is 100% Speed-based (90% Speed + 10% casting stat). Evidence: bc_SpellDamage case L1466-L1467 @0x141603e60 (Small tier, Defense set to 0); stat audit code_stat = SPD. Fix sketch: T: add \"based on the caster's Speed\". Or S: point the case at the Int local ([rsp+0xb7d8]) instead of Speed (0xb7f8) Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. Damage scales off Speed. 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"Target takes a small amount of damage\". Fix: S: bc_SpellDamage L1466 Blindside case, lea rcx,[rsp+0xb7f8] (caster Speed) @0x141604031 -> [rsp+0xb7d8] (the casting-stat local 64 other Small cases use): byte @0x141604035 f8 -> d8. vs bugged: depends on the caster (Speed builds weaker, Intelligence builds stronger). 2026-10-26: built as byte patch SU-0138 (verified against the baseline exe; not yet run in game).",
+  "release_notes": {
+    "section": "Spells",
+    "effect": "Blindside (spell)",
+    "intended": "The target takes a small amount of damage that ignores its Defense.",
+    "actual": "In the unpatched game, the damage was based on the caster's Speed.",
+    "fix": "Now it is based on the caster's Intelligence, like other spells.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

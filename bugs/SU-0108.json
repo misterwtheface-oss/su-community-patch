@@ -1,0 +1,44 @@
+{
+  "id": "SU-0108",
+  "aliases": [
+    "D:True Ending"
+  ],
+  "title": "True Ending",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "True Ending",
+      "runtime_id": 448,
+      "key": "TRUEENDING",
+      "text_key": "L_P_TRUEENDING_DESC"
+    }
+  ],
+  "problem": "exception list longer than its text",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0108",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:TRIAGE D"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": " | 2026-10-26 realign (text is the contract): text claims \"Effects that activate when creatures die are ignored. This perk does not affect Born Again\". Fix: H: True Ending: only Born Again may still run; the code lets everything above bc_OnDeath L163 run (see EFFECT_ORDER_FINDINGS on-death item 4). vs bugged: stronger. 2026-10-26 hook batch B2: left needs-hook. True Ending must skip every on-death effect except Born Again; the code lets everything above bc_OnDeath L163 run. A fix means moving the perk's early exit above those blocks (reordering bc_OnDeath), which a call-site hook can't do; needs a function-entry design. Round-3 F2 2026-10-26: built. Hook at bc_OnDeath L14 decides 'True Ending applies' exactly as L80 + L162 (scr_PerkLevel(448) > 0 and not scr_BattleType(arg) == 1); frameless detours jump L16 -> L80 (the game still sets its boss flag), L84 -> L90 (Born Again runs), L95 -> L162 (the game's own True Ending exit). In-game test: with True Ending, kill creatures that have on-death effects in the early blocks (Don't Touch My Garbage, Master of Robodomis, Epigraphy flag, Ultimate Ember / Somnus resurrection, Breath of Death, Angry Army, Croak of the King, Traumatism, Hate And Other Triumphs): none of them fire; Born Again still resurrects. In a boss battle (battle type 1) everything works as before.",
+  "release_notes": {
+    "section": "Perks",
+    "effect": "True Ending (perk)",
+    "intended": "Effects that activate when creatures die are ignored, except Born Again (not in boss battles).",
+    "actual": "In the unpatched game, a number of on-death effects still ran.",
+    "fix": "Now every on-death effect except Born Again is ignored; boss battles are unchanged.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

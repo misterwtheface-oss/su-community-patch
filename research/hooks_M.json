@@ -1,0 +1,514 @@
+{
+  "patches": [
+    {
+      "id": "SU-0301",
+      "bug": "SU-0301",
+      "default": 1,
+      "title": "Roulette: a heal roll ends only that hit, so the creature's remaining extra attacks still happen (code: the heal roll ended the whole attack)",
+      "edits": [
+        {
+          "va": "0x1406f09b2",
+          "expect": "e9c68b0000",
+          "write": "e9b1fbfdff",
+          "note": "bc_CreatureAttack L1776 Roulette heal: continue with the next hit (hit-loop continue block) instead of returning"
+        }
+      ],
+      "runtime_hooks": [],
+      "reserves": []
+    },
+    {
+      "id": "SU-0286",
+      "bug": "SU-0286",
+      "default": 1,
+      "title": "Master of Hounds: only Hounds' Dire Wolves use the highest stat (code: every Dire Wolf owner on the holder's side)",
+      "edits": [
+        {
+          "va": "0x149856700",
+          "expect": "000000000000",
+          "write": "ff255a1b6800",
+          "note": "trampoline -> hook_m_su0286_enemy (cave code)"
+        },
+        {
+          "va": "0x149856706",
+          "expect": "000000000000",
+          "write": "ff255c1b6800",
+          "note": "trampoline -> hook_m_su0286_ally (cave code)"
+        },
+        {
+          "va": "0x1413271b8",
+          "expect": "1441be00",
+          "write": "44f55208",
+          "note": "bc_OnAttack L1067 enemy-side gate (1447) -> hook: the owner must be a Hound"
+        },
+        {
+          "va": "0x14132738d",
+          "expect": "0f35be00",
+          "write": "75f35208",
+          "note": "bc_OnAttack L1067 your-side gate (1447) -> hook: the owner must be a Hound"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8260",
+          "symbol": "hook_m_su0286_enemy"
+        },
+        {
+          "slot_va": "0x149ed8268",
+          "symbol": "hook_m_su0286_ally"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x149856700",
+          "end": "0x149856705",
+          "what": "trampoline -> hook_m_su0286_enemy"
+        },
+        {
+          "start": "0x149856706",
+          "end": "0x14985670b",
+          "what": "trampoline -> hook_m_su0286_ally"
+        },
+        {
+          "start": "0x149ed8260",
+          "end": "0x149ed8267",
+          "what": "hook pointer hook_m_su0286_enemy"
+        },
+        {
+          "start": "0x149ed8268",
+          "end": "0x149ed826f",
+          "what": "hook pointer hook_m_su0286_ally"
+        }
+      ]
+    },
+    {
+      "id": "SU-0243",
+      "bug": "SU-0243",
+      "default": 1,
+      "title": "Teleportation Shrine: after paying 1,000 Power the Realm Type choice travels (code: the cost was checked again after paying and failed below 2,000)",
+      "edits": [
+        {
+          "va": "0x14985670c",
+          "expect": "000000000000",
+          "write": "ff255e1b6800",
+          "note": "trampoline -> hook_m_su0243_cost (cave code)"
+        },
+        {
+          "va": "0x147448939",
+          "expect": "b3bee7f8",
+          "write": "cfdd4002",
+          "note": "obj_realmselector KeyPress_69 L52 ppower - 1000 -> hook: no second affordability check once paid"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8270",
+          "symbol": "hook_m_su0243_cost"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14985670c",
+          "end": "0x149856711",
+          "what": "trampoline -> hook_m_su0243_cost"
+        },
+        {
+          "start": "0x149ed8270",
+          "end": "0x149ed8277",
+          "what": "hook pointer hook_m_su0243_cost"
+        }
+      ]
+    },
+    {
+      "id": "SU-0268",
+      "bug": "SU-0268",
+      "default": 1,
+      "title": "Master of Wights + Forbearance: the Wight's 100% Health is the base the resurrection bonuses add to (code: Master of Wights overwrote the bonus with 100%)",
+      "edits": [
+        {
+          "va": "0x149856712",
+          "expect": "000000000000",
+          "write": "ff25601b6800",
+          "note": "trampoline -> hook_m_su0268_diminish (cave code)"
+        },
+        {
+          "va": "0x149856718",
+          "expect": "000000000000",
+          "write": "ff25621b6800",
+          "note": "trampoline -> hook_m_su0268_race (cave code)"
+        },
+        {
+          "va": "0x141083cd2",
+          "expect": "ead6fe04",
+          "write": "3c2a7d08",
+          "note": "bc_EventResurrect L147 scr_Diminish(amount, bonus) -> hook: Wight base = Max Health"
+        },
+        {
+          "va": "0x141083f0f",
+          "expect": "bd8920ff",
+          "write": "05287d08",
+          "note": "bc_EventResurrect L151 race == Wight -> hook: false once L147 used the Wight base"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8278",
+          "symbol": "hook_m_su0268_diminish"
+        },
+        {
+          "slot_va": "0x149ed8280",
+          "symbol": "hook_m_su0268_race"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x149856712",
+          "end": "0x149856717",
+          "what": "trampoline -> hook_m_su0268_diminish"
+        },
+        {
+          "start": "0x149856718",
+          "end": "0x14985671d",
+          "what": "trampoline -> hook_m_su0268_race"
+        },
+        {
+          "start": "0x149ed8278",
+          "end": "0x149ed827f",
+          "what": "hook pointer hook_m_su0268_diminish"
+        },
+        {
+          "start": "0x149ed8280",
+          "end": "0x149ed8287",
+          "what": "hook pointer hook_m_su0268_race"
+        },
+        {
+          "start": "0x149ed8298",
+          "end": "0x149ed829b",
+          "what": "SU-0268 Wight base used"
+        }
+      ]
+    },
+    {
+      "id": "SU-0200",
+      "bug": "SU-0200",
+      "default": 1,
+      "group": "heavy",
+      "title": "Disarmed: the Artifact's trait, its Nether Stone's traits and the Nether Stone's trick properties are lost too (code: only stats, trick slots and spells were)",
+      "edits": [
+        {
+          "va": "0x14985671e",
+          "expect": "000000000000",
+          "write": "ff25641b6800",
+          "note": "trampoline -> hook_m_su0200_artifact (cave code)"
+        },
+        {
+          "va": "0x149856724",
+          "expect": "000000000000",
+          "write": "ff25661b6800",
+          "note": "trampoline -> hook_m_su0200_nether (cave code)"
+        },
+        {
+          "va": "0x14202ce42",
+          "expect": "2aef8805",
+          "write": "d8988207",
+          "note": "scr_CritHasPassive L60 creature.artifact -> hook: none while Disarmed"
+        },
+        {
+          "va": "0x141ceffa4",
+          "expect": "28800a00",
+          "write": "7c67b607",
+          "note": "inv_ArtifactStatTotal L41 Nether Stone property -> hook: 0 for non-stat properties while Disarmed"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8288",
+          "symbol": "hook_m_su0200_artifact"
+        },
+        {
+          "slot_va": "0x149ed8290",
+          "symbol": "hook_m_su0200_nether"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14985671e",
+          "end": "0x149856723",
+          "what": "trampoline -> hook_m_su0200_artifact"
+        },
+        {
+          "start": "0x149856724",
+          "end": "0x149856729",
+          "what": "trampoline -> hook_m_su0200_nether"
+        },
+        {
+          "start": "0x149ed8288",
+          "end": "0x149ed828f",
+          "what": "hook pointer hook_m_su0200_artifact"
+        },
+        {
+          "start": "0x149ed8290",
+          "end": "0x149ed8297",
+          "what": "hook pointer hook_m_su0200_nether"
+        }
+      ]
+    },
+    {
+      "id": "SU-0280",
+      "bug": "SU-0280",
+      "default": 1,
+      "group": "heavy",
+      "title": "Improbable Catapult: Avatar traits copied to enemies work for the enemy side (Prayer Position, Avenged Sevenfold, Firelord, Expanded Power, The End, Perfect Imperfection's damage parts, The Truth, The Black, I HATE YOU); code: your side only",
+      "edits": [
+        {
+          "va": "0x14985672a",
+          "expect": "000000000000",
+          "write": "ff25281b6800",
+          "note": "trampoline -> hook_m_su0280_any_ally (cave code)"
+        },
+        {
+          "va": "0x1406e760b",
+          "expect": "0f8469010000",
+          "write": "660f1f440000",
+          "note": "Firelord: the side test no longer restricts the trait to one side (holder side decided by the hook)"
+        },
+        {
+          "va": "0x1406e7767",
+          "expect": "35318201",
+          "write": "bfef1609",
+          "note": "Firelord: scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x140e1ca8b",
+          "expect": "0f8425020000",
+          "write": "660f1f440000",
+          "note": "Prayer Position (damage): the side test no longer restricts the trait to one side (holder side decided by the hook)"
+        },
+        {
+          "va": "0x140e1cca3",
+          "expect": "f9db0e01",
+          "write": "839aa308",
+          "note": "Prayer Position (damage): scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x140b07bfe",
+          "expect": "0f8469010000",
+          "write": "660f1f440000",
+          "note": "Prayer Position (end of turn): the side test no longer restricts the trait to one side (holder side decided by the hook)"
+        },
+        {
+          "va": "0x140b07d5a",
+          "expect": "422b4001",
+          "write": "cce9d408",
+          "note": "Prayer Position (end of turn): scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x140e96880",
+          "expect": "0f84fb010000",
+          "write": "660f1f440000",
+          "note": "Avenged Sevenfold: the side test no longer restricts the trait to one side (holder side decided by the hook)"
+        },
+        {
+          "va": "0x140e969e2",
+          "expect": "ba3e0701",
+          "write": "44fd9b08",
+          "note": "Avenged Sevenfold: scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x1415afdab",
+          "expect": "0f846f010000",
+          "write": "660f1f440000",
+          "note": "Expanded Power: the side test no longer restricts the trait to one side (holder side decided by the hook)"
+        },
+        {
+          "va": "0x1415aff0d",
+          "expect": "8fa99500",
+          "write": "19682a08",
+          "note": "Expanded Power: scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x140b069db",
+          "expect": "0f8469010000",
+          "write": "660f1f440000",
+          "note": "The End (gate): the side test no longer restricts the trait to one side (holder side decided by the hook)"
+        },
+        {
+          "va": "0x140b06b37",
+          "expect": "653d4001",
+          "write": "effbd408",
+          "note": "The End (gate): scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x140b0710c",
+          "expect": "90374001",
+          "write": "1af6d408",
+          "note": "The End (attacker): scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x140b072a0",
+          "expect": "fc354001",
+          "write": "86f4d408",
+          "note": "The End (highest stat): scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x140e199a9",
+          "expect": "0f846f010000",
+          "write": "660f1f440000",
+          "note": "Perfect Imperfection (taken): the side test no longer restricts the trait to one side (holder side decided by the hook)"
+        },
+        {
+          "va": "0x140e19b0b",
+          "expect": "910d0f01",
+          "write": "1bcca308",
+          "note": "Perfect Imperfection (taken): scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x140ea4e8b",
+          "expect": "0f846f010000",
+          "write": "660f1f440000",
+          "note": "Perfect Imperfection (dealt): the side test no longer restricts the trait to one side (holder side decided by the hook)"
+        },
+        {
+          "va": "0x140ea4fed",
+          "expect": "af580601",
+          "write": "39179b08",
+          "note": "Perfect Imperfection (dealt): scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x14145c5ae",
+          "expect": "0f848b000000",
+          "write": "660f1f440000",
+          "note": "The Truth (cast): the side test no longer restricts the trait to one side (holder side decided by the hook)"
+        },
+        {
+          "va": "0x14145c616",
+          "expect": "86e2aa00",
+          "write": "10a13f08",
+          "note": "The Truth (cast): scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x141536b52",
+          "expect": "0f848a000000",
+          "write": "660f1f440000",
+          "note": "The Truth (defend): the side test no longer restricts the trait to one side (holder side decided by the hook)"
+        },
+        {
+          "va": "0x141536bb9",
+          "expect": "e33c9d00",
+          "write": "6dfb3108",
+          "note": "The Truth (defend): scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x14156b8fb",
+          "expect": "0f8489000000",
+          "write": "660f1f440000",
+          "note": "The Truth (provoke): the side test no longer restricts the trait to one side (holder side decided by the hook)"
+        },
+        {
+          "va": "0x14156b961",
+          "expect": "3bef9900",
+          "write": "c5ad2e08",
+          "note": "The Truth (provoke): scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x140c5dc78",
+          "expect": "0f846f010000",
+          "write": "660f1f440000",
+          "note": "The Truth (start of turn): the side test no longer restricts the trait to one side (holder side decided by the hook)"
+        },
+        {
+          "va": "0x140c5ddda",
+          "expect": "c2ca2a01",
+          "write": "4c89bf08",
+          "note": "The Truth (start of turn): scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x1413b0ead",
+          "expect": "0f846f010000",
+          "write": "660f1f440000",
+          "note": "The Truth (attack): the side test no longer restricts the trait to one side (holder side decided by the hook)"
+        },
+        {
+          "va": "0x1413b100f",
+          "expect": "8d98b500",
+          "write": "17574a08",
+          "note": "The Truth (attack): scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x141d9a7cf",
+          "expect": "0f84b7000000",
+          "write": "660f1f440000",
+          "note": "The Truth (Nether Stone stats): the side test no longer restricts the trait to one side (holder side decided by the hook)"
+        },
+        {
+          "va": "0x141d9a82a",
+          "expect": "72001700",
+          "write": "fcbeab07",
+          "note": "The Truth (Nether Stone stats): scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x1412b8c51",
+          "expect": "4b1cc500",
+          "write": "d5da5908",
+          "note": "The Black (gate): scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x1412b8cf6",
+          "expect": "a61bc500",
+          "write": "30da5908",
+          "note": "The Black (holder): scr_AnyAllyHasPassive -> hook (holder side from the subject)"
+        },
+        {
+          "va": "0x149856730",
+          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
+          "write": "803d661b6800007413c6055d1b680000c605551b680001e91925a6f7c7442470",
+          "note": "SU-0280 The Black: after your side's pass, run the block again for the enemy holder (cave code)"
+        },
+        {
+          "va": "0x149856750",
+          "expect": "000000000000000000",
+          "write": "4c020000e9962ea6f7",
+          "note": "SU-0280 The Black: after your side's pass, run the block again for the enemy holder (cave code)"
+        },
+        {
+          "va": "0x1412b95e7",
+          "expect": "c74424704c020000",
+          "write": "e944d15908909090",
+          "note": "bc_MaintainPermanentEffects L588 (end of the The Black block) -> second-pass stub"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8258",
+          "symbol": "hook_m_su0280_any_ally"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14985672a",
+          "end": "0x14985672f",
+          "what": "trampoline -> hook_m_su0280_any_ally"
+        },
+        {
+          "start": "0x149856730",
+          "end": "0x149856758",
+          "what": "SU-0280 The Black second-pass stub"
+        },
+        {
+          "start": "0x149ed8258",
+          "end": "0x149ed825f",
+          "what": "hook pointer hook_m_su0280_any_ally"
+        },
+        {
+          "start": "0x149ed829c",
+          "end": "0x149ed829c",
+          "what": "SU-0280 The Black: holder side"
+        },
+        {
+          "start": "0x149ed829d",
+          "end": "0x149ed829d",
+          "what": "SU-0280 The Black: enemy pass pending"
+        }
+      ]
+    }
+  ]
+}

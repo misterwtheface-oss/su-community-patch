@@ -1,0 +1,53 @@
+{
+  "id": "SU-0191",
+  "aliases": [
+    "B1#31"
+  ],
+  "title": "Party-wide spells: hidden x0.25",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Party-wide spells: hidden x0.25",
+      "text_key": "L_CODD_SPELLGEMS_SPELL_POTENCY"
+    }
+  ],
+  "problem": "Spells whose target type is 'all enemies', 'all allies' or 'all creatures' have their final damage, healing or stat change multiplied by 0.25 (Nine Meteors exempt for damage). The Codex gives fixed Intelligence percentages per potency word, and party-wide spell texts use the same words ('Enemies take a moderate amount of damage'), so a party-wide 'moderate' spell delivers 27.5% instead of the stated 110%. No text mentions the reduction. NOTE: applying ruling 1 literally quadruples every party-wide spell for both sides; please confirm, or choose the text alternative.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-text",
+  "status": "patched",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#31"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "User 2026-10-26: add one Codex line stating the party-wide x0.25 (no code change). Text: \"Spell Potency\" refers to the strength of a spell's damage, healing, and stat changes. ... Below is a list of how much {STAT_intelligence} is used for each tier of potency. ... ... Evidence: bc_SpellDamage L2403 x0.25 (lea @0x141642733 -> 0x1498f5f20; 1.0 at 0x1498f5f70); bc_SpellHealing L778 (lea @0x1416514ef -> 0x1498f65b0; 1.0 at 0x1498f6650); bc_SpellStat L964 (lea @0x14165f564 -> 0x1498f6b50; 1.0 at 0x1498f6ce0); selected by spell record field 5 = 1/2/3. Fix sketch: Per ruling 1: repoint the three 0.25 loads to the 1.0 constant already used one line earlier in each function: @0x141642733 rel32 -> 0x1498f5f70, @0x1416514ef -> 0x1498f6650, @0x14165f564 -> 0x1498f6ce0. Text alternative if the user keeps the design: append to L_CODD_SPELLGEMS_SPELL_POTENCY \"Spells that affect a whole party use 25% of this potency.\" Reasoning: The Codex states numbers per potency word and party-wide spells use those words, so the code contradicts a numeric text claim. Because the change is game-wide, I flag it for an explicit user decision between the literal code fix and the one-line Codex addition. App note (unpatched game): Spells that hit or affect a whole party only have 25% of the potency the Codex lists for their potency word. Source: errata round 2 (2026-10-26). | 2026-10-26: text correction shipped via localization_override (loader text module).",
+  "text_fix": [
+    {
+      "file": "codex.csv",
+      "key": "L_CODD_SPELLGEMS_SPELL_POTENCY",
+      "en_find": "is used for each tier of potency.",
+      "en_proposed": "is used for each tier of potency. Spells that affect an entire party use 25% of these amounts.",
+      "en_current_sha256": "2c39650a1c2ac1b4ef4cbc917c4056c616f19e89abbfe069dc9c75f54dd74601"
+    }
+  ],
+  "release_notes": {
+    "section": "Interface text",
+    "effect": "Codex: Spell Potency",
+    "intended": "The Codex lists how much Intelligence each potency tier uses.",
+    "actual": "In the unpatched game, spells that hit or affect a whole party quietly used only 25% of the listed amounts.",
+    "fix": "Now the Codex states that party-wide spells use 25% of these amounts (the game's behaviour is unchanged).",
+    "impact": "neutral",
+    "flags": [
+      "text"
+    ]
+  }
+}

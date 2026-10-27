@@ -1,0 +1,44 @@
+{
+  "id": "SU-0140",
+  "aliases": [
+    "B3#17"
+  ],
+  "title": "Internal Combustion",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Internal Combustion",
+      "runtime_id": 597,
+      "key": "INTERNALCOMBUSTION",
+      "text_key": "L_SD_INTERNALCOMBUSTION"
+    }
+  ],
+  "problem": "When the hit kills, each other enemy gets a new spell-damage event of 25% of the final hit (after all its bonuses and any crit). That new event goes through the whole damage pipeline again: bonuses apply a second time and it can crit again.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0140",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#17"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: The on-kill splash is far too strong and can crit. Evidence: bc_ExecuteEvents L423-L443: amount × 0.25 @0x1410a57db, bc_EventDamage @0x1410a5a85 with damage type 1 (spell). Fix sketch: H: deal the 25% as a fixed hit that skips modifiers. Stopgap K: lower the 0.25 Triage 2026-10-26: Splash = 25% of the final hit, then re-run through the damage pipeline (bonuses apply twice, can crit). Hook: deal the 25% as a fixed hit. | Batch S: left needs-hook. No verified path through bc_EventDamage for a fixed, modifier-free splash; overlaps batch C's damage-engine work. Round-2 C2 2026-10-26: still needs-hook; NEEDS A USER DECISION. Text: 'all other enemies take 25% of this damage'. bc_EventDamage has no modifier-free path (BYPASS only skips Shell / Barrier; '-4444' just clears the label), so the 25% splash (bc_ExecuteEvents L431) always re-runs the pipeline. Options: (a) pass source -1 for the splash: removes the attacker's bonuses and the crit re-roll, keeps the targets' own reductions, but loses kill credit for splash kills; (b) apply the 25% straight to Health (no reactions or on-damage effects); (c) leave as is. User ruling 2026-10-26: 25% of the damage dealt to the primary target splashes, the same as the Splashing buff; it requires the primary target to be killed by the spell and cannot chain into more explosions. Clarification: on-kill effects in general DO count for splash kills (the splash keeps the caster as source); only Internal Combustion's own on-kill clause must not re-trigger. Batch C3 2026-10-26: Splashing (bc_OnAttack L37-L99) = bc_EventDamage per adjacent enemy, 50% of the damage dealt, dtype -1 (indirect), own label, attacker as source. IC's splash (bc_ExecuteEvents L431) already used 25% of the dealt amount, the hit's source and no label (the on-kill check needs the '(Internal Combustion)' label, so splash kills can't chain); only its dtype was 1 (spell: spell bonuses and the crit roll ran again). Fix: dtype -> -1, Splashing's form. In-game test: kill a target with Internal Combustion: every other enemy takes about 25% of the damage the target took (minus their own reductions, like a Splashing hit), never a crit; a splash kill doesn't explode again, but the caster's own on-kill traits do fire for it.",
+  "release_notes": {
+    "section": "Spells",
+    "effect": "Internal Combustion (spell)",
+    "intended": "If the target is killed, all other enemies take 25% of the damage and are Burned.",
+    "actual": "In the unpatched game, the splash went through the spell bonuses again and could crit again.",
+    "fix": "Now the splash is 25% of the damage dealt, like Splashing: no second round of bonuses or crit, and it can't chain, but kills still count for the caster's on-kill effects.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

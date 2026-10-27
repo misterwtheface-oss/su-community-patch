@@ -1,0 +1,557 @@
+{
+  "patches": [
+    {
+      "id": "SU-0289",
+      "bug": "SU-0289",
+      "default": 1,
+      "group": "heavy",
+      "title": "Master of Spellmanes: gems that can't be sealed read as unsealed at once (code: sealed until the gem manager's next pass); also the read side of SU-0212",
+      "edits": [
+        {
+          "va": "0x14a343d00",
+          "expect": "000000000000",
+          "write": "ff254a4db9ff",
+          "note": "trampoline -> hook_l_su0289_sealed (cave code)"
+        },
+        {
+          "va": "0x14a343d06",
+          "expect": "000000000000",
+          "write": "ff254c4db9ff",
+          "note": "trampoline -> hook_l_su0289_step (cave code)"
+        },
+        {
+          "va": "0x140871b48",
+          "expect": "24a20407",
+          "write": "b421ad09",
+          "note": "bc_CreatureCast gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x1408f4db6",
+          "expect": "b66ffc06",
+          "write": "46efa409",
+          "note": "bc_CreatureCast gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x140b427af",
+          "expect": "bd95d706",
+          "write": "4d158009",
+          "note": "bc_CreatureStartOfTurn gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x140bb699f",
+          "expect": "cd53d006",
+          "write": "5dd37809",
+          "note": "bc_CreatureStartOfTurn gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x140df34b3",
+          "expect": "b988ac06",
+          "write": "49085509",
+          "note": "bc_EventDamage gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x140e1068a",
+          "expect": "e2b6aa06",
+          "write": "72365309",
+          "note": "bc_EventDamage gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x140e5ac85",
+          "expect": "e710a606",
+          "write": "77904e09",
+          "note": "bc_EventDamage gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x140e948bb",
+          "expect": "b174a206",
+          "write": "41f44a09",
+          "note": "bc_EventDamage gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x140eb228f",
+          "expect": "dd9aa006",
+          "write": "6d1a4909",
+          "note": "bc_EventDamage gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x140eb5f3f",
+          "expect": "2d5ea006",
+          "write": "bddd4809",
+          "note": "bc_EventDamage gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x141186429",
+          "expect": "43597306",
+          "write": "d3d81b09",
+          "note": "bc_GetSpellGems gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x141186b90",
+          "expect": "dc517306",
+          "write": "6cd11b09",
+          "note": "bc_GetSpellGems gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x1413840ee",
+          "expect": "7e7c5306",
+          "write": "0efcfb08",
+          "note": "bc_OnAttack gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x1414d427f",
+          "expect": "ed7a3e06",
+          "write": "7dfae608",
+          "note": "bc_OnDeath gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x1417ad155",
+          "expect": "17ec1006",
+          "write": "a76bb908",
+          "note": "crit_attack gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x1417bf824",
+          "expect": "48c50f06",
+          "write": "d844b808",
+          "note": "crit_defense gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x1417d3124",
+          "expect": "488c0e06",
+          "write": "d80bb708",
+          "note": "crit_intelligence gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x1417e5d4b",
+          "expect": "21600d06",
+          "write": "b1dfb508",
+          "note": "crit_speed gem.sealed read -> hook: a gem that cannot be Sealed reads as not sealed"
+        },
+        {
+          "va": "0x147646472",
+          "expect": "5a4e8cfa",
+          "write": "90d8cf02",
+          "note": "spell-gem manager Step L77 AnyEnemyHasPassive(1815) -> hook: same answer, refreshes the unseal rules"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a343d00",
+          "end": "0x14a343d05",
+          "what": "trampoline -> hook_l_su0289_sealed"
+        },
+        {
+          "start": "0x14a343d06",
+          "end": "0x14a343d0b",
+          "what": "trampoline -> hook_l_su0289_step"
+        },
+        {
+          "start": "0x149ed8a50",
+          "end": "0x149ed8a57",
+          "what": "hook pointer hook_l_su0289_sealed"
+        },
+        {
+          "start": "0x149ed8a58",
+          "end": "0x149ed8a5f",
+          "what": "hook pointer hook_l_su0289_step"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8a50",
+          "symbol": "hook_l_su0289_sealed"
+        },
+        {
+          "slot_va": "0x149ed8a58",
+          "symbol": "hook_l_su0289_step"
+        }
+      ]
+    },
+    {
+      "id": "SU-0212",
+      "bug": "SU-0212",
+      "default": 1,
+      "title": "Diabolism / Straight Up / Unstoppable Force: their gems read as unsealed at once (code: sealed until the gem manager's next pass). Needs SU-0289 (shared sealed-read hooks) and SU-0137 (cast check)",
+      "edits": [],
+      "reserves": [
+        {
+          "start": "0x149ed8a60",
+          "end": "0x149ed8a67",
+          "what": "SU-0212 on-flag (hook pointer slot)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8a60",
+          "symbol": "hook_l_su0212_flag"
+        }
+      ]
+    },
+    {
+      "id": "SU-0271",
+      "bug": "SU-0271",
+      "default": 1,
+      "title": "Gemcutter unseals only its own side's Ultimate gems (code: every Ultimate gem on the field when either side has it)",
+      "edits": [
+        {
+          "va": "0x14a343d0c",
+          "expect": "000000000000",
+          "write": "ff25564db9ff",
+          "note": "trampoline -> hook_l_su0271_ally (cave code)"
+        },
+        {
+          "va": "0x14a343d12",
+          "expect": "000000000000",
+          "write": "ff25584db9ff",
+          "note": "trampoline -> hook_l_su0271_enemy (cave code)"
+        },
+        {
+          "va": "0x147646ce2",
+          "expect": "ba3b8cfa",
+          "write": "26d0cf02",
+          "note": "spell-gem manager Step L87 AnyAllyHasPassive(1988) -> hook: your gems only"
+        },
+        {
+          "va": "0x147646da5",
+          "expect": "27458cfa",
+          "write": "69cfcf02",
+          "note": "spell-gem manager Step L87 AnyEnemyHasPassive(1988) -> hook: enemy gems only"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a343d0c",
+          "end": "0x14a343d11",
+          "what": "trampoline -> hook_l_su0271_ally"
+        },
+        {
+          "start": "0x14a343d12",
+          "end": "0x14a343d17",
+          "what": "trampoline -> hook_l_su0271_enemy"
+        },
+        {
+          "start": "0x149ed8a68",
+          "end": "0x149ed8a6f",
+          "what": "hook pointer hook_l_su0271_ally"
+        },
+        {
+          "start": "0x149ed8a70",
+          "end": "0x149ed8a77",
+          "what": "hook pointer hook_l_su0271_enemy"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8a68",
+          "symbol": "hook_l_su0271_ally"
+        },
+        {
+          "slot_va": "0x149ed8a70",
+          "symbol": "hook_l_su0271_enemy"
+        }
+      ]
+    },
+    {
+      "id": "SU-0226",
+      "bug": "SU-0226",
+      "default": 1,
+      "title": "Chaos Rift is filed as a utility spell (code: a stat-boosting spell), so Velox / Lagopus / Temptation rank 100 no longer pick it",
+      "edits": [
+        {
+          "va": "0x1459d9e1a",
+          "expect": "22ab3f04",
+          "write": "c2a53f04",
+          "note": "scr_DatabaseSpellGems2 L1879 Chaos Rift category: \"BOOST\" -> \"UTILITY\" string"
+        }
+      ],
+      "reserves": [],
+      "runtime_hooks": []
+    },
+    {
+      "id": "SU-0228",
+      "bug": "SU-0228",
+      "default": 1,
+      "title": "Velox / Lagopus also cast Dark Ritual, a stat-changing spell (code: only BOOST / DEBOOST-tagged gems)",
+      "edits": [
+        {
+          "va": "0x14a343d18",
+          "expect": "000000000000",
+          "write": "ff255a4db9ff",
+          "note": "trampoline -> hook_l_su0228_velox (cave code)"
+        },
+        {
+          "va": "0x14a343d1e",
+          "expect": "000000000000",
+          "write": "ff255c4db9ff",
+          "note": "trampoline -> hook_l_su0228_lagopus (cave code)"
+        },
+        {
+          "va": "0x1416c64a4",
+          "expect": "6865bcfe",
+          "write": "70d8c708",
+          "note": "bc_StartupCasting L153 (Velox) DEBOOST tag test -> hook: also Dark Ritual (35) / Death Siphon (37)"
+        },
+        {
+          "va": "0x1416c90b4",
+          "expect": "5839bcfe",
+          "write": "66acc708",
+          "note": "bc_StartupCasting L293 (Lagopus) DEBOOST tag test -> hook: also Dark Ritual (35) / Death Siphon (37)"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a343d18",
+          "end": "0x14a343d1d",
+          "what": "trampoline -> hook_l_su0228_velox"
+        },
+        {
+          "start": "0x14a343d1e",
+          "end": "0x14a343d23",
+          "what": "trampoline -> hook_l_su0228_lagopus"
+        },
+        {
+          "start": "0x149ed8a78",
+          "end": "0x149ed8a7f",
+          "what": "hook pointer hook_l_su0228_velox"
+        },
+        {
+          "start": "0x149ed8a80",
+          "end": "0x149ed8a87",
+          "what": "hook pointer hook_l_su0228_lagopus"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8a78",
+          "symbol": "hook_l_su0228_velox"
+        },
+        {
+          "slot_va": "0x149ed8a80",
+          "symbol": "hook_l_su0228_lagopus"
+        }
+      ]
+    },
+    {
+      "id": "SU-0229",
+      "bug": "SU-0229",
+      "default": 1,
+      "title": "Velox / Lagopus also cast Death Siphon, a stat-changing spell (code: only BOOST / DEBOOST-tagged gems). Needs SU-0228 (shared tag-test hook)",
+      "edits": [],
+      "reserves": [
+        {
+          "start": "0x149ed8a88",
+          "end": "0x149ed8a8f",
+          "what": "SU-0229 on-flag (hook pointer slot)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8a88",
+          "symbol": "hook_l_su0229_flag"
+        }
+      ]
+    },
+    {
+      "id": "SU-0233",
+      "bug": "SU-0233",
+      "default": 1,
+      "title": "Ice Bolt always afflicts Frozen (code: only when its damage on the target is above 0)",
+      "edits": [
+        {
+          "va": "0x1409be087",
+          "expect": "0f8489050000",
+          "write": "660f1f440000",
+          "note": "bc_CreatureCast L15548: the damage > 0 jump is removed, L15549-L15550 (Frozen) always run"
+        }
+      ],
+      "reserves": [],
+      "runtime_hooks": []
+    },
+    {
+      "id": "SU-0235",
+      "bug": "SU-0235",
+      "default": 1,
+      "title": "Shellbust deals 150% of the Defense actually lost (code: of the planned loss, even when it is blocked, reflected or turned into a gain)",
+      "edits": [
+        {
+          "va": "0x14a343d24",
+          "expect": "000000000000",
+          "write": "ff25764db9ff",
+          "note": "trampoline -> hook_l_su0235_lose (cave code)"
+        },
+        {
+          "va": "0x14a343d2a",
+          "expect": "000000000000",
+          "write": "ff25784db9ff",
+          "note": "trampoline -> hook_l_su0235_mult (cave code)"
+        },
+        {
+          "va": "0x1408ae530",
+          "expect": "2c1a7a00",
+          "write": "f057a909",
+          "note": "bc_CreatureCast L9420 Shellbust bc_EventLoseDefense -> hook: record the loss that really happens"
+        },
+        {
+          "va": "0x1408aeb59",
+          "expect": "1343ef00",
+          "write": "cd51a909",
+          "note": "bc_CreatureCast L9432 Shellbust big_mult(amount, 1.5) -> hook: 150% of the recorded loss"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a343d24",
+          "end": "0x14a343d29",
+          "what": "trampoline -> hook_l_su0235_lose"
+        },
+        {
+          "start": "0x14a343d2a",
+          "end": "0x14a343d2f",
+          "what": "trampoline -> hook_l_su0235_mult"
+        },
+        {
+          "start": "0x149ed8aa0",
+          "end": "0x149ed8aa7",
+          "what": "hook pointer hook_l_su0235_lose"
+        },
+        {
+          "start": "0x149ed8aa8",
+          "end": "0x149ed8aaf",
+          "what": "hook pointer hook_l_su0235_mult"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8aa0",
+          "symbol": "hook_l_su0235_lose"
+        },
+        {
+          "slot_va": "0x149ed8aa8",
+          "symbol": "hook_l_su0235_mult"
+        }
+      ]
+    },
+    {
+      "id": "SU-0242",
+      "bug": "SU-0242",
+      "default": 1,
+      "title": "Smith cards power 2 raise only the buff / debuff trick slots' activation chance (code: every trick slot's value by 10%)",
+      "edits": [
+        {
+          "va": "0x141ce323b",
+          "expect": "74",
+          "write": "eb",
+          "note": "inv_ArtifactGetStat trick group 5: Smith power 2 bonus skipped (not an activation chance)"
+        },
+        {
+          "va": "0x141ce3505",
+          "expect": "74",
+          "write": "eb",
+          "note": "inv_ArtifactGetStat trick group 6: Smith power 2 bonus skipped (not an activation chance)"
+        },
+        {
+          "va": "0x141ce37d3",
+          "expect": "74",
+          "write": "eb",
+          "note": "inv_ArtifactGetStat trick group 7: Smith power 2 bonus skipped (not an activation chance)"
+        },
+        {
+          "va": "0x141ce3aa1",
+          "expect": "74",
+          "write": "eb",
+          "note": "inv_ArtifactGetStat trick group 8: Smith power 2 bonus skipped (not an activation chance)"
+        },
+        {
+          "va": "0x141ce3d69",
+          "expect": "74",
+          "write": "eb",
+          "note": "inv_ArtifactGetStat trick group 9: Smith power 2 bonus skipped (not an activation chance)"
+        }
+      ],
+      "reserves": [],
+      "runtime_hooks": []
+    },
+    {
+      "id": "SU-0272",
+      "bug": "SU-0272",
+      "default": 1,
+      "title": "Giftwrapped Army gives each Mimic buffs it doesn't already have (code: repeats possible)",
+      "edits": [
+        {
+          "va": "0x14a343d30",
+          "expect": "000000000000",
+          "write": "ff255a4db9ff",
+          "note": "trampoline -> hook_l_su0272_randbuff (cave code)"
+        },
+        {
+          "va": "0x1416a5f09",
+          "expect": "732cacff",
+          "write": "23dec908",
+          "note": "bc_StartupBuffsDebuffs L1005 bc_GetRandomBuff(-1) -> hook: pass the Mimic"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a343d30",
+          "end": "0x14a343d35",
+          "what": "trampoline -> hook_l_su0272_randbuff"
+        },
+        {
+          "start": "0x149ed8a90",
+          "end": "0x149ed8a97",
+          "what": "hook pointer hook_l_su0272_randbuff"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8a90",
+          "symbol": "hook_l_su0272_randbuff"
+        }
+      ]
+    },
+    {
+      "id": "SU-0222",
+      "bug": "SU-0222",
+      "default": 1,
+      "title": "Spin the Wheel also works for an enemy holder, on your creatures' turns (code: only your holder on enemy turns). Needs SU-0001",
+      "edits": [
+        {
+          "va": "0x14a343d36",
+          "expect": "000000000000",
+          "write": "ff255c4db9ff",
+          "note": "trampoline -> hook_l_su0222_luck (cave code)"
+        },
+        {
+          "va": "0x1466679b6",
+          "expect": "0f84e7000000",
+          "write": "660f1f440000",
+          "note": "scr_Roll L36: the 'enemy's turn' (slot == 0) jump is removed; the hook below picks the side"
+        },
+        {
+          "va": "0x146667a1b",
+          "expect": "812e8afb",
+          "write": "17c3cd03",
+          "note": "scr_Roll L36 AnyAllyHasPassive(1765) -> hook: your side on an enemy's turn, the enemy side on yours"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a343d36",
+          "end": "0x14a343d3b",
+          "what": "trampoline -> hook_l_su0222_luck"
+        },
+        {
+          "start": "0x149ed8a98",
+          "end": "0x149ed8a9f",
+          "what": "hook pointer hook_l_su0222_luck"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8a98",
+          "symbol": "hook_l_su0222_luck"
+        }
+      ]
+    }
+  ]
+}

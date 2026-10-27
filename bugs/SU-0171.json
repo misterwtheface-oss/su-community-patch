@@ -1,0 +1,43 @@
+{
+  "id": "SU-0171",
+  "aliases": [
+    "B5#34"
+  ],
+  "title": "Master of Wolpertingers (1517)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Master of Wolpertingers",
+      "runtime_id": 1517,
+      "text_key": "L_TRAIT_DESC_MASTEROFWOLPERTINGERS"
+    }
+  ],
+  "problem": "One 50% roll for +1 cast, once per cast call. Nothing repeats it. Text: \"This effect can occur multiple times in a row.\"",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0171",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#34"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Master of Wolpertingers: cast Scourge spells many times; the extra Scourge cast can repeat (chain of 50% rolls, at most 14 extra). Community claim: The extra Scourge cast can't repeat. Evidence: bc_CreatureCast: scr_Roll(50) @0x14074756f; Scourge ids 166-170 @0x1407475ba-0x140747708; gates @0x1407478f9 / 0x140747c98; += 1 @0x140747eb4. Fix sketch: Loop the roll (H), or remove the sentence (T). Triage 2026-10-26: One 50% roll; 'can occur multiple times in a row' is not implemented. Hook: repeat the roll while it succeeds.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Master of Wolpertingers (trait)",
+    "intended": "Scourge spells have a 50% chance to be cast 1 additional time, which can happen several times in a row.",
+    "actual": "In the unpatched game, there was only one roll.",
+    "fix": "Now the roll repeats while it keeps succeeding.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "SU-0109",
+  "aliases": [
+    "D:Petra & Aes"
+  ],
+  "title": "Petra & Aes",
+  "subjects": [
+    {
+      "kind": "relic",
+      "name": "Petra & Aes, War Drums of Meraxis",
+      "relic_code_id": 8,
+      "rank": 10
+    }
+  ],
+  "problem": "rank 70 adds a flat 15% of Speed",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0109",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:TRIAGE D"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": " | 2026-10-26 realign (text is the contract): text claims \"potency increased by 15% of Speed\". Fix: H: Petra & Aes rank 70: add 15% of Speed to the potency (before Defense and modifiers) instead of a flat add to the final amount, in all three calculators. vs bugged: stronger against low Defense, weaker against high. 2026-10-26 hook batch B2: left needs-hook. The rank-70 flat add sits after Defense and the modifiers in three calculators (bc_SpellDamage 0x14163c5df, bc_SpellHealing 0x141650f85, bc_SpellStat 0x14165e7b7). Moving it into the potency means removing the flat add and adding 15% of Speed to each calculator's potency stat; the potency-stat read sites and the removal were not decoded in this batch. | 2026-10-26 hook batch F1 built (research/hooks_F1.json, loader/hooks_F1.c). Left needs-hook. Plan: move the rank-70 flat add (bc_SpellDamage L2297 @0x14163c5df, crit_speed x 0.15 at L2298; healing @0x141650f85; stat @0x14165e7b7) into the stat-bonus pool the way Swiftcasting (364, damage L415-L417) adds its stat, and skip the flat add. Not built: the pool and Speed locals of the three calculators were not decoded in this batch. | 2026-10-26 patched (hooks_G4, SU-0109): in bc_SpellDamage (L437), bc_SpellHealing (L193) and bc_SpellStat (L232) the scr_Diminish(stat, pool) call that folds the casting-stat bonus pool into the casting stat is hooked. With scr_CritHasRelicPerk(caster, 8, 7) (the game's own Petra & Aes rank 70 gate), 15% of crit_speed(caster) joins the pool, the same place Swiftcasting's 35% of Speed goes. The old flat add to the final amount (damage L2297, healing / stat gates) is skipped (je -> jmp). The bonus now goes through Defense and every potency modifier like the rest of the casting stat. In-game test: a creature with Petra & Aes at rank 70 and high Speed; its damage spells against a high-Defense enemy, its heals and its stat-spell amounts all rise with Speed in proportion (compare with the relic below rank 70), and no longer add a fixed amount on top; spells without the relic are unchanged.",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "Petra & Aes, rank 70 (relic)",
+    "intended": "The potency of the bearer's spells is increased by 15% of its Speed.",
+    "actual": "The game added a flat amount (15% of Speed) to the spell's final number, after Defense and potency modifiers.",
+    "fix": "Now the 15% of Speed is added to the stat the spell is based on (like Swiftcasting), so it goes through Defense and potency modifiers.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

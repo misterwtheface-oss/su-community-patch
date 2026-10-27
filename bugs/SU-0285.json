@@ -1,0 +1,35 @@
+{
+  "id": "SU-0285",
+  "aliases": [
+    "B5#24"
+  ],
+  "title": "Master of Clutchers",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Master of Clutchers",
+      "runtime_id": 1414,
+      "text_key": "L_TRAIT_DESC_MASTEROFCLUTCHERS"
+    }
+  ],
+  "problem": "The dodge still happens, so on-dodge effects fire, and then the hit goes through anyway.",
+  "category": "not-a-bug",
+  "confidence": "code-certain",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "community:B5#24"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: When an enemy dodges your {RACE_Clutcher}s' attacks, they still take damage. Evidence: bc_CreatureAttack dodged branch: bc_OnDodge runs first, then the Clutchers gates @0x1406f35f9 / @0x1406f37bf let the damage through (EFFECT_ORDER attack pipeline M, L1791-L1834). Reasoning: The text itself says the enemy dodges and still takes damage, so on-dodge effects firing follows from the wording. No patch. App note (unpatched game): Against Master of Clutchers, an enemy's dodge still triggers its on-dodge effects, then the attack hits anyway. Source: errata round 2 (2026-10-26).",
+  "reason": "works as its text says"
+}

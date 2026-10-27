@@ -1,0 +1,52 @@
+{
+  "id": "SU-0136",
+  "aliases": [
+    "B2#40"
+  ],
+  "title": "Fleshripper rank 50",
+  "subjects": [
+    {
+      "kind": "relic",
+      "name": "Fleshripper, Bloodied Cleaver of Tartarith",
+      "relic_code_id": 10,
+      "rank": 50
+    }
+  ],
+  "problem": "Partly disputed. The damage is worked out with the normal Bleed damage function, so modifiers inside it do apply: Master of Pilwizes, the resistant cut and Fleshripper rank 70 (+50%). But it is dealt as a plain indirect hit, not as a Bleed tick, so everything that reacts to \"taking damage from Bleeding\" (ranks 30, 40, 80, 90 and the other tick-time Bleed effects) ignores it, although the rank-50 text calls it damage \"from this debuff\".",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0136",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B2#40"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true,
+      "history": [
+        {
+          "date": "2026-10-26",
+          "by": "user",
+          "result": "heavy=1: War Golem with Fleshripper attacking a Bleeding enemy works fine (no crash, no flicker reported). Bleed-reaction behavior on the rank-50 hit and long chains not yet checked."
+        }
+      ]
+    }
+  },
+  "notes": "Community claim: Its damage isn't Bleed damage: no Bleed modifiers (except Master of Pilwiz), no ranks 30/40/80/90. Evidence: bc_OnAttack L1425-1427: relic 10 rank 50 (@0x14134600d / 0x141346202) && target has Bleed (33) && scr_Roll(25) -> bc_CalculateBleedDamage(target) (@0x1413469c2) -> bc_EventDamage(..., dtype -1, ...) (@0x141346d90). Rank 70 is inside bc_CalculateBleedDamage (@0x1406737cb); ranks 30/40/80/90 are in the bc_CreatureStartOfTurn Bleed tick. Fix sketch: H (run the Bleed-tick reactions too), or T Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. Rank 50 deals a plain hit equal to the Bleed damage, not a Bleed tick, so 'takes damage from Bleed' effects don't react. 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"take damage from this debuff immediately\". Fix: H: rank-50 hit (bc_OnAttack L1425-1427 @0x141346d90) should run the Bleed-tick reactions (ranks 30/40/80/90 and other on-Bleed-damage effects) as the start-of-turn tick does. vs bugged: stronger. 2026-10-26 hook batch B2: left needs-hook. Running the Bleed-tick reactions (ranks 30/40/80/90 and other on-Bleed-damage effects) for the rank-50 hit needs the bc_CreatureStartOfTurn tick block reproduced or re-entered for one creature; no single call site gives that, so it was not built safely here. Round-3 F2: still needs-hook. The Bleed-tick reactions (Fleshripper ranks 30/40/80/90 and other on-Bleed-damage effects) are inline inside bc_CreatureStartOfTurn's per-condition tick loop; there is no function that performs one creature's tick, so the rank-50 hit can't be routed through them without re-implementing those reactions in C. | 2026-10-26 patched (hooks_H, SU-0136, group heavy): the rank-50 hit (bc_OnAttack L1427) is now one real Bleed tick. A hook on its bc_EventDamage call runs bc_CreatureStartOfTurn in a Bleed-only mode for the target (a magic argument count; cave stubs jump from L2 to the Bleed tick count L1059, from L1083 to the tick loop L1096 and from L1252 to the function's normal epilogue) while global.creatureturn temporarily names the target, exactly as during that creature's own tick; the tick queues its own damage event, so the plain hit's push is skipped. Everything that reacts to Bleed damage now applies: Fleshripper ranks 30 / 40 / 80 / 90, Hemophilia, Cauterize the Wound, Bloodletting, Gutwretch, Brain Drain, Bloody Massacre, Cornered (incl. its extra tick), Kiichi's Aggression / Onslaught, Bleed Out. Checked: the Bleed block only reads locals it writes itself or that the prologue builds; no jump leaves or enters it; the function never reads its argument count. Nesting capped at 3 (a tick's rank-40 / 80 Attack can proc rank 50 again); beyond that, the old plain hit. Fails safe to the old plain hit when the target value is not a plain value. In-game test: Fleshripper at rank 50+ on a creature; attack Bleeding enemies until rank 50 procs: the hit now shows as Bleed damage, and the Bleed reactions fire with it (rank 30 heals the bearer, rank 40 / 80 extra attacks, Hemophilia +35%, Cauterize heals an enemy with that trait instead). Crash risk to watch: a crash or freeze right when rank 50 procs, especially when it chains (rank 40 / 80 attack -> rank 50 again), stack-overflow style crashes in long chains, or the turn order / 'whose turn' display jumping to the Bleeding enemy after the proc; set heavy=0 in suucp.ini to compare. | 2026-10-26 crash hardening: the bleed-only pass jumps L3 -> L1059 past the construction of two iterator locals ([rsp+0x25d28] / [rsp+0x25d48]); the epilogue destructor frees their +0x10 pointer when non-zero, so stack garbage could be freed. The S1 stub now clears both pointers before the jump. Found by the jump-over audit after the SU-0027 crash; no crash had been reported for SU-0136.",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "Fleshripper, rank 50 (relic)",
+    "intended": "The bearer's attacks make Bleeding enemies take damage from the debuff an additional time.",
+    "actual": "In the unpatched game, the extra damage was a plain hit, so effects that react to Bleed damage ignored it.",
+    "fix": "Now the extra damage is a real Bleed tick, so every Bleed modifier and reaction applies.",
+    "impact": "stronger",
+    "flags": [
+      "heavy"
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "SU-0020",
+  "aliases": [
+    "A22"
+  ],
+  "title": "Christmas Music Sucks",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Christmas Music Sucks",
+      "runtime_id": 1018,
+      "text_key": "L_TRAIT_DESC_CHRISTMASMUSICSUCKS"
+    }
+  ],
+  "problem": "Also applies to damaging spells (text: non-damaging only).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0020",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§4 item 5"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: S: skip the block in spell damage — in patch (byte-verified)",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Christmas Music Sucks (trait)",
+    "intended": "Changes how much Barrier absorbs, for spells that don't deal damage.",
+    "actual": "The game also applied it to damaging spells.",
+    "fix": "Now only spells that don't deal damage are affected.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

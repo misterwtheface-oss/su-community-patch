@@ -1,0 +1,43 @@
+{
+  "id": "SU-0048",
+  "aliases": [
+    "B11"
+  ],
+  "title": "Puppet Master",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Puppet Master",
+      "runtime_id": 753,
+      "text_key": "L_TRAIT_DESC_PUPPETMASTER"
+    }
+  ],
+  "problem": "Two bonus blocks (20% + maybe 10% per minion).",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0048",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§7"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: S User 2026-10-26: Puppet Master = damage dealt +20% per minion, damage taken -5% per minion. Remove the second bonus block (+10% per 'temp' ally) and make sure the taken half is 5% per minion. | 2026-10-26 hook batch F1 built (research/hooks_F1.json, loader/hooks_F1.c). The damage-taken half (bc_EventDamage L1797) is already 0.05 x minions, unchanged. The extra block at L3868 (Puppet Master holder: +0.1 x temporary allies on top of the 20% per minion) is skipped (je -> jmp). In-game test: Puppet Master with 2 minions: damage dealt +40% (not +60%).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Puppet Master (trait)",
+    "intended": "The holder deals 20% more damage and takes 5% less damage for each minion it has.",
+    "actual": "In the unpatched game, on top of the 20% per minion, the game added another 10% per temporary ally.",
+    "fix": "Now it is 20% more damage per minion only; the damage taken part is unchanged.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

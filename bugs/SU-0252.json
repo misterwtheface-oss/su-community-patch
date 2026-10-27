@@ -1,0 +1,34 @@
+{
+  "id": "SU-0252",
+  "aliases": [
+    "B3#56"
+  ],
+  "title": "Healing spells with no potency size (Lifeline, Archangel's Blessing etc.)",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Healing spells with no potency size",
+      "runtime_id": "261 Lifeline, 606 Archangel's Blessing, 472 Utopia, 660 Herd Immunity, 744 Eaten Alive, 320 Fermented Hops, 292 Drain Life, 433 Rune of Lua, 45 Divinity",
+      "text_key": "L_SD_LIFELINE; L_SD_ARCHANGEL'SBLESSING; L_SPELLMOD_INCREASEDHEALING / L_SPMOD_INCREASEDHEALING; L_P_SPELLMENDING_DESC; L_CARD_GEMLING1; L_CODD_SPELLGEMS_ENCHANTING"
+    }
+  ],
+  "problem": "These spells send a fixed heal straight to the heal event and never call the spell-healing calculator, where Obsidian, Spell Mending, Gemling 1 and the other 'spells heal X% more' bonuses live. The Enchanter still offers Obsidian on them (HEAL tag). So those properties and bonuses do nothing on these spells; only general healing modifiers in the heal event apply.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": null,
+  "status": "open",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#56"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Lifeline: \"Caster recovers 100% {STAT_health}.\" | Archangel's Blessing: \"Your creatures recover 30% {STAT_health} and gain a random buff.\" | Obsidian: \"Healing Increased By {1}%\" ... Evidence: spell_signatures: no calc block, only bc_EventHeal (Lifeline @0x140858fc0, Archangel's Blessing @0x14081fc89, Utopia @0x14080a553, Herd Immunity @0x14081eb70, Eaten Alive @0x14078baf2, Fermented Hops @0x1407f2872, Divinity @0x14085d492); Obsidian @0x14164f0e3, Spell Mending @0x14165077e, Gemling 1 @0x14164f8a0 (all bc_SpellHealing); compat column 11 = 1 for all but Divinity. Fix sketch: Same hook as B3#14 (fixed-heal family): multiply the fixed heal at each listed bc_EventHeal call by 1 + the bc_SpellHealing 'heals more' shares. Heals already at 100% are capped anyway (Lifeline, Utopia, Divinity), so the visible change is on the partial ones (Archangel's Blessing 30%, Fermented Hops 35%, Herd Immunity, Drain Life). Reasoning: The perk / card / property texts promise more healing from the caster's spells and the Enchanter offers Obsidian on these gems, so skipping them contradicts the texts. One family record with #14. App note (unpatched game): Fixed-amount heals like Lifeline and Archangel's Blessing ignore the Obsidian property and 'spells heal X% more' bonuses; only general healing modifiers apply. Source: errata round 2 (2026-10-26)."
+}

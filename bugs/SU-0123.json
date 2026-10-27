@@ -1,0 +1,43 @@
+{
+  "id": "SU-0123",
+  "aliases": [
+    "B1#30"
+  ],
+  "title": "Xyrxzy's Subversion",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Xyrxzy's Subversion",
+      "runtime_id": 1274,
+      "text_key": "L_TRAIT_DESC_XYRXZY'SSUBVERSION"
+    }
+  ],
+  "problem": "Its text says \"after this creature manually casts a spell\". The code puts it in the on-cast list, which runs after every cast, manual or automatic, and has no manual check at all. It then casts 3 random spells taken from random enemies' gems, as automatic casts, right away. Each of those casts runs the on-cast list again, so Subversion fires again, and so on. The chain stops only when the creature hits its per-turn cast limit (14 casts). It also fires from artifact / Nether Stone / other automatic casts. Not blacklisted (id 1359; a Nether Boss trait sold in the Nether Shop).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0123",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#30"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Xyrxzy's Subversion: cast one spell manually; the effect fires once, not again from its own automatic casts. Community claim: Doesn't respect \"manually\" and re-triggers itself until the action limit. Evidence: bc_OnCast L537–L548 @0x141454fd0: scr_CritHasPassive(caster, 1274) → bc_GetEnemiesOf → loop i <= 3 (0x1402bd5d0 @0x1414550d0) → random enemy → bc_GetSpellGems → random gem → bc_CreatureCastSpellGem(caster, gem, 1) @0x1414552cd (automatic, runs inline). bc_OnCast is called for every execution with no arg3 gate (bc_CreatureCast L19802–L19803 @0x140a8ed22). Cast limit casts >= limit in bc_CreatureCast L42–L59.. Fix sketch: Preferred: make it fire only after manual casts. bc_OnCast doesn't receive the manual flag, so this needs new code: e.g. a global \"current cast is manual\" flag set in bc_CreatureCast before L19802 and tested in the L537 block (H). Cheaper alternative: text fix \"After this creature casts a spell (manual or automatic)…\" (T), which still leaves the self-loop. Triage 2026-10-26: Fires after every cast (no manual check) and re-triggers itself on its own automatic casts until the cast limit. Hook: gate on the manual-cast flag of the triggering cast.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Xyrxzy's Subversion (trait)",
+    "intended": "After the holder manually casts a spell, it also casts 3 random enemies' spells.",
+    "actual": "In the unpatched game, it triggered after every cast, including the 3 spells it cast itself, chaining until the creature hit its cast limit.",
+    "fix": "Now it only triggers after the holder's manual casts, so it can't chain itself.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "id": "SU-0307",
+  "aliases": [
+    "B6#26"
+  ],
+  "title": "Skyttels: Save & Restart crash",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Skyttels: Save & Restart crash",
+      "runtime_id": 1048,
+      "text_key": "L_TRAIT_DESC_SKYTTELS"
+    }
+  ],
+  "problem": "The community says that after Skyttels copies enchanted gems, \"Save & Restart\" crashes the game when it restarts (the save itself completes). No static path from Skyttels to the save data exists in the code read: the copies are battle objects the game deletes when the battle is cleaned up, and Save & Restart is an overworld menu action, so the copies should be gone when the game saves.",
+  "category": "bug",
+  "confidence": "medium",
+  "decision": "test-first",
+  "status": "test-first",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B6#26"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: At the start of battle, this creature gains copies of your other creatures' permanent Spell Gems. This trait does not work on creatures that also have this trait. Evidence: Copies: inv_CreateSpellGem -> instance_create obj_spellgem (object 0x3c7); obj_spellgem Create sets inbattle = (room == battle room) @0x147647cde / 0x147647d7d. bc_CleanUpBattle: with (obj_spellgem) { magnification = 0; cantripology = 0; free = 0; if (inbattle) scr_RemoveInstance(id) } @0x1406881a0-0x14068836e. extragems is read by no save_* function (refs only in battle code and scr_UpdateCreature). Save & Restart (L_MENU_SAVE_RESTART, object event @0x147105d17 / 0x1471dbab2): confirm path calls scr_OverworldMsgStackAdd and scr_SaveGame @0x1471dbfb6 (overworld only). The copy loop copies elements (no shared array). Test: 1) Party: Skyttels holder + an ally whose permanent gem has an Enchanter class-swap enchantment. Win a battle, return to the overworld, use Save & Restart. 2) Same party, ally gems unenchanted (control). 3) Same as 1 without the Skyttels holder (control for the enchantment alone). Outcomes: crash only in 1 -> a Skyttels leak exists that static reading missed (next: trace scr_SaveGame / spell-gem load using the save from run 1); crash in 1 and 3 -> the enchantment, not Skyttels, crashes Save & Restart; no crash anywhere -> not reproducible on 2.0.38, close it. Reasoning: Every static route was checked: creation, battle cleanup (removes all battle-created gems), the save trigger (overworld only) and the copy loop. None carries the copies into the save, so a crash at restart can only be confirmed or ruled out in game. Source: errata round 2 (2026-10-26)."
+}

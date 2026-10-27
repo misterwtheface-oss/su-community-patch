@@ -1,0 +1,44 @@
+{
+  "id": "SU-0133",
+  "aliases": [
+    "B2#27"
+  ],
+  "title": "Union (Tribalist)",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Union",
+      "runtime_id": 162,
+      "key": "SYNERGY",
+      "text_key": "L_P_SYNERGY_DESC"
+    }
+  ],
+  "problem": "For Health, each creature receives X% of the current Max Health of every same-race ally whose highest stat is Health, one creature after another. Allies handled earlier have already received their share, so later creatures get more (it compounds). The text describes a fixed % of each creature's highest stat. The other four stats are worked out live in the stat getters and don't have this problem.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0133",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B2#27"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Health gains grow along the party, each creature getting ~10% more than the previous one. Evidence: bc_StartupStatGain L781-789: for each creature c on your side: allies = bc_GetAlliesOf(c, false, false) (@0x141730b7d); if same race and Health is the ally's highest stat: amt = round(ally.hpmax x 0.01 x rank) (hpmax read @0x1417311bf, perk 162 @0x1417312ea); c.hpmax += amt; c.hp += amt (@0x1417314ae / 0x14173156c). Fix sketch: H: take every creature's Max Health before the loop starts Triage 2026-10-26: Health shares compound along the party. Hook: read every creature's Max Health before the loop. Batch R: not built. Needs every creature's Max Health snapshotted before the L781-789 loop (array iteration from C, helper not yet mapped). Round-2 hook (A2): bc_StartupStatGain is wrapped with a snapshot of your creatures' Max Health; the Health share's ally.hpmax read (L787) uses the snapshot. In-game test: Union with 3+ same-race creatures whose highest stat is Health: the Health each one gains is the same % of each ally's starting Max Health, not rising along the party.",
+  "release_notes": {
+    "section": "Perks",
+    "effect": "Union (perk)",
+    "intended": "Your creatures grant a % of their highest stat to your other creatures of the same race.",
+    "actual": "In the unpatched game, for Health, shares compounded along the party, so later creatures received more.",
+    "fix": "Now each share is taken from every creature's Maximum Health at the start of battle.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

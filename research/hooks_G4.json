@@ -1,0 +1,302 @@
+{
+  "patches": [
+    {
+      "id": "SU-0109",
+      "bug": "SU-0109",
+      "default": 1,
+      "title": "Petra & Aes (rank 70): spell potency increased by 15% of Speed, folded into the casting stat like Swiftcasting (code: flat 15% of Speed added to the final amount)",
+      "edits": [
+        {
+          "va": "0x1488bff70",
+          "expect": "000000000000",
+          "write": "ff252a866101",
+          "note": "trampoline -> hook_su0109_damage (cave code)"
+        },
+        {
+          "va": "0x1415aa810",
+          "expect": "ac6bac04",
+          "write": "5c573107",
+          "note": "bc_SpellDamage L437 / L2297 scr_Diminish(stat, pool) -> hook: pool + 15% Speed under Petra & Aes 70"
+        },
+        {
+          "va": "0x14163c5fe",
+          "expect": "0f8494010000",
+          "write": "e99501000090",
+          "note": "bc_SpellDamage Petra & Aes 70 gate: je -> jmp (skip the old flat +15% Speed on the final amount)"
+        },
+        {
+          "va": "0x1488bff78",
+          "expect": "00000000000000000000000000",
+          "write": "48892d69866101ff2523866101",
+          "note": "trampoline -> hook_su0109_healing (cave code)"
+        },
+        {
+          "va": "0x141648c98",
+          "expect": "2487a204",
+          "write": "dc722707",
+          "note": "bc_SpellHealing L193 scr_Diminish(stat, pool) -> hook: pool + 15% Speed under Petra & Aes 70"
+        },
+        {
+          "va": "0x141650f94",
+          "expect": "0f848d000000",
+          "write": "e98e00000090",
+          "note": "bc_SpellHealing Petra & Aes 70 gate: je -> jmp (skip the old flat +15% Speed on the final amount)"
+        },
+        {
+          "va": "0x1488bff88",
+          "expect": "00000000000000000000000000",
+          "write": "48892d59866101ff251b866101",
+          "note": "trampoline -> hook_su0109_stat (cave code)"
+        },
+        {
+          "va": "0x141656785",
+          "expect": "37aca104",
+          "write": "ff972607",
+          "note": "bc_SpellStat L232 scr_Diminish(stat, pool) -> hook: pool + 15% Speed under Petra & Aes 70"
+        },
+        {
+          "va": "0x14165e7c6",
+          "expect": "0f848b000000",
+          "write": "e98c00000090",
+          "note": "bc_SpellStat Petra & Aes 70 gate: je -> jmp (skip the old flat +15% Speed on the final amount)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed85a0",
+          "symbol": "hook_su0109_damage"
+        },
+        {
+          "slot_va": "0x149ed85a8",
+          "symbol": "hook_su0109_healing"
+        },
+        {
+          "slot_va": "0x149ed85b0",
+          "symbol": "hook_su0109_stat"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x1488bff70",
+          "end": "0x1488bff75",
+          "what": "trampoline -> hook_su0109_damage"
+        },
+        {
+          "start": "0x149ed85a0",
+          "end": "0x149ed85a7",
+          "what": "hook pointer hook_su0109_damage"
+        },
+        {
+          "start": "0x1488bff78",
+          "end": "0x1488bff84",
+          "what": "trampoline -> hook_su0109_healing"
+        },
+        {
+          "start": "0x149ed85a8",
+          "end": "0x149ed85af",
+          "what": "hook pointer hook_su0109_healing"
+        },
+        {
+          "start": "0x1488bff88",
+          "end": "0x1488bff94",
+          "what": "trampoline -> hook_su0109_stat"
+        },
+        {
+          "start": "0x149ed85b0",
+          "end": "0x149ed85b7",
+          "what": "hook pointer hook_su0109_stat"
+        },
+        {
+          "start": "0x149ed85e8",
+          "end": "0x149ed85ef",
+          "what": "caller rbp saved by the healing / stat trampolines"
+        }
+      ]
+    },
+    {
+      "id": "SU-0135",
+      "bug": "SU-0135",
+      "default": 1,
+      "title": "Reliquary Stat Bonus: raises the Relic's stats by 1% per rank (100% more with Abandoned Altar) (code: the Relic stat redirect returned before the bonus)",
+      "edits": [
+        {
+          "va": "0x1488bff98",
+          "expect": "000000000000",
+          "write": "ff251a866101",
+          "note": "trampoline -> hook_su0135_attack (cave code)"
+        },
+        {
+          "va": "0x1417aaebb",
+          "expect": "11f6ffff",
+          "write": "d9501107",
+          "note": "crit_attack L17 owner redirect -> hook: Relic gets +1%/rank Stat Bonus (x2 with Abandoned Altar)"
+        },
+        {
+          "va": "0x1488bffa0",
+          "expect": "000000000000",
+          "write": "ff251a866101",
+          "note": "trampoline -> hook_su0135_defense (cave code)"
+        },
+        {
+          "va": "0x1417bd133",
+          "expect": "99f6ffff",
+          "write": "692e1007",
+          "note": "crit_defense L13 owner redirect -> hook: Relic gets +1%/rank Stat Bonus (x2 with Abandoned Altar)"
+        },
+        {
+          "va": "0x1488bffa8",
+          "expect": "000000000000",
+          "write": "ff251a866101",
+          "note": "trampoline -> hook_su0135_intelligence (cave code)"
+        },
+        {
+          "va": "0x1417d00cd",
+          "expect": "3ff6ffff",
+          "write": "d7fe0e07",
+          "note": "crit_intelligence L13 owner redirect -> hook: Relic gets +1%/rank Stat Bonus (x2 with Abandoned Altar)"
+        },
+        {
+          "va": "0x1488bffb0",
+          "expect": "000000000000",
+          "write": "ff251a866101",
+          "note": "trampoline -> hook_su0135_speed (cave code)"
+        },
+        {
+          "va": "0x1417e3d5a",
+          "expect": "d2f6ffff",
+          "write": "52c20d07",
+          "note": "crit_speed L14 owner redirect -> hook: Relic gets +1%/rank Stat Bonus (x2 with Abandoned Altar)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed85b8",
+          "symbol": "hook_su0135_attack"
+        },
+        {
+          "slot_va": "0x149ed85c0",
+          "symbol": "hook_su0135_defense"
+        },
+        {
+          "slot_va": "0x149ed85c8",
+          "symbol": "hook_su0135_intelligence"
+        },
+        {
+          "slot_va": "0x149ed85d0",
+          "symbol": "hook_su0135_speed"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x1488bff98",
+          "end": "0x1488bff9d",
+          "what": "trampoline -> hook_su0135_attack"
+        },
+        {
+          "start": "0x149ed85b8",
+          "end": "0x149ed85bf",
+          "what": "hook pointer hook_su0135_attack"
+        },
+        {
+          "start": "0x1488bffa0",
+          "end": "0x1488bffa5",
+          "what": "trampoline -> hook_su0135_defense"
+        },
+        {
+          "start": "0x149ed85c0",
+          "end": "0x149ed85c7",
+          "what": "hook pointer hook_su0135_defense"
+        },
+        {
+          "start": "0x1488bffa8",
+          "end": "0x1488bffad",
+          "what": "trampoline -> hook_su0135_intelligence"
+        },
+        {
+          "start": "0x149ed85c8",
+          "end": "0x149ed85cf",
+          "what": "hook pointer hook_su0135_intelligence"
+        },
+        {
+          "start": "0x1488bffb0",
+          "end": "0x1488bffb5",
+          "what": "trampoline -> hook_su0135_speed"
+        },
+        {
+          "start": "0x149ed85d0",
+          "end": "0x149ed85d7",
+          "what": "hook pointer hook_su0135_speed"
+        }
+      ]
+    },
+    {
+      "id": "SU-0143",
+      "bug": "SU-0143",
+      "default": 1,
+      "title": "Witchcraft: Cursed enemies cast one of their single-target damage spells on a random creature (either side, living, not itself) (code: always hit the caster's opponents)",
+      "edits": [
+        {
+          "va": "0x1488bffb8",
+          "expect": "000000000000",
+          "write": "ff251a866101",
+          "note": "trampoline -> hook_su0143_cast (cave code)"
+        },
+        {
+          "va": "0x14077bb09",
+          "expect": "73f93200",
+          "write": "ab441408",
+          "note": "bc_CreatureCast L1880 Witchcraft auto-cast bc_CreatureCastSpellGem -> hook: flag this cast"
+        },
+        {
+          "va": "0x1488bffc0",
+          "expect": "000000000000",
+          "write": "ff251a866101",
+          "note": "trampoline -> hook_su0143_eventcast (cave code)"
+        },
+        {
+          "va": "0x140aaf794",
+          "expect": "68952200",
+          "write": "2808e107",
+          "note": "bc_CreatureCastSpellGem L288 bc_EventCast -> hook: flagged cast targets one random living creature"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed85d8",
+          "symbol": "hook_su0143_cast"
+        },
+        {
+          "slot_va": "0x149ed85e0",
+          "symbol": "hook_su0143_eventcast"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x1488bffb8",
+          "end": "0x1488bffbd",
+          "what": "trampoline -> hook_su0143_cast"
+        },
+        {
+          "start": "0x149ed85d8",
+          "end": "0x149ed85df",
+          "what": "hook pointer hook_su0143_cast"
+        },
+        {
+          "start": "0x1488bffc0",
+          "end": "0x1488bffc5",
+          "what": "trampoline -> hook_su0143_eventcast"
+        },
+        {
+          "start": "0x149ed85e0",
+          "end": "0x149ed85e7",
+          "what": "hook pointer hook_su0143_eventcast"
+        },
+        {
+          "start": "0x149ed85f0",
+          "end": "0x149ed85f7",
+          "what": "Witchcraft cast flag (int)"
+        }
+      ]
+    }
+  ]
+}

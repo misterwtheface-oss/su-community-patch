@@ -1,0 +1,45 @@
+{
+  "id": "SU-0022",
+  "aliases": [
+    "A24",
+    "B6#11"
+  ],
+  "title": "Piercing Dragon Claws (minion half)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Piercing Dragon Claws",
+      "runtime_id": 315,
+      "text_key": "L_TRAIT_DESC_PIERCINGDRAGONCLAWS"
+    }
+  ],
+  "problem": "25% of Speed, not 30% (its own buff half uses 30%). Community confirms.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0022",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§12 item 3",
+    "community:B6#11"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: K: 0.25 → 0.3 — in patch (byte-verified)",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Piercing Dragon Claws (trait)",
+    "intended": "The extra damage is based on 30% of Speed.",
+    "actual": "In the unpatched game, when the effect was triggered through a minion, the game used 25%.",
+    "fix": "Now every trigger uses 30%.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "SU-0159",
+  "aliases": [
+    "B6#44"
+  ],
+  "title": "Vicar's Blessing (1089)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Vicar's Blessing",
+      "runtime_id": 1089,
+      "text_key": "L_TRAIT_DESC_VICAR'SBLESSING"
+    }
+  ],
+  "problem": "For each enemy of the damaged creature it rolls 35%, then checks for the trait; the first holder that passes casts and the loop stops. With n holders the chance is 1 − 0.65ⁿ (2 holders: 57.75%), but never more than one cast.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0159",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B6#44"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Stacks despite \"does not stack\". Evidence: bc_ExecuteEvents L818-L826: roll @0x1410bcf5a, trait @0x1410bd139, cast @0x1410bd6f1, exit @0x1410bd790. Fix sketch: H: roll once per event, then let the first holder cast. Or T: drop \"does not stack\". Triage 2026-10-26: Stacks across holders (1 - 0.65^n) despite 'does not stack'. Hook: one 35% roll per event. 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Two creatures with Vicar's Blessing; over many Blight ticks the Minor Healing rate should be about 35%, not ~58%.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Vicar's Blessing (trait)",
+    "intended": "35% chance to cast Minor Healing on an enemy after it takes Blight damage; does not stack.",
+    "actual": "In the unpatched game, each holder rolled its own chance, so more holders made a cast more likely.",
+    "fix": "Now there is one 35% chance per Blight tick, however many holders there are.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

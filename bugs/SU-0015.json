@@ -1,0 +1,45 @@
+{
+  "id": "SU-0015",
+  "aliases": [
+    "A16"
+  ],
+  "title": "Prism + Topaz (damage spells)",
+  "subjects": [
+    {
+      "kind": "gem_property",
+      "name": "Prism"
+    },
+    {
+      "kind": "gem_property",
+      "name": "Topaz"
+    }
+  ],
+  "problem": "Uses the *target's* Defense as the potency stat.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0015",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§4 item 3"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: S: read the caster's Defense slot 2026-10-26: built as byte patch SU-0015 (verified against the baseline exe; not yet run in game).",
+  "release_notes": {
+    "section": "Spell gems & items",
+    "effect": "Prism and Topaz spell gem properties (damage spells)",
+    "intended": "The spell's potency is based on the caster's Defense.",
+    "actual": "In the unpatched game, on damage spells the game used the target's Defense.",
+    "fix": "Now damage spells use the caster's Defense, like the other spell types.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

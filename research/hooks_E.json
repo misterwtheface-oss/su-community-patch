@@ -1,0 +1,752 @@
+{
+  "patches": [
+    {
+      "id": "SU-0093",
+      "bug": "SU-0093",
+      "default": 1,
+      "title": "Life And Other Illusions: effects that activate when creatures attack are ignored whichever side holds the trait (code: only when the opposing side held it)",
+      "edits": [
+        {
+          "va": "0x1488bfa00",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot] -> hook_e_either_side_passive (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x1412d4384",
+          "expect": "1865c300",
+          "write": "78b65e07",
+          "note": "bc_OnAttack L25: AnyAllyHasPassive -> either side"
+        },
+        {
+          "va": "0x1412d454d",
+          "expect": "7f6dc300",
+          "write": "afb45e07",
+          "note": "bc_OnAttack L25: AnyEnemyHasPassive -> either side"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8400",
+          "symbol": "hook_e_either_side_passive"
+        }
+      ]
+    },
+    {
+      "id": "SU-0094",
+      "bug": "SU-0094",
+      "default": 1,
+      "title": "Madness And Other Ideals: effects that activate when creatures defend are ignored whichever side holds the trait (code: only when the opposing side held it)",
+      "edits": [
+        {
+          "va": "0x1488bfa08",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot] -> hook_e_either_side_passive (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x1415337e2",
+          "expect": "ba709d00",
+          "write": "22c23807",
+          "note": "bc_OnDefend first block: AnyAllyHasPassive -> either side"
+        },
+        {
+          "va": "0x141533889",
+          "expect": "437a9d00",
+          "write": "7bc13807",
+          "note": "bc_OnDefend first block: AnyEnemyHasPassive -> either side"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8408",
+          "symbol": "hook_e_either_side_passive"
+        }
+      ]
+    },
+    {
+      "id": "SU-0095",
+      "bug": "SU-0095",
+      "default": 1,
+      "title": "Forgiveness And Other Blunders: effects that activate when creatures provoke are ignored whichever side holds the trait (code: only when the opposing side held it)",
+      "edits": [
+        {
+          "va": "0x1488bfa10",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot] -> hook_e_either_side_passive (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x141564ba3",
+          "expect": "f95c9a00",
+          "write": "69ae3507",
+          "note": "bc_OnProvoke first block: AnyAllyHasPassive -> either side"
+        },
+        {
+          "va": "0x141564c57",
+          "expect": "75669a00",
+          "write": "b5ad3507",
+          "note": "bc_OnProvoke first block: AnyEnemyHasPassive -> either side"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8410",
+          "symbol": "hook_e_either_side_passive"
+        }
+      ]
+    },
+    {
+      "id": "SU-0096",
+      "bug": "SU-0096",
+      "default": 1,
+      "title": "Love And Other Disasters: effects that activate when creatures are afflicted with a buff or debuff are ignored whichever side holds the trait (code: only when the opposing side held it)",
+      "edits": [
+        {
+          "va": "0x1488bfa18",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot] -> hook_e_either_side_passive (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x14143082e",
+          "expect": "6ea0ad00",
+          "write": "e6f14807",
+          "note": "bc_OnBuffDebuff L34: AnyAllyHasPassive -> either side"
+        },
+        {
+          "va": "0x1414308e5",
+          "expect": "e7a9ad00",
+          "write": "2ff14807",
+          "note": "bc_OnBuffDebuff L34: AnyEnemyHasPassive -> either side"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8418",
+          "symbol": "hook_e_either_side_passive"
+        }
+      ]
+    },
+    {
+      "id": "SU-0174",
+      "bug": "SU-0174",
+      "default": 1,
+      "title": "Hate And Other Triumphs: effects that activate when creatures die are ignored whichever side holds the trait (code: only when the opposing side held it)",
+      "edits": [
+        {
+          "va": "0x1488bfa20",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot] -> hook_e_either_side_passive (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x14146f144",
+          "expect": "58b7a900",
+          "write": "d8084507",
+          "note": "bc_OnDeath L150: AnyAllyHasPassive -> either side"
+        },
+        {
+          "va": "0x14146f30d",
+          "expect": "bfbfa900",
+          "write": "0f074507",
+          "note": "bc_OnDeath L150: AnyEnemyHasPassive -> either side"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8420",
+          "symbol": "hook_e_either_side_passive"
+        }
+      ]
+    },
+    {
+      "id": "SU-0175",
+      "bug": "SU-0175",
+      "default": 1,
+      "title": "Justice And Other Fallacies: effects that activate when creatures are resurrected are ignored whichever side holds the trait (code: only when the opposing side held it)",
+      "edits": [
+        {
+          "va": "0x1488bfa28",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot] -> hook_e_either_side_passive (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x1415825f2",
+          "expect": "aa829800",
+          "write": "32d43307",
+          "note": "bc_OnResurrect L209: AnyAllyHasPassive -> either side"
+        },
+        {
+          "va": "0x1415826a4",
+          "expect": "288c9800",
+          "write": "80d33307",
+          "note": "bc_OnResurrect L209: AnyEnemyHasPassive -> either side"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8428",
+          "symbol": "hook_e_either_side_passive"
+        }
+      ]
+    },
+    {
+      "id": "SU-0124",
+      "bug": "SU-0124",
+      "default": 1,
+      "title": "Beelzebub: triggers when its master kills an enemy (code: any kill, allies too)",
+      "edits": [
+        {
+          "va": "0x1488bfa30",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot] -> hook_e_minion_kill (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x1414c2f90",
+          "expect": "7c80b600",
+          "write": "9cca3f07",
+          "note": "bc_OnDeath: scr_CritHasCondition(killer, 58) -> only if the dead creature was on the other side"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8430",
+          "symbol": "hook_e_minion_kill"
+        }
+      ]
+    },
+    {
+      "id": "SU-0125",
+      "bug": "SU-0125",
+      "default": 1,
+      "title": "Leviathan: triggers when its master kills an enemy (code: any kill, allies too)",
+      "edits": [
+        {
+          "va": "0x1488bfa38",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot] -> hook_e_minion_kill (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x1414c1e7e",
+          "expect": "8e91b600",
+          "write": "b6db3f07",
+          "note": "bc_OnDeath: scr_CritHasCondition(killer, 57) -> only if the dead creature was on the other side"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8438",
+          "symbol": "hook_e_minion_kill"
+        }
+      ]
+    },
+    {
+      "id": "SU-0126",
+      "bug": "SU-0126",
+      "default": 1,
+      "title": "Spiderlings: explode after the master takes damage from an enemy, for 50% of the master's Current Health (code: any sourced hit, allies too; Maximum Health)",
+      "edits": [
+        {
+          "va": "0x1488bfa40",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot] -> hook_e_spiderling (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x140f3449b",
+          "expect": "716b0f01",
+          "write": "a1b59807",
+          "note": "bc_EventDamage L6595: scr_CritHasCondition(creature, 45) -> only if the source is on the other side"
+        },
+        {
+          "va": "0x140f345e3",
+          "expect": "81c5aa08",
+          "write": "a1c4aa08",
+          "note": "bc_EventDamage L6596: burst amount reads creature.hpmax -> creature.hp"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8440",
+          "symbol": "hook_e_spiderling"
+        }
+      ]
+    },
+    {
+      "id": "SU-0162",
+      "bug": "SU-0162",
+      "default": 1,
+      "title": "Haunting Memories: works while its holder is dead, as the text says (code: the trait lookup skipped dead holders)",
+      "edits": [
+        {
+          "va": "0x1488bfa48",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot] -> hook_e_haunting (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x140b0080c",
+          "expect": "b0ba5201",
+          "write": "38f2db07",
+          "note": "bc_CreatureEndOfTurn L1194: scr_CritHasPassive(e, 878) -> with alive_only = 0"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8448",
+          "symbol": "hook_e_haunting"
+        }
+      ]
+    },
+    {
+      "id": "SU-0163",
+      "bug": "SU-0163",
+      "default": 1,
+      "title": "Horde: the shared Speed is not applied to creatures that have the trait (code: holders received it)",
+      "edits": [
+        {
+          "va": "0x1488bfa50",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot] -> hook_e_horde_ally (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x1488bfa58",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot] -> hook_e_horde_enemy (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x1417f3297",
+          "expect": "05767100",
+          "write": "b5c70c07",
+          "note": "crit_speed Horde gate (your side): false when the creature has 141"
+        },
+        {
+          "va": "0x1417f3745",
+          "expect": "877b7100",
+          "write": "0fc30c07",
+          "note": "crit_speed Horde gate (enemy side): false when the creature has 141"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8450",
+          "symbol": "hook_e_horde_ally"
+        },
+        {
+          "slot_va": "0x149ed8458",
+          "symbol": "hook_e_horde_enemy"
+        }
+      ]
+    },
+    {
+      "id": "SU-0153",
+      "bug": "SU-0153",
+      "default": 1,
+      "title": "Periphery: works for the holder's own side, enemy holders included (code: player side only)",
+      "edits": [
+        {
+          "va": "0x1488bfa60",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot] -> hook_e_periphery_dodge (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x1406e413f",
+          "expect": "0f8469010000",
+          "write": "660f1f440000",
+          "note": "bc_CreatureAttack L1535 (always dodge): drop the 'slot > 0' test"
+        },
+        {
+          "va": "0x1406e429b",
+          "expect": "01668201",
+          "write": "c1b71d08",
+          "note": "bc_CreatureAttack L1535 (always dodge): AnyAllyHasPassive(603) -> the holder's own side"
+        },
+        {
+          "va": "0x1488bfa68",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot] -> hook_e_periphery_taken (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x140eb000a",
+          "expect": "0f846f010000",
+          "write": "660f1f440000",
+          "note": "bc_EventDamage L5175 (50% more damage taken): drop the 'slot > 0' test"
+        },
+        {
+          "va": "0x140eb016c",
+          "expect": "30a70501",
+          "write": "f8f8a007",
+          "note": "bc_EventDamage L5175 (50% more damage taken): AnyAllyHasPassive(603) -> the holder's own side"
+        },
+        {
+          "va": "0x1488bfa70",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot] -> hook_e_periphery_crit (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x140ed375a",
+          "expect": "0f846f010000",
+          "write": "660f1f440000",
+          "note": "bc_EventDamage L5844 (always crit): drop the 'slot > 0' test"
+        },
+        {
+          "va": "0x140ed38bc",
+          "expect": "e06f0301",
+          "write": "b0c19e07",
+          "note": "bc_EventDamage L5844 (always crit): AnyAllyHasPassive(603) -> the holder's own side"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8460",
+          "symbol": "hook_e_periphery_dodge"
+        },
+        {
+          "slot_va": "0x149ed8468",
+          "symbol": "hook_e_periphery_taken"
+        },
+        {
+          "slot_va": "0x149ed8470",
+          "symbol": "hook_e_periphery_crit"
+        }
+      ]
+    },
+    {
+      "id": "SU-0028",
+      "bug": "SU-0028",
+      "default": 1,
+      "title": "Master of Cataclysms: only your all-Cataclysm party's traits get the 10% activation (code: enemies' Wrath traits rolled too). Partial: the 'each creature's turn' half is not built",
+      "edits": [
+        {
+          "va": "0x1488bfa78",
+          "expect": "000000000000",
+          "write": "ff25fa896101",
+          "note": "trampoline: jmp [slot] -> hook_e_cataclysm (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x140b58067",
+          "expect": "55424d01",
+          "write": "0d7ad607",
+          "note": "bc_CreatureStartOfTurn Cataclysm sweep: scr_CritHasPassive -> master's side only"
+        },
+        {
+          "va": "0x140b58855",
+          "expect": "673a4d01",
+          "write": "1f72d607",
+          "note": "bc_CreatureStartOfTurn Cataclysm sweep: scr_CritHasPassive -> master's side only"
+        },
+        {
+          "va": "0x140b59043",
+          "expect": "79324d01",
+          "write": "316ad607",
+          "note": "bc_CreatureStartOfTurn Cataclysm sweep: scr_CritHasPassive -> master's side only"
+        },
+        {
+          "va": "0x140b59831",
+          "expect": "8b2a4d01",
+          "write": "4362d607",
+          "note": "bc_CreatureStartOfTurn Cataclysm sweep: scr_CritHasPassive -> master's side only"
+        },
+        {
+          "va": "0x140b5a01f",
+          "expect": "9d224d01",
+          "write": "555ad607",
+          "note": "bc_CreatureStartOfTurn Cataclysm sweep: scr_CritHasPassive -> master's side only"
+        },
+        {
+          "va": "0x140b5a80d",
+          "expect": "af1a4d01",
+          "write": "6752d607",
+          "note": "bc_CreatureStartOfTurn Cataclysm sweep: scr_CritHasPassive -> master's side only"
+        },
+        {
+          "va": "0x140b5affb",
+          "expect": "c1124d01",
+          "write": "794ad607",
+          "note": "bc_CreatureStartOfTurn Cataclysm sweep: scr_CritHasPassive -> master's side only"
+        },
+        {
+          "va": "0x140b5b7e9",
+          "expect": "d30a4d01",
+          "write": "8b42d607",
+          "note": "bc_CreatureStartOfTurn Cataclysm sweep: scr_CritHasPassive -> master's side only"
+        },
+        {
+          "va": "0x140b5bfd7",
+          "expect": "e5024d01",
+          "write": "9d3ad607",
+          "note": "bc_CreatureStartOfTurn Cataclysm sweep: scr_CritHasPassive -> master's side only"
+        },
+        {
+          "va": "0x140b5c7c5",
+          "expect": "f7fa4c01",
+          "write": "af32d607",
+          "note": "bc_CreatureStartOfTurn Cataclysm sweep: scr_CritHasPassive -> master's side only"
+        },
+        {
+          "va": "0x140b5cfb3",
+          "expect": "09f34c01",
+          "write": "c12ad607",
+          "note": "bc_CreatureStartOfTurn Cataclysm sweep: scr_CritHasPassive -> master's side only"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8478",
+          "symbol": "hook_e_cataclysm"
+        }
+      ]
+    },
+    {
+      "id": "SU-0029",
+      "bug": "SU-0029",
+      "default": 1,
+      "title": "Ejector Seat: ignored if an ally has the same trait, for indirect damage too (code: only the attack/spell immunity checked allies)",
+      "edits": [
+        {
+          "va": "0x1488bfa80",
+          "expect": "0000000000000000000000000000",
+          "write": "84c00f9505f7896101e9bed262f8",
+          "note": "Ejector Seat: remember 'attack/spell' (dtype > -1), always run the ally check (cave code)"
+        },
+        {
+          "va": "0x1488bfa90",
+          "expect": "0000000000000000000000000000000000000000000000000000000000",
+          "write": "803de9896101000f84c6ff62f8c7842478010300a2170000e9d8d862f8",
+          "note": "Ejector Seat: after the ally check, indirect damage goes to the Health = 0 branch (cave code)"
+        },
+        {
+          "va": "0x140eecd41",
+          "expect": "0fb6c085c00f84172d0000",
+          "write": "e93a2d9d07909090909090",
+          "note": "bc_EventDamage L6041: dtype test result -> cave (no branch here any more)"
+        },
+        {
+          "va": "0x140eed37a",
+          "expect": "c7842478010300a2170000",
+          "write": "e911279d07909090909090",
+          "note": "bc_EventDamage L6050 (no ally holds it): branch on the remembered damage type"
+        }
+      ]
+    },
+    {
+      "id": "SU-0107",
+      "bug": "SU-0107",
+      "default": 1,
+      "title": "Disposability: only your other creatures' buffs persist through death (code: the holder's own buffs and every minion persisted too)",
+      "edits": [
+        {
+          "va": "0x1488bfab0",
+          "expect": "000000000000",
+          "write": "ff25d2896101",
+          "note": "trampoline: jmp [slot] -> hook_e_dispose_enemy (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x1488bfab8",
+          "expect": "000000000000",
+          "write": "ff25d2896101",
+          "note": "trampoline: jmp [slot] -> hook_e_dispose_ally (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x1488bfac0",
+          "expect": "000000000000",
+          "write": "ff25d2896101",
+          "note": "trampoline: jmp [slot] -> hook_e_dispose_not_buff (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x1412a3051",
+          "expect": "7b82c600",
+          "write": "5bca6107",
+          "note": "bc_HandleDeath L60 (enemy side): not when the dying creature holds 512"
+        },
+        {
+          "va": "0x1412a3136",
+          "expect": "6677c600",
+          "write": "7ec96107",
+          "note": "bc_HandleDeath L60 (your side): not when the dying creature holds 512"
+        },
+        {
+          "va": "0x1412a3339",
+          "expect": "e31dd000",
+          "write": "83c76107",
+          "note": "bc_HandleDeath L64: remove unless the condition is a buff"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8488",
+          "symbol": "hook_e_dispose_enemy"
+        },
+        {
+          "slot_va": "0x149ed8490",
+          "symbol": "hook_e_dispose_ally"
+        },
+        {
+          "slot_va": "0x149ed8498",
+          "symbol": "hook_e_dispose_not_buff"
+        }
+      ]
+    },
+    {
+      "id": "SU-0146",
+      "bug": "SU-0146",
+      "default": 1,
+      "title": "Better, Faster, Stronger: Writhelings afflict a random enemy with a random debuff a second time (code repeated Pleasant Disease's random buff on an ally)",
+      "edits": [
+        {
+          "va": "0x140f73e59",
+          "expect": "78210200",
+          "write": "f8220200",
+          "note": "bc_EventDamage L7076/77: pick from the enemies array [rsp+0x222f8] (was allies [rsp+0x22178])"
+        },
+        {
+          "va": "0x140f73e81",
+          "expect": "78210200",
+          "write": "f8220200",
+          "note": "bc_EventDamage L7076/77: pick from the enemies array [rsp+0x222f8] (was allies [rsp+0x22178])"
+        },
+        {
+          "va": "0x1488bfac8",
+          "expect": "000000000000",
+          "write": "ff25d2896101",
+          "note": "trampoline: jmp [slot] -> hook_e_bfs_random_debuff (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x140f73fcc",
+          "expect": "b04b1f00",
+          "write": "f8ba9407",
+          "note": "bc_EventDamage L7077: bc_GetRandomBuff(t) -> bc_GetRandomDebuff(-1, t)"
+        },
+        {
+          "va": "0x140f747c5",
+          "expect": "7764d5ff",
+          "write": "77680600",
+          "note": "bc_EventDamage L7078: bc_EventBuff -> bc_EventDebuff (same 9-argument layout, see SU-0129)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed84a0",
+          "symbol": "hook_e_bfs_random_debuff"
+        }
+      ]
+    },
+    {
+      "id": "SU-0156",
+      "bug": "SU-0156",
+      "default": 1,
+      "title": "Pumpkin Spice: each side with a holder swaps its creatures' Maximum Health and Defense, once (code: only the first holder's side)",
+      "edits": [
+        {
+          "va": "0x141769837",
+          "expect": "a1010000",
+          "write": "65fdffff",
+          "note": "bc_StartupStatLoss: inner-loop exit continues the outer loop (was: leave the whole effect)"
+        },
+        {
+          "va": "0x1488bfad0",
+          "expect": "000000000000",
+          "write": "ff25d2896101",
+          "note": "trampoline: jmp [slot] -> hook_e_pumpkin (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x1417696e2",
+          "expect": "da2b8c00",
+          "write": "ea631507",
+          "note": "bc_StartupStatLoss: scr_CritHasPassive(c, 333) -> first holder per side only"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed84a8",
+          "symbol": "hook_e_pumpkin"
+        }
+      ]
+    },
+    {
+      "id": "SU-0158",
+      "bug": "SU-0158",
+      "default": 1,
+      "title": "Valiant Heart: +1 attack / cast for each other creature with the same secondary Fusion (code: counted itself, and unfused creatures all matched)",
+      "edits": [
+        {
+          "va": "0x1406c6b12",
+          "expect": "4aa42109",
+          "write": "2aa42109",
+          "note": "bc_GetAlliesOf include_self: true -> false"
+        },
+        {
+          "va": "0x14074699f",
+          "expect": "bda51909",
+          "write": "9da51909",
+          "note": "bc_GetAlliesOf include_self: true -> false"
+        },
+        {
+          "va": "0x1488bfad8",
+          "expect": "000000000000",
+          "write": "ff25d2896101",
+          "note": "trampoline: jmp [slot] -> hook_e_valiant_eq (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x1406c6cbe",
+          "expect": "0e5cbcff",
+          "write": "168e1f08",
+          "note": "fuse2 == fuse2 -> never equal when either is -1 (unfused)"
+        },
+        {
+          "va": "0x140746b5d",
+          "expect": "6f5db4ff",
+          "write": "778f1708",
+          "note": "fuse2 == fuse2 -> never equal when either is -1 (unfused)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed84b0",
+          "symbol": "hook_e_valiant_eq"
+        }
+      ]
+    },
+    {
+      "id": "SU-0159",
+      "bug": "SU-0159",
+      "default": 1,
+      "title": "Vicar's Blessing: one 35% chance per Blight tick, whatever the number of holders (code: one roll per holder)",
+      "edits": [
+        {
+          "va": "0x1410bcf6c",
+          "expect": "0f84db010000",
+          "write": "660f1f440000",
+          "note": "bc_ExecuteEvents L821: ignore the per-enemy 35% roll"
+        },
+        {
+          "va": "0x1488bfae0",
+          "expect": "000000000000",
+          "write": "ff25d2896101",
+          "note": "trampoline: jmp [slot] -> hook_e_vicar (loader/hooks_E.c) (cave code)"
+        },
+        {
+          "va": "0x1410bd13a",
+          "expect": "82f1f600",
+          "write": "a2298007",
+          "note": "bc_ExecuteEvents L821: first holder makes the single 35% roll"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed84b8",
+          "symbol": "hook_e_vicar"
+        }
+      ]
+    }
+  ]
+}

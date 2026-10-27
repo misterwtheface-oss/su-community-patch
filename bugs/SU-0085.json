@@ -1,0 +1,44 @@
+{
+  "id": "SU-0085",
+  "aliases": [
+    "H06"
+  ],
+  "title": "Covenant",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Covenant",
+      "runtime_id": 289,
+      "key": "COVENANT",
+      "text_key": "L_P_COVENANT_DESC"
+    }
+  ],
+  "problem": "Covenant (perk 289) is never read: after all five Runes every Rune cast runs on-attack twice, for any caster",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0085",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "handoff:HANDOFF_bug_report_candidates.md"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Hook spec: research/handoff_eval.md Hook batch R (loader/hooks_R.c, research/hooks_R.json). In-game test: without Covenant, cast all five Rune spells then a sixth Rune: on-attack effects run once; with Covenant they run twice.",
+  "release_notes": {
+    "section": "Perks",
+    "effect": "Covenant (perk)",
+    "intended": "Once your creatures have cast each Rune spell this battle, their on-attack effects activate 1 additional time.",
+    "actual": "The game gave this to any caster, with or without the perk.",
+    "fix": "Now only Covenant owners get it.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

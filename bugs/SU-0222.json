@@ -1,0 +1,43 @@
+{
+  "id": "SU-0222",
+  "aliases": [
+    "B2#33"
+  ],
+  "title": "Luck re-rolls (Sleight of Hand, Good/Bad Luck, Spin the Wheel)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Luck re-rolls",
+      "runtime_id": 1765,
+      "text_key": "L_TRAIT_DESC_SPINTHEWHEEL (cf. L_P_SLEIGHTOFHAND_DESC, L_RP_GOODLUCK, L_RP_BADLUCK)"
+    }
+  ],
+  "problem": "Keying on whose turn it is matches every text ('whenever it is ... turn'), so the community claim itself works as the text says. But Spin the Wheel is one-sided: the game only checks 'it is an enemy's turn and one of YOUR creatures has the trait'. An enemy holding Spin the Wheel never helps on its own enemies' turns (your turns), although the text, read from the holder's side, promises it.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0222",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B2#33"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Spin the Wheel: \"Whenever it is an enemy's turn, any random effects that fail to occur are re-rolled an additional time. This trait does not stack.\" | Sleight of Hand: \"Whenever ... Evidence: scr_Roll L36 (Spin the Wheel block): creatureturn.slot == 0 test (sete @0x146667995, je 0x146667aa3 @0x1466679b6) -> scr_AnyAllyHasPassive(1765) @0x146667a1a (player-side helper) -> re-roll L37-L39. There is no scr_AnyEnemyHasPassive(1765) anywhere. The whole re-roll block also sits behind the battledone gate that SU-0001 fixes. Fix sketch: scr_Roll L36: NOP the slot == 0 jump at 0x1466679b6 (0f84e7000000 -> 660f1f440000) and redirect the call at 0x146667a1a (scr_AnyAllyHasPassive) to a C hook: if global.creatureturn.slot == 0, return scr_AnyAllyHasPassive(1765) (the existing case); otherwise return scr_AnyEnemyHasPassive(1765) (@0x141f0b2d0). Needs SU-0001, since the re-roll block is otherwise dead. It can be added to the SU-0001 record instead of a new one. Reasoning: All four texts key on whose turn it is. The one place code and text differ is the missing enemy-holder half of Spin the Wheel: a one-sided gap like Elf's, fixed by extending the same check to the other side. SU-0001 covers only the battledone inversion. App note (unpatched game): The luck re-rolls depend on whose turn it is, not on who holds them; Spin the Wheel only works when one of your creatures has it (and, like Sleight of Hand and Good Luck, its re-roll never happens during battle). Source: errata round 2 (2026-10-26). | Patch (batch L): scr_Roll L36: the slot == 0 je @0x1466679b6 becomes a 6-byte NOP and the scr_AnyAllyHasPassive(1765) call @0x146667a1a goes to a hook: creatureturn.slot == 0 -> scr_AnyAllyHasPassive(1765) (the old case), slot > 0 -> scr_AnyEnemyHasPassive(1765), anything else -> false (the old skip). Needs SU-0001, which makes the re-roll block run during battle.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Spin the Wheel (trait)",
+    "intended": "Whenever it is an enemy's turn, random effects that fail to occur are re-rolled an additional time.",
+    "actual": "In the unpatched game, only your own Spin the Wheel worked (on enemy turns); an enemy holding it never re-rolled anything on your creatures' turns.",
+    "fix": "Now an enemy's Spin the Wheel also re-rolls on your creatures' turns.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

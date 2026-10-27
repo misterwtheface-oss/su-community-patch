@@ -1,0 +1,43 @@
+{
+  "id": "SU-0031",
+  "aliases": [
+    "A33"
+  ],
+  "title": "Single Discipline",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Single Discipline",
+      "runtime_id": 1678,
+      "text_key": "L_TRAIT_DESC_SINGLEDISCIPLINE"
+    }
+  ],
+  "problem": "Grows with the square of the cast count (3 casts = +90%, text = +30%).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0031",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§3"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Single Discipline: cast one spell 3 times at once (e.g. with extra casts); damage gets +30% Intelligence total, not +90%. Fix: S/H",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Single Discipline (trait)",
+    "intended": "The spell gets 10% more Intelligence for each time it is cast at once.",
+    "actual": "In the unpatched game, the bonus grew with the square of the count instead of once per cast.",
+    "fix": "Now it is a flat 10% per cast.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

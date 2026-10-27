@@ -1,0 +1,43 @@
+{
+  "id": "SU-0175",
+  "aliases": [
+    "B4#29-Justice"
+  ],
+  "title": "Justice And Other Fallacies",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Justice And Other Fallacies",
+      "runtime_id": 644,
+      "text_key": "L_TRAIT_DESC_JUSTICEANDOTHERFALLACIES"
+    }
+  ],
+  "problem": "One-sided: the code only ignores the effects when the opposing side holds the trait; the text reads global.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0175",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B4#29"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "2026-10-26 realign (text is the contract): text claims \"Effects that activate when creatures are resurrected are ignored\". Fix: H: bc_OnResurrect L211: stop the on-resurrect list for every resurrection. vs bugged: mixed. USER DECISION: reverses the earlier 'one-sided by design' (CROSS) reading; the global version also cancels the holder's own side's effects User 2026-10-26: global, as the text reads (no prior design ruling by the user). Fix = extend the trait's existing side test to the bearer's side too; no other changes (e.g. Life And Other Illusions: no extra handling of defenders' when-attacked effects). 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Justice And Other Fallacies on your creature; resurrect one of your creatures that has an on-resurrect trait: the on-resurrect effect should not fire.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Justice And Other Fallacies (trait)",
+    "intended": "Effects that activate when creatures are resurrected are ignored.",
+    "actual": "In the unpatched game, only the effects of the side opposing the holder were ignored.",
+    "fix": "Now on-resurrect effects are ignored for both sides, whichever side holds the trait.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

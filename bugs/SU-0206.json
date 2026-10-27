@@ -1,0 +1,44 @@
+{
+  "id": "SU-0206",
+  "aliases": [
+    "B1#56"
+  ],
+  "title": "Nemesis: Misery",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Nemesis: Misery",
+      "text_key": "L_B_NEM_DESC_MISERY"
+    }
+  ],
+  "problem": "Misery is only checked in the stat-gain events and the buff event. Start-of-battle stat gains (written directly, no event) and buffs added directly (start-of-battle grants and 'always have' buffs through scr_CritAddCondition) get through, so your creatures still gain stats and buffs.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0206",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#56"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Your creatures cannot gain buffs or stats. Evidence: global.nemesis == 2 tested only in bc_EventGainAttack L98-L102 @0x140fecb6b and the other 4 stat-gain events, and bc_EventBuff L111-L113 (@0x140ccd391). nemesis reads elsewhere test other values (bc_StartupStatGain L904: 4; bc_StartupBuffsDebuffs L617/L686: 7/16; scr_CritIsImmune L154: 9). bc_StartupStatGain is direct writes (START_OF_BATTLE_FINDINGS phase 4); start-of-battle buffs are direct scr_CritAddCondition (phase note L535). Fix sketch: (1) scr_CritAddCondition: after its 'is a buff' test (where the realm Maximum Buffs check sits, @0x1420164a1..0x142016638) refuse when global.nemesis == 2 and creature.slot > 0 (detour hook). (2) Wrap the bc_StartupStatGain call @0x1469c6a08: snapshot each player creature's attack/defense/intelligence/speed/hpmax before, and after the call clamp each to at most its snapshot when global.nemesis == 2 (call redirect to a C wrapper). Reasoning: The text says no buffs or stats at all; start-of-battle gains and directly added buffs are gains and are not blocked. Code-certain from the full list of nemesis readers. App note (unpatched game): Misery only blocks stat gains and buffs during battle; start-of-battle stat gains and buffs your creatures always have still apply. Source: errata round 2 (2026-10-26). | Patched, buff half (batch K, 2026-10-26): inside scr_CritAddCondition, the L46 realm 'Maximum Buffs' gate (slot > 0 && scr_ConditionIsBuff && scr_RealmHasProperty(31)) is reached exactly for a buff on your creature. Its scr_RealmHasProperty call (0x1420164a1) -> hook_k_su0206_realm_prop: with global.nemesis == 2 (the value bc_EventBuff L111 tests) and the condition not a minion it answers true and arms a flag; a detour on the L48 marker (0x1420164b6) then jumps to the game's own L51 refusal exit (as when the realm buff cap is full). Covers every direct add (start-of-battle, bc_MaintainPermanentEffects 'always has', in-battle direct grants); buff events were already refused by bc_EventBuff. Jump-over checked (skip audit clean): L48-L50 only build temps that the shared exit releases generically; the exit is also reached from L33 / L43 without them. Needs a per-effect ruling on which writes are gains.",
+  "release_notes": {
+    "section": "Realm",
+    "effect": "Misery (Nemesis)",
+    "intended": "Your creatures cannot gain buffs or stats.",
+    "actual": "In the unpatched game, Misery only stopped buffs and stats gained through the game's in-battle buff and stat events; buffs your creatures were given directly (start-of-battle buffs, 'always has' buffs and other direct grants) and start-of-battle stat gains still applied.",
+    "fix": "Now your creatures cannot gain those buffs either. Start-of-battle stat gains are not blocked yet.",
+    "impact": "weaker",
+    "flags": [
+      "partial"
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "id": "SU-0220",
+  "aliases": [
+    "B2#29"
+  ],
+  "title": "Artifact stat slots (Health vs Disarmed)",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Artifact stat slots",
+      "text_key": "L_CDESC_DEBUFF_DISARMED (cf. L_CODD_ARTIFACTS_STAT_SLOTS)"
+    }
+  ],
+  "problem": "Attack, Intelligence, Defense and Speed from artifacts are live terms in the stat getters. Artifact Health is written into max and current Health once at battle start, so Disarmed can't take it away. Disarmed's text says exactly that.",
+  "category": "not-a-bug",
+  "confidence": "code-certain",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "community:B2#29"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: {CONDNAME_DEBUFF_DISARMED} creatures lose the benefits from their equipped Artifact, other than {STAT_health}. Evidence: bc_StartupStatGain L1123-L1124 (0x14174af08-0x14174b7e0): inv_ArtifactStatTotal, then hpmax += and hp += (see B2#22). crit_attack: about 20 inv_ArtifactStatTotal calls in the bonus pool. Reasoning: Disarmed's own text carves out Health, so the behavior matches the text. Whether it is a 'have' term or a base write is an internal detail. App note (unpatched game): Artifact Attack, Intelligence, Defense and Speed are live bonuses; artifact Health is added once at the start of battle, so Disarmed doesn't remove it. Source: errata round 2 (2026-10-26).",
+  "reason": "works as its text says"
+}

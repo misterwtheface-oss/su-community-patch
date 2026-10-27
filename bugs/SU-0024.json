@@ -1,0 +1,55 @@
+{
+  "id": "SU-0024",
+  "aliases": [
+    "A26"
+  ],
+  "title": "Demonologist vs anointed Undying Loyalty / Eternal Guardian",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Demonologist specialization"
+    },
+    {
+      "kind": "perk",
+      "name": "Undying Loyalty",
+      "runtime_id": 231,
+      "key": "UNDYINGLOYALTY",
+      "text_key": "L_P_UNDYINGLOYALTY_DESC"
+    },
+    {
+      "kind": "perk",
+      "name": "Eternal Guardian",
+      "runtime_id": 387,
+      "key": "ETERNALGUARDIAN",
+      "text_key": "L_P_ETERNALGUARDIAN_DESC"
+    }
+  ],
+  "problem": "Demonologist's rule runs first and discards what those perks should keep.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0024",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§11 item 6"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: H: reorder 2026-10-26 hook batch B2: left needs-hook. Demonologist runs first and discards minions / buffs the anointed perks should keep; the fix is a reorder of the death-handling blocks, not a call-site change. Not built. Round-3 F2 2026-10-26: built. bc_HandleDeath: the L91 Demonologist compare reports 'no' when Undying Loyalty (231) or Eternal Guardian (387) applies, so the chain reaches UL / EG; UL's IsBuff test is false when EG also applies (buffs kept); EG's IsMinion test is false for demon minions 56-62 for a Demonologist (demons kept). Also fixes UL + EG without Demonologist (UL used to win and drop buffs). In-game test: Demonologist + anointed Undying Loyalty: a dying creature keeps all its minions (demons included), loses buffs. Demonologist + Eternal Guardian: keeps buffs and its demon minions, loses other minions. UL + EG (any spec): keeps buffs and minions. Demonologist alone: unchanged (only demon minions kept).",
+  "release_notes": {
+    "section": "Perks",
+    "effect": "Demonologist with anointed Undying Loyalty or Eternal Guardian (perks)",
+    "intended": "Undying Loyalty keeps minions through death and Eternal Guardian keeps buffs through death.",
+    "actual": "In the unpatched game, Demonologist's own death rule threw these away, so the anointed perks did nothing for a Demonologist.",
+    "fix": "Now minions (Undying Loyalty) and buffs (Eternal Guardian) persist through death for a Demonologist too; with both, both are kept. Demons are kept as before.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

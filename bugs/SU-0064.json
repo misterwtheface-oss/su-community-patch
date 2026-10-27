@@ -1,0 +1,51 @@
+{
+  "id": "SU-0064",
+  "aliases": [
+    "B27"
+  ],
+  "title": "Careful What You Wish For / Grim Ailment",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Careful What You Wish For",
+      "runtime_id": 1071,
+      "text_key": "L_TRAIT_DESC_CAREFULWHATYOUWISHFOR"
+    },
+    {
+      "kind": "trait",
+      "name": "Grim Ailment",
+      "runtime_id": 1072,
+      "text_key": "L_TRAIT_DESC_GRIMAILMENT"
+    }
+  ],
+  "problem": "\"Only last 1 turn\" not found in these builders (not traced).",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0064",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§13"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: ? User 2026-10-26: add the explicit '... only last for 1 turn' limit (not found in code): buffs / debuffs gained by the holder side's creatures get duration 1. Integrate with SU-0080's hook at the 3 bc_ExecuteEvents scr_CritAddCondition sites (they own that call) or the event builders. | 2026-10-26 hook batch F1 built (research/hooks_F1.json, loader/hooks_F1.c). hook_su0080_add_condition (the 3 buff/debuff event sites in bc_ExecuteEvents) passes the arguments through f1_su0064_args via the SU-0064 slot: a buff gained by a creature whose side holds Careful What You Wish For (1071), or a debuff from a source whose side holds Grim Ailment (1072), gets duration 1; permanent (-2) conditions are left alone. Needs SU-0080 (owns the call sites). Coverage: conditions added outside those event sites (direct scr_CritAddCondition calls) are not limited. In-game test: Careful What You Wish For on your side: a buff cast on your creature lasts 1 turn. Grim Ailment on your side: debuffs your creatures inflict last 1 turn.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Careful What You Wish For and Grim Ailment (traits)",
+    "intended": "Extra random buffs (or debuffs), but the side's buffs (or the debuffs it applies) only last 1 turn.",
+    "actual": "In the unpatched game, the 1-turn limit was missing.",
+    "fix": "Now those buffs and debuffs last 1 turn; permanent ones are left alone. Partial: conditions added directly rather than through a normal buff or debuff (some trait and start-of-battle effects) keep their normal duration. Requires SU-0080.",
+    "impact": "weaker",
+    "flags": [
+      "partial"
+    ]
+  }
+}

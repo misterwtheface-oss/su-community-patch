@@ -1,0 +1,35 @@
+{
+  "id": "SU-0257",
+  "aliases": [
+    "B4#12"
+  ],
+  "title": "Carnal Genesis",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Carnal Genesis",
+      "runtime_id": 14,
+      "text_key": "L_TRAIT_DESC_CARNALGENESIS"
+    }
+  ],
+  "problem": "Carnal Genesis can't cause the claimed lock, for four reasons. (1) Moving a creature on the Timeline doesn't reset any action limit; limits reset only when a creature starts its turn. (2) Each creature can be moved at most once per creature-turn. (3) Heals are capped at 15 per creature per turn (5 in Calm Mode), and a heal refused by the cap sets off no on-heal effects. (4) The creature whose turn it is can never be sent to the top. So every chain of heals within one turn comes to an end. Over several turns, a side that keeps winning the 10% rolls can take many turns in a row, which is exactly what the text describes.",
+  "category": "not-a-bug",
+  "confidence": "high",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "community:B4#12"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: After your creatures are healed, they have a 10% chance to move to the top of the {TIMELINE}. This trait does not stack. Evidence: bc_OnHeal L271 side gate scr_AnyAllyHasPassive/AnyEnemyHasPassive(14) @0x14155e769/0x14155e67f; L274 scr_Roll(10) @0x14155e7e5; L276 bc_EventActionQueue(-2 = top) @0x14155e9f0. Once-per-turn move lock: bc_EventActionQueue L21-L24 'timelined' test @0x140cc8ada, set @0x140cc8bc3. Turn creature refused: bc_ExecuteEvents L1174 compares event.creature with creatureturn ([rsp+0x39a8], loaded @0x141087a89) @0x1410d0b11 and skips; otherwise L1179 bc_SendCreatureToTopOfActionQueue @0x1410d0ea0. Heal cap: bc_EventHeal heals >= limit @0x141039989 (no event created). Limits reset only in bc_CreatureStartOfTurn @0x140b23c2f-0x140b23d38. Reasoning: The community's explanation ('changing the timeline resets turn action limits') is wrong: limits reset only in bc_CreatureStartOfTurn. The once-per-turn move lock, the per-turn heal cap and the rule that the acting creature can't be moved keep every chain finite, so this path has no endless loop. An endless heal chain would need a heal that ignores the heal limit. Relic-sourced heals are refunded at bc_EventHeal 0x141039e0d, but Carnal Genesis doesn't create any. App note (unpatched game): Carnal Genesis can send several healed creatures to the top of the Timeline, so one side can take many turns in a row, but it can't make turns repeat forever. Source: errata round 2 (2026-10-26).",
+  "reason": "works as its text says"
+}

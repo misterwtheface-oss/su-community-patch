@@ -1,0 +1,43 @@
+{
+  "id": "SU-0045",
+  "aliases": [
+    "B08"
+  ],
+  "title": "Unrealized Potential",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Unrealized Potential",
+      "runtime_id": 1069,
+      "text_key": "L_TRAIT_DESC_UNREALIZEDPOTENTIAL"
+    }
+  ],
+  "problem": "Copy gets halved twice (50% + 25%, text 50% + 50%).",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0045",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§13"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: S User 2026-10-26: the copy must not be halved a second time: total stays equal, split over two events (100 -> 50 + 50); the code gives 50 + 25. Fix: skip the second halving for the copy. | 2026-10-26 hook batch F1 built (research/hooks_F1.json, loader/hooks_F1.c). In each of the 5 stat-gain builders (Attack L341, Defense L349, Intelligence L340, Speed L344, Max Health L335) the var get of amount that feeds the queued copy now returns the pre-halving amount; the copy halves itself on its own pass, so 100 -> 50 + 50. In-game test: Unrealized Potential holder gains a stat (e.g. +100 Attack): the log shows two gains of 50 (was 50 + 25).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Unrealized Potential (trait)",
+    "intended": "The creature gains these stats an additional time, 50% fewer.",
+    "actual": "In the unpatched game, the extra copy was halved twice (50% + 25%).",
+    "fix": "Now the extra copy is 50% of the stats (50% + 50%).",
+    "impact": "stronger",
+    "flags": []
+  }
+}

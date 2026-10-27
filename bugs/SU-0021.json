@@ -1,0 +1,43 @@
+{
+  "id": "SU-0021",
+  "aliases": [
+    "A23"
+  ],
+  "title": "Creationism",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Creationism",
+      "runtime_id": 480,
+      "text_key": "L_TRAIT_DESC_CREATIONISM"
+    }
+  ],
+  "problem": "No Nature check: boosts every damaging spell.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0021",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§4 item 4"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Creationism: cast a Nature spell and a non-Nature spell; only the Nature spell gets the bonus. Fix: H: add the Nature test",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Creationism (trait)",
+    "intended": "Changes the Intelligence used by damaging Nature spells.",
+    "actual": "The game applied it to every damaging spell, of any class.",
+    "fix": "Now only damaging Nature spells are affected.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

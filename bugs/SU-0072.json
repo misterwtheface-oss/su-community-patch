@@ -1,0 +1,43 @@
+{
+  "id": "SU-0072",
+  "aliases": [
+    "C06"
+  ],
+  "title": "Chastity",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Chastity",
+      "runtime_id": 79,
+      "text_key": "L_TRAIT_DESC_CHASTITY"
+    }
+  ],
+  "problem": "Code: Health ≥ 90% (cast path only; the other Chastity checks already use >). Text: \"more than 90%\".",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0072",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§3"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Ruling 2026-10-26: align the code to the text. Fix: S: call the game's own \">\" helper — in patch, applied in game",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Chastity (trait)",
+    "intended": "The creature is Invisible while it has more than 90% Health.",
+    "actual": "In the unpatched game, when casting, the game also counted exactly 90%.",
+    "fix": "Now it needs more than 90% everywhere.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

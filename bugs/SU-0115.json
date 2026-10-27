@@ -1,0 +1,43 @@
+{
+  "id": "SU-0115",
+  "aliases": [
+    "D:No Head Necessary"
+  ],
+  "title": "No Head Necessary",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "No Head Necessary",
+      "runtime_id": 1002,
+      "text_key": "L_TRAIT_DESC_NOHEADNECESSARY"
+    }
+  ],
+  "problem": "one 50% roll for all dead holders",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0115",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:TRIAGE D"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": " | 2026-10-26 realign (text is the contract): text claims \"While this creature is dead, it has a 50% chance to attack\". Fix: H: roll 50% per dead holder (bc_CreatureStartOfTurn L5076-L5080; currently one shared roll, then every dead holder attacks). vs bugged: neutral on average (less correlated). | In-game test: several dead No Head Necessary holders: each rolls its own 50% (sometimes one attacks and another doesn't) instead of all or none.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "No Head Necessary (trait)",
+    "intended": "While dead, each holder has a 50% chance to attack enemies at the start of their turns.",
+    "actual": "In the unpatched game, one roll decided for every dead holder at once (all or none).",
+    "fix": "Now each dead holder rolls its own 50% chance.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

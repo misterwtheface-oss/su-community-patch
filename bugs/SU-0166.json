@@ -1,0 +1,43 @@
+{
+  "id": "SU-0166",
+  "aliases": [
+    "B5#21"
+  ],
+  "title": "Master of Arachnalisks (1399)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Master of Arachnalisks",
+      "runtime_id": 1399,
+      "text_key": "L_TRAIT_DESC_MASTEROFARACHNALISKS"
+    }
+  ],
+  "problem": "The side test is the wrong way round. The bonus is added to Poison on a creature on the holder's own side (and counts Arachnalisks on that side). Enemies' Poison is never increased. With your own Master and a Poisoned creature of yours, that creature takes more Poison damage. For comparison, Arachnophobia (521) in the same function uses the correct \"opposite side\" test.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0166",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#21"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Doesn't work. Evidence: bc_CalculatePoisonDamage: victim.slot > 0 && scr_AnyAllyHasPassive(1399) @0x1406797af / 0x14067983d; victim.slot == 0 && scr_AnyEnemyHasPassive(1399) @0x140679895 / 0x14067991d; count bc_CountRace(bc_GetAlliesOf(victim, true, true), \"Arachnalisk\") @0x1406799e2 / 0x140679a8f; × 0.2 @0x140679b24. Fix sketch: Swap the two side checks, and count with bc_GetEnemiesOf(victim) (3 call-target edits, S; H if the argument count must change). Triage 2026-10-26: S: swap the two side checks (AnyAlly <-> AnyEnemy) and count Arachnalisks with bc_GetEnemiesOf(victim) instead of bc_GetAlliesOf (3 call-target edits; verify argument counts match before building). 2026-10-26: built as byte patch SU-0166 (verified against the baseline exe; not yet run in game).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Master of Arachnalisks (trait)",
+    "intended": "Enemies take 20% more Poison damage for each Arachnalisk on your side.",
+    "actual": "In the unpatched game, the bonus went to Poison on the holder's own side.",
+    "fix": "Now enemies' Poison is increased.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

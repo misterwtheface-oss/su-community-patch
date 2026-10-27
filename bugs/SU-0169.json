@@ -1,0 +1,43 @@
+{
+  "id": "SU-0169",
+  "aliases": [
+    "B5#31"
+  ],
+  "title": "Master of Manticores (1458)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Master of Manticores",
+      "runtime_id": 1458,
+      "text_key": "L_TRAIT_DESC_MASTEROFMANTICORES"
+    }
+  ],
+  "problem": "The +15% Attack / Defense loop gives the bonus only to party members whose race is Manticore. The enemy −5% Attack part is fine.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0169",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#31"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Only Manticores get the bonus, though the text says \"your creatures\". Evidence: bc_StartupStatGain: scr_AnyAllyHasPassive(1458) @0x14174e6ef; crits[i].race == \"Manticore\" @0x14174e8dd, skip je 0x14174f29d @0x14174e900 (bytes 0f 84 97 09 00 00); enemy mirror @0x14174f5ed / je @0x14174f610. Fix sketch: NOP the two race-skip jumps @0x14174e900 and @0x14174f610 (S). Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. Only Manticores get the +15%. 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"your creatures have 15% more Attack and Defense for each Manticore\". Fix: S: NOP the race-skip jumps in bc_StartupStatGain: @0x14174e900 (L1179, your side) and @0x14174f610 (L1189, enemy side), 0f8497090000 -> 660f1f440000; the count is a separate bc_CountRace call. vs bugged: stronger (every creature on the side). 2026-10-26: built as byte patch SU-0169 (verified against the baseline exe; not yet run in game).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Master of Manticores (trait)",
+    "intended": "Your creatures get 15% more Attack and Defense for each Manticore on your side.",
+    "actual": "In the unpatched game, only Manticores got the bonus.",
+    "fix": "Now every creature on the side gets it.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

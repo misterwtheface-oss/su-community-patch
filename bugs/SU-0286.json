@@ -1,0 +1,43 @@
+{
+  "id": "SU-0286",
+  "aliases": [
+    "B5#27"
+  ],
+  "title": "Master of Hounds",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Master of Hounds",
+      "runtime_id": 1447,
+      "text_key": "L_TRAIT_DESC_MASTEROFHOUNDS"
+    }
+  ],
+  "problem": "The text limits it to your Hounds' Dire Wolves, but the code has no Hound check: every Dire Wolf owner on the holder's side uses its highest stat. 'Highest stat' can be max Health; that part fits the text, since Health is a stat.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0286",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#27"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Your {RACE_Hound}s' {CONDNAME_MINION_DIREWOLF} now deal damage based on their highest stat rather than {STAT_speed}. Evidence: bc_OnAttack L1064-L1068: Dire Wolf (cond 48) loop; base = crit_speed @0x141326fe7 (L1066); L1067 gate slot == 0 && scr_AnyEnemyHasPassive(1447) @0x1413271b7 or slot > 0 && scr_AnyAllyHasPassive(1447) @0x14132738c, with no race test; L1068 scr_GetCritNthHighestStatAmt @0x1413275a9 (includes hpmax). Fix sketch: At L1067, AND the side test with `creature.race == \"Hound\"` (creature = the Dire Wolf owner whose crit_speed is read at L1066). Hook the two gate calls @0x1413271b7 / @0x14132738c (or the merged bool before the L1068 branch) so they return false for non-Hounds. Reasoning: The text names the race ('Your Hounds''), so applying it to every Dire Wolf owner contradicts the text (ruling 1). Using Health as the highest stat matches 'highest stat', so that part stays. App note (unpatched game): Master of Hounds works for any of your creatures with Dire Wolves, not only Hounds, and the highest stat used can be Health. Source: errata round 2 (2026-10-26). | Patched (batch M, 2026-10-26): the two side calls of the bc_OnAttack L1067 gate (scr_AnyEnemyHasPassive(1447) @0x1413271b7, scr_AnyAllyHasPassive(1447) @0x14132738c) -> hook_m_su0286_enemy / hook_m_su0286_ally (loader/hooks_M.c): false unless the Dire Wolves' owner (the attacker, bc_OnAttack [rsp+0x168f0], the creature whose crit_speed L1066 reads) has race \"Hound\" (game's own string global and == compare). Highest stat may still be Health (fits the text).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Master of Hounds (trait)",
+    "intended": "Your Hounds' Dire Wolves now deal damage based on their highest stat rather than Speed.",
+    "actual": "In the unpatched game, every creature with Dire Wolves on the holder's side used its highest stat, Hound or not.",
+    "fix": "Now only Hounds' Dire Wolves use the highest stat; other creatures' Dire Wolves use Speed as before.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

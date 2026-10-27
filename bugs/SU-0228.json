@@ -1,0 +1,43 @@
+{
+  "id": "SU-0228",
+  "aliases": [
+    "B3#8"
+  ],
+  "title": "Dark Ritual (not cast by Velox / Lagopus)",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Dark Ritual",
+      "runtime_id": 35,
+      "text_key": "L_TRAIT_DESC_VELOX; L_TRAIT_DESC_LAGOPUS; L_SD_DARKRITUAL"
+    }
+  ],
+  "problem": "Dark Ritual raises the caster's Attack and Speed, so it is a stat-manipulating spell by its own text, but its internal category is UTILITY. Velox and Lagopus only pick BOOST / DEBOOST gems, so they never cast it.",
+  "category": "bug",
+  "confidence": "medium",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0228",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#8"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Velox / Lagopus: \"... first 3 permanent, stat-manipulating Spell Gems each have a 50% / 20% chance to be {ACTION_cast} automatically at the start of battle.\" | Dark Ritual: ... Evidence: Spell DB field 4 of id 35 = \"UTILITY\" (store @0x1458dd6b2, scr_DatabaseSpellGems); filter bc_StartupCasting L153 @0x1416c634d (Velox), L293 @0x1416c8f5d (Lagopus). Fix sketch: Do NOT retag: a BOOST tag would also make Temptation R100 copy a 'kill your ally' spell onto the bearer and make the Enchanter offer Stat +/- (Malachite), which can't act on a fixed 100% transfer. Instead redirect the tag test in bc_StartupCasting at L153 (Velox, block from @0x1416c634d) and L293 (Lagopus, @0x1416c8f5d) to a C hook that returns 'stat spell' for BOOST / DEBOOST tags OR spell id 35 / 37 (and, with #5, not for 22). Reasoning: 'Stat-manipulating' is not defined anywhere in the game's text, so it reads in plain language; Dark Ritual changes stats. The code uses a hidden tag that disagrees with that reading. App note (unpatched game): Velox and Lagopus never cast Dark Ritual, because the game files it as a utility spell even though it gives stats. Source: errata round 2 (2026-10-26). | Patch (batch L): bc_StartupCasting L153 (Velox) @0x1416c64a3 and L293 (Lagopus) @0x1416c90b3: the '> 0' test after string_pos(\"DEBOOST\", tag) goes to a hook that is also true for spell 35 (and 37 with SU-0229 on); the gem's spellid value is the one the line just read ([rbp+0x460] / [rbp+0x410], rbp = rsp + 0x100). No retag, so Temptation rank 100 and the Enchanter are unchanged. Dark Ritual's 'target ally is killed' still applies when it is cast this way.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Velox and Lagopus (traits) with Dark Ritual",
+    "intended": "The first 3 permanent, stat-manipulating Spell Gems have a chance to be cast at the start of battle.",
+    "actual": "In the unpatched game, Dark Ritual was never picked although it gives the caster Attack and Speed, because the game files it as a utility spell.",
+    "fix": "Now Dark Ritual counts as a stat-manipulating Spell Gem for Velox and Lagopus.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

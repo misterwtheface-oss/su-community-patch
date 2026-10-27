@@ -1,0 +1,43 @@
+{
+  "id": "SU-0070",
+  "aliases": [
+    "C04"
+  ],
+  "title": "Cold Blood",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Cold Blood",
+      "runtime_id": 269,
+      "text_key": "L_TRAIT_DESC_COLDBLOOD"
+    }
+  ],
+  "problem": "Code: 175%–300% damage. Text: 50%–250%.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0070",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§7"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Ruling 2026-10-26: align the code to the text. Fix: S: random range 75–200 → −50–150 — in patch, applied in game",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Cold Blood (trait)",
+    "intended": "Damage dealt is between 50% and 250% of normal.",
+    "actual": "In the unpatched game, the range was 175% to 300%.",
+    "fix": "Now the range is 50% to 250%.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

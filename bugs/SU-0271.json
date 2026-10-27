@@ -1,0 +1,43 @@
+{
+  "id": "SU-0271",
+  "aliases": [
+    "B4#38"
+  ],
+  "title": "Gemcutter",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Gemcutter",
+      "runtime_id": 1988,
+      "text_key": "L_TRAIT_DESC_GEMCUTTER"
+    }
+  ],
+  "problem": "The 'cannot be Sealed' part doesn't block the seal; it undoes it afterwards. Effects that seal gems directly (Eggnapper, Forbearance Forgone, Acid Body, Shellshock, Munch, Mind Eraser, sealing spells) do seal Ultimate gems. The game's spell-gem manager then unseals them on its next pass, so on a Gemcutter team the seal never lasts. The real problem is scope: that clean-up runs whenever either side has Gemcutter, and it unseals every Ultimate gem on the field. An enemy Gemcutter therefore also protects your Ultimates, and yours protects the enemy's. The text says 'Your creatures''.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0271",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B4#38"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Your creatures' Ultimate Spell Gems cannot be Sealed and do not consume {STAT_charges}. Your creatures are immune to {CONDNAME_DEBUFF_SILENCE}. Evidence: obj_spellgem_manager Step_0 (FUN_1476442e0, works through the gem instances in chunks): L87 scr_AnyAllyHasPassive(1988) @0x147646ce1 OR scr_AnyEnemyHasPassive(1988) @0x147646da4; L88 inv_SpellIsUltimate @0x147646e80; L89 sealed = 0 (xmm7 = 0) @0x147646ec7. No test of which side the gem belongs to (gems carry an 'enemy' field, copied by inv_SpellGemCopy L16). Direct sealed writes exist, e.g. bc_OnCast @0x14144c804 (Forbearance Forgone) and bc_StartupGems @0x1416dfa5f (Eggnapper). Fix sketch: Make the L87 test match the gem's side. Redirect the two calls @0x147646ce1 and @0x147646da4 to hooks that read the gem instance's 'enemy' field: return AnyAllyHasPassive(1988) only for player gems (enemy == 0) and AnyEnemyHasPassive(1988) only for enemy gems (enemy != 0). Reasoning: The vague community claim comes down to two facts. Direct seals are undone by the spell-gem manager, so the promise holds in practice for your own side, apart from a brief moment. And the undo check ignores sides, which contradicts 'Your creatures''. No in-game test is needed for the scope finding. Confidence is high rather than certain only because the use of the gem's 'enemy' field wasn't traced end to end. App note (unpatched game): Gemcutter unseals every Ultimate Spell Gem on the field shortly after it is sealed, including the other side's; an enemy Gemcutter protects your Ultimates too. Source: errata round 2 (2026-10-26). | Patch (batch L): obj_spellgem_manager Step_0 L87 calls scr_AnyAllyHasPassive(1988) @0x147646ce1 and scr_AnyEnemyHasPassive(1988) @0x147646da4 go to hooks: when the answer is true and the gem (with-loop self) is sealed, the gem's side is taken from bc_SpellGemGetOwner(gem).slot; the ally test then counts only for your gems and the enemy test only for enemy gems. Unknown owner keeps the game's answer. The gem's 'enemy' field was not used: it is only ever set by obj_spellgem Create and inv_SpellGemCopy. Still unseals on the manager's next pass (same as before; the immediate-read part is not in scope here).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Gemcutter (trait)",
+    "intended": "Your creatures' Ultimate Spell Gems cannot be Sealed.",
+    "actual": "In the unpatched game, a Gemcutter on either side unsealed every Ultimate Spell Gem on the field, so an enemy Gemcutter also protected your Ultimates and yours protected the enemy's.",
+    "fix": "Now Gemcutter only unseals the Ultimate Spell Gems of its own side.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

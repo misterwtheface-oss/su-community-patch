@@ -1,0 +1,34 @@
+{
+  "id": "SU-0301",
+  "aliases": [
+    "B6#18b"
+  ],
+  "title": "Roulette (new finding: heal branch ends the whole attack)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Roulette",
+      "runtime_id": 271,
+      "text_key": "L_TRAIT_DESC_ROULETTE"
+    }
+  ],
+  "problem": "The 50% roll is made per hit inside the hit loop, but when it lands on \"heal\" the code exits the whole attack routine. With extra attacks (\"attacks N additional times\") every later hit is lost: it neither deals damage nor heals. The after-attack steps are skipped as well (Invisible removal, Prejudice, Spooky Technique). Text: each time it attacks, 50% heal, otherwise 50% more damage.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "needs-hook",
+  "patch": "SU-0301",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:errata-round2 (found decoding B6#18)"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: When this creature {ACTION_attacks}, it has a 50% chance to deal no damage and heal all your creatures for the amount of damage it would have dealt. Otherwise, it deals 50% more damage. Evidence: bc_CreatureAttack hit loop L1076-L1892 (increment/continue block @0x1406d0568, back edge @0x1406f6748). Roulette L1742-L1776 is inside it: L1775 dmg ([rsp+0x350]) = 0, L1776 `jmp 0x1406f957d` @0x1406f09b2 = function epilogue (return). dmg is recomputed for each hit at L1142. Fix sketch: Byte edit at 0x1406f09b2: change `jmp 0x1406f957d` (e9 c6 8b 00 00) to `jmp 0x1406d0568` (e9 b1 fb fd ff), i.e. continue with the next hit instead of returning. dmg is zeroed at L1775 and recomputed at L1142; after the last hit the normal post-loop phase (L1893-L1960) runs. Reasoning: The roll is per hit, so the text's 50/50 applies to each attack; the early return silently deletes the remaining attacks. Retargeting the jump to the loop's own continue block is the smallest change and is the same path as the normal back edge. App note (unpatched game): In the unpatched game, when Roulette heals, the rest of that attack (its remaining extra hits) is cancelled. Source: errata round 2 (2026-10-26). | Patched (batch M, 2026-10-26): byte edit in bc_CreatureAttack L1776 @0x1406f09b2: `jmp 0x1406f957d` (function exit) -> `jmp 0x1406d0568` (the hit loop's own continue block, the target of its back edge @0x1406f6748). dmg was set to 0 at L1775 and is recomputed per hit at L1142; after the last hit the post-loop phase (L1893+) runs as for a normal attack. Checked: no non-volatile register is written anywhere in the loop body, so the shorter path leaves no register state behind. | 2026-10-26 in-game crash (user, heavy group off): GML 'STRING argument is unset' at bc_CreatureAttack L1076 (the hit-loop test `i <= hits`), reached through this patch's jump from the L1776 heal branch into the loop's continue block: the heal branch does not keep the loop state valid for another pass. Default off (status needs-hook) until the continuation is rebuilt with the loop state restored."
+}

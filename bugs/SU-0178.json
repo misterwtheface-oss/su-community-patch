@@ -1,0 +1,43 @@
+{
+  "id": "SU-0178",
+  "aliases": [
+    "B1#7"
+  ],
+  "title": "I HATE YOU !@#$ING ALL (Torun)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "I HATE YOU !@#$ING ALL",
+      "runtime_id": 610,
+      "text_key": "L_TRAIT_DESC_IHATEYOU!@#$INGALL"
+    }
+  ],
+  "problem": "Player-only. Both halves of the trait (the end-of-turn 'insult', which is a Provoke, and the 90% damage cut) are behind a 'creature is on the player's side' test. An enemy Torun's team never insults and your creatures deal full damage to it, although the text works from the holder's view. For player holders it works as a 90% cut, uncapped, on any hit (indirect and sourceless included) taken by one of your creatures while it is Provoking.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0178",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#7"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: AT THE END OF YOUR CREATURES' TURNS, THEY'LL SAY A LOT OF !@#$ED UP !@#$ TO THE ENEMIES. SINCE YOUR ENEMIES HAVE THE EMOTIONAL FORTITUDE OF A PIKACHU, THEY'LL CRY LIKE A BUNCH OF ... Evidence: bc_CreatureEndOfTurn L1310: slot >int 0 @0x140b0786a, je @0x140b07874 skips; AnyAllyHasPassive(610) @0x140b079cf -> bc_CreatureProvoke @0x140b07bad. bc_EventDamage L2528: creature.slot >int 0 @0x140e1c574 (je @0x140e1c57e), isprovoking (var read @0x140e1c5c7), AnyAllyHasPassive(610) @0x140e1c795 -> L2529 amount -= amount x 0.9 (0.9 @0x1498eb6b0). Codex 'no effect for enemies' list (scr_CodexFillContents L750) names only traits 2123 and 2128, not 610. Fix sketch: Extend both blocks to the enemy side (ruling 5) by dropping the two side tests: (1) bc_CreatureEndOfTurn L1310 @0x140b07874: 0f 84 69 01 00 00 -> 6 x 90 (NOP the 'slot > 0' skip); (2) bc_EventDamage L2528 @0x140e1c57e: 0f 84 25 02 00 00 -> 6 x 90. The rest of each gate (AnyAllyHasPassive(610), isprovoking) is already side-relative. Reasoning: Code-certain one-sided gate (slot > 0) on both the Provoke and the damage cut, and the Codex's list of traits that do nothing for enemies does not include this one. The 'Provoke' proxy for 'insulted' is coherent with the text, so only the missing side is a bug. App note (unpatched game): Only works when your side has it: an enemy with I HATE YOU !@#$ING ALL never makes its team Provoke and gets no damage cut; on your side it cuts any damage taken by your Provoking creatures by 90%, with no cap. Source: errata round 2 (2026-10-26). | Patched (batch I, 2026-10-26). Correction to the fix sketch: NOP'ing the two slot tests alone is wrong, because scr_AnyAllyHasPassive always reads your party (global.crits), so enemies would have Provoked / been protected by YOUR copy of the trait. Edits: NOP the `slot > 0` je at bc_CreatureEndOfTurn L1310 (0x140b07874) and bc_EventDamage L2528 (0x140e1c57e), and redirect each gate's scr_AnyAllyHasPassive(610) (0x140b079cf / 0x140e1c795) to hook_i_su0178_endturn / _damage, which ask the creature's own side (slot > 0: scr_AnyAllyHasPassive, slot == 0: scr_AnyEnemyHasPassive; no usable slot: false, as before). End of turn: the creature is global creatureturn ([frame + 0x48], also the L1312 Provoke target); damage: event.creature. Your side behaves exactly as before.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "I HATE YOU !@#$ING ALL (trait)",
+    "intended": "At the end of your creatures' turns they insult the enemies, who then deal 90% less damage. This trait does not stack.",
+    "actual": "In the unpatched game, the trait only worked on the player's side: an enemy with it never made its team Provoke at the end of their turns, and your creatures dealt full damage to its Provoking team.",
+    "fix": "Now the trait works for whichever side has it: that side's creatures Provoke at the end of their turns and take 90% less damage while Provoking.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

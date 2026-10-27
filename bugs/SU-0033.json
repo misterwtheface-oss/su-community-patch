@@ -1,0 +1,41 @@
+{
+  "id": "SU-0033",
+  "aliases": [
+    "A35"
+  ],
+  "title": "Confused attackers",
+  "subjects": [
+    {
+      "kind": "condition",
+      "name": "Confused"
+    }
+  ],
+  "problem": "The Confused chance bonus leaks into the hit's damage pool: +5/+25/+30 flat damage per hit.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0038",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§5"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: H: clear the pool after use | In-game test: a Confused creature's multi-hit attack: the Confused chance no longer adds to the damage of the following hits (all hits equal). Covered by the SU-0038 per-hit pool reset.",
+  "release_notes": {
+    "section": "Combat rules",
+    "effect": "Confused attackers (combat)",
+    "intended": "A Confused creature's attacks deal normal damage.",
+    "actual": "In the unpatched game, the Confused chance leaked into the damage of each following hit of a multi-hit attack, adding a little extra damage.",
+    "fix": "Now the Confused chance no longer adds damage. Covered by SU-0038 (multi-hit attacks).",
+    "impact": "weaker",
+    "flags": []
+  }
+}

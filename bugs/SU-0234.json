@@ -1,0 +1,43 @@
+{
+  "id": "SU-0234",
+  "aliases": [
+    "B3#22"
+  ],
+  "title": "Memento of Attack / Intelligence / Defense / Speed (while sealed)",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Memento of Attack / Intelligence / Defense / Speed",
+      "runtime_id": "540, 541, 542, 543",
+      "text_key": "L_SD_MEMENTOOFATTACK (and _INTELLIGENCE / _DEFENSE / _SPEED)"
+    }
+  ],
+  "problem": "The text gives the bonus for every missing charge, with no exception. The stat getters only look at unsealed gems, so a sealed Memento (Gems Sealed After Casting, Seal Magic, Begrudge ...) gives nothing even though its charges are still missing. The game's only description of Sealed is that the gem can't be cast.",
+  "category": "bug",
+  "confidence": "medium",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0234",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#22"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: This spell doesn't do anything when {ACTION_cast}. The caster has 5% more {STAT_attack} for each {STAT_charge} this Spell Gem is missing. Evidence: bc_GetSpellGems(creature, ultimates, sealed, empty) called with (c, 0, 0, 1): crit_attack L369 @0x1417b202b (sealed arg lea @0x1417b1fd5), crit_defense L370 @0x1417c486f (lea @0x1417c4819), crit_intelligence L398 @0x1417d7f2f (lea @0x1417d7ed9), crit_speed L356 @0x1417eaf73 (lea @0x1417eaf1d); Memento terms at L372 / L373 / L401 / L359 (stat_getters.md). Fix sketch: Constant repoint x4: the second lea (sealed flag) before each bc_GetSpellGems call points at 0x1498e0f40 (bool false); repoint it to 0x1498e0f60 (bool true) (the one already used for the third argument) at 0x1417b1fd5, 0x1417c4819, 0x1417d7ed9, 0x1417eaf1d. Check first that each of these four gem lists feeds only the Memento term (if another clause shares the list, use a hook that adds sealed Mementos only). Reasoning: The Memento text makes an unconditional claim and nothing in the game's text says sealing switches off a gem's passive effect; the code adds that condition. App note (unpatched game): A sealed Memento gem gives no stat bonus, even though its charges are still missing. Source: errata round 2 (2026-10-26). | Patched (batch J, 2026-10-26): constant repoint x4: the sealed argument of the Memento gem-list fetch bc_GetSpellGems(c, false, sealed, true) false (0x1498e0f40) -> true (0x1498e0f60) at crit_attack L369 lea @0x1417b1fd5, crit_defense L370 @0x1417c4819, crit_intelligence L398 @0x1417d7ed9, crit_speed L356 @0x1417eaf1d. Builder check: each list feeds only its Memento loop (spell id 540 / 542 / 541 / 543) and is reassigned by the next bc_GetSpellGems before any other read.",
+  "release_notes": {
+    "section": "Spell gems & items",
+    "effect": "Memento of Attack / Intelligence / Defense / Speed (spell gems)",
+    "intended": "The caster has 5% more Attack (Intelligence, Defense, Speed) for each charge this Spell Gem is missing.",
+    "actual": "In the unpatched game, a Sealed Memento gem gave no bonus, even though its charges were still missing.",
+    "fix": "Now a Memento gem gives its bonus while it is Sealed too.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

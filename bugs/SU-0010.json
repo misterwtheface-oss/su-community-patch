@@ -1,0 +1,41 @@
+{
+  "id": "SU-0010",
+  "aliases": [
+    "A10"
+  ],
+  "title": "Valkyrie card power 3",
+  "subjects": [
+    {
+      "kind": "card",
+      "name": "Valkyrie card power 3"
+    }
+  ],
+  "problem": "75% crit cap applies to attacks *against* enemies (your attacks), not enemies' attacks.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0010",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§5"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: S: test attacker side — in patch (byte-verified)",
+  "release_notes": {
+    "section": "Cards",
+    "effect": "Valkyrie card set, power 3 (card)",
+    "intended": "Enemies' critical chance is capped at 75%.",
+    "actual": "The game capped your own creatures' critical chance instead.",
+    "fix": "Now the cap applies to enemies only.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

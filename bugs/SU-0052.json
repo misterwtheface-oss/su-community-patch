@@ -1,0 +1,48 @@
+{
+  "id": "SU-0052",
+  "aliases": [
+    "B15"
+  ],
+  "title": "Sugar Rush",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Sugar Rush",
+      "runtime_id": 1741,
+      "text_key": "L_TRAIT_DESC_SUGARRUSH"
+    }
+  ],
+  "problem": "May skip a buff after each removal (array walk).",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0052",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§14"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true,
+      "verified_in_game": {
+        "date": "2026-10-26",
+        "by": "user",
+        "result": "bug confirmed: 1 buff kept after Sugar Rush's end-of-turn removal"
+      }
+    }
+  },
+  "notes": "Fix: H User 2026-10-26: in-game test: one buff was kept, not removed, at end of turn. Confirms the forward array walk skips the element after each removal. Fix: walk the conditions array backwards (or don't advance after a removal). | 2026-10-26 hook batch F1 built (research/hooks_F1.json, loader/hooks_F1.c). Stands in for the loop's scr_CritRemoveCondition (bc_CreatureEndOfTurn L240): if the conditions count dropped, the loop's own skip-increment flag is set so the same index is checked again. A buff that resists removal leaves the count unchanged, so the walk still advances (no endless loop). In-game test: Sugar Rush creature with 3+ buffs: all removed at the end of its turn.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Sugar Rush (trait)",
+    "intended": "At the end of the creature's turn, all its buffs are removed.",
+    "actual": "In the unpatched game, each removal skipped the next buff, so about half the buffs stayed.",
+    "fix": "Now all of the creature's buffs are removed.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

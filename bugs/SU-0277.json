@@ -1,0 +1,35 @@
+{
+  "id": "SU-0277",
+  "aliases": [
+    "B5#8"
+  ],
+  "title": "Honed Blades",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Honed Blades",
+      "runtime_id": 346,
+      "text_key": "L_TRAIT_DESC_HONEDBLADES"
+    }
+  ],
+  "problem": "Each creature adds 15% of every other ally's artifact % bonus for that stat to its own % bonus. All slots that give the stat count, dual-stat slots included. It shares the bonus percentage, not part of the other creature's stat value. Health is not shared, as the text says.",
+  "category": "not-a-bug",
+  "confidence": "code-certain",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "community:B5#8"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Your creatures share 15% of their Artifacts' bonuses from {STAT_attack}, {STAT_intelligence}, {STAT_defense}, and {STAT_speed} with each other. This trait does not stack. Evidence: crit_attack gate @0x1417b93c6; bc_GetAlliesOf(c, false, false) @0x1417b946a (self excluded); 5 x inv_ArtifactStatTotal @0x1417b996b-0x1417b9a29 (props 1/54/58/59/60); 0.15 @0x1417b9a5b. Same in crit_defense @0x1417cb766, crit_intelligence @0x1417defcb, crit_speed @0x1417f2697. Reasoning: 'Share 15% of their Artifacts' bonuses' is what the getters do; artifact stats are percentage bonuses. Counting the dual-stat slots fits 'bonuses from Attack…'. Nothing to fix. App note (unpatched game): Honed Blades gives each creature 15% of the other creatures' artifact % bonuses (dual-stat slots included) as a % bonus of its own. Source: errata round 2 (2026-10-26).",
+  "reason": "works as its text says"
+}

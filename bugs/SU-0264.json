@@ -1,0 +1,43 @@
+{
+  "id": "SU-0264",
+  "aliases": [
+    "B4#26b"
+  ],
+  "title": "Draconic Arrogance",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Draconic Arrogance",
+      "runtime_id": 1885,
+      "text_key": "L_TRAIT_DESC_DRACONICARROGANCE"
+    }
+  ],
+  "problem": "Embolden can't cause a crash: it reads its neighbours' stored Defense, not a fresh calculation. But Draconic Arrogance has a real crash path. It calculates its allies' current stats, and two other traits calculate their allies' current stats too: From Death to Destiny (for dead allies) and all four versions of Lifeblood (enemy-only). When both halves of such a pair are active, each stat lookup calls the other without end until the game crashes. On your side this happens when a Draconic Arrogance creature is dead but its traits stay active (Beyond the Veil, Life After Death, From Beyond the Grave) while an ally with From Death to Destiny is alive. On the enemy side it happens when an enemy with Draconic Arrogance fights alongside a Lifeblood enemy.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0264",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B4#26b"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: This creature has additional stats (other than {STAT_health}) equal to 5% of your other creatures' highest stats. This trait ignores other creatures with this same trait. Evidence: Embolden: crit_defense L722-L728 reads recent_defense @0x1417cc1de (stored value, no recursion). Draconic: scr_GetCritNthHighestStatAmt is called with its 3rd argument false (bool, 0x1498e0f40), which takes the branch that calls the ally's full crit_attack / crit_defense / crit_intelligence / crit_speed. Partner traits: From Death to Destiny crit_defense L780-L784 (bc_GetAlliesOf(c, true), hp <= 0 && !1046 -> crit_defense(ally) @0x1417cd570), also crit_attack L668-L672, crit_intelligence L803-L807, crit_speed L709-L713; Lifeblood 1219 / 1312 / 1313 / 1314 in all four getters (e.g. crit_attack L624-L662, crit_defense L733-L771). The getters have no re-entry guard; the only early exit is the global.calc_stats test that returns recent_* outside battle stat calculation (e.g. crit_attack L20 @0x1417aaee1). scr_CritHasPassive ignores dead creatures unless their traits stay active, which is why the dead-holder case needs Beyond the Veil or similar. Fix sketch: Break the loop on the Draconic side, using the same stored-stat approach as Embolden and Giran's Unity. Redirect the four scr_GetCritNthHighestStatAmt calls (crit_attack @0x1417aedca, crit_defense @0x1417c1fe4, crit_intelligence @0x1417e20a6, crit_speed @0x1417e7efb) to a C hook that returns the largest of the ally's recent_attack, recent_defense, recent_intelligence, recent_speed and hpmax. That removes both crash pairs involving Draconic Arrogance. The Lifeblood versions (1219 vs 1312-1314) can also loop against each other the same way; that one is enemy-only and is a separate item. Reasoning: Traced in the code: the Embolden path can't recurse, so the claim as stated is wrong. But stat calculations that call each other with no guard can recurse without end, and in this game build that is a hard crash. Your-side case needs a dead Draconic holder whose traits stay active, which explains why the crash looks rare and random. App note (unpatched game): Draconic Arrogance can crash the game if its holder is dead but keeps its traits (e.g. through Beyond the Veil) while an ally has From Death to Destiny; it has no problem with Embolden. Source: errata round 2 (2026-10-26). | Patched (batch J, 2026-10-26): the four scr_GetCritNthHighestStatAmt(ally, 1, false) calls (crit_attack L226 @0x1417aedca, crit_defense L255 @0x1417c1fe4, crit_intelligence L898 @0x1417e20a6, crit_speed L213 @0x1417e7efb) -> hook_j_su0264_highest: the largest of the ally's recent_attack, recent_defense, recent_intelligence, recent_speed and hpmax (the same five values the mode-false branch ranks, read from the stored results instead of calling the getters). Any other argument shape falls back to the original. The Lifeblood-vs-Lifeblood pair (1219 vs 1312-1314, enemy only) is not part of this fix.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Draconic Arrogance (trait)",
+    "intended": "This creature has additional stats (other than Health) equal to 5% of your other creatures' highest stats.",
+    "actual": "In the unpatched game, Draconic Arrogance recalculated its allies' stats from scratch. Next to From Death to Destiny (with a dead Draconic Arrogance creature whose traits stay active, e.g. through Beyond the Veil) or an enemy Lifeblood, the two traits kept asking for each other's stats and the game crashed.",
+    "fix": "Now Draconic Arrogance reads its allies' current stats (as Embolden does), so it can no longer cause that crash. The bonus itself is unchanged.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "id": "SU-0124",
+  "aliases": [
+    "B1#41"
+  ],
+  "title": "Beelzebub",
+  "subjects": [
+    {
+      "kind": "condition",
+      "name": "Beelzebub (minion)"
+    }
+  ],
+  "problem": "The death handler only checks that the killer exists and has Beelzebub. There is no check that the dead creature was on the other side, so killing an ally (e.g. with a Confused attack or a self-damaging effect) also triggers it. Text says \"kills an enemy\". (Anger Management interaction not checked.)",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0124",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#41"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Triggers when the master kills any creature, not only an enemy; works with Anger Management. Evidence: bc_OnDeath(killer, dying) L987 @0x1414c2de2: killer > -1 (0x14028ca10) && scr_CritHasCondition(killer, 58) @0x1414c2f8f; no slot comparison. Fix sketch: T: \"kills a creature\" (simplest, harmless upside). Or H: add killer.slot vs dying.slot side test Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. Triggers on any kill (no side test). 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"master kills an enemy\". Fix: H: call-site hook on scr_CritHasCondition(killer, 58) in bc_OnDeath L987 (@0x1414c2f8f): return false unless killer.slot and dying.slot are on opposite sides (slot==0 vs >0). vs bugged: weaker (no ally-kill trigger). 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Master with Beelzebub; kill an ALLY (e.g. Confused attack or self-damage): no Greater Demon. Kill an enemy: a random Greater Demon.",
+  "release_notes": {
+    "section": "Conditions & minions",
+    "effect": "Beelzebub (minion)",
+    "intended": "Triggers when its master kills an enemy.",
+    "actual": "In the unpatched game, any kill triggered it, allies included.",
+    "fix": "Now only kills of enemies trigger it.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "SU-0066",
+  "aliases": [
+    "B28"
+  ],
+  "title": "Like Sand (+ Master of Stags)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Like Sand",
+      "runtime_id": 625,
+      "text_key": "L_TRAIT_DESC_LIKESAND"
+    }
+  ],
+  "problem": "Cost 2 (1 extra); with Stags 4. Text: 2 additional (cost 3); Stags \"100% more effective\". Community confirms the Stags half.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0066",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§3"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test:  Fix: S | 2026-10-26 realign (text is the contract): text claims \"consume 2 additional charges (Master of Stags: 100% more effective)\". S: bc_CreatureCast L1471 cost mov edx,2 @0x140765e25 -> 3 (ba02000000 -> ba03000000); L1473 (with Master of Stags) mov edx,4 @0x1407665a0 -> 5 (ba04000000 -> ba05000000). vs bugged: stronger drawback (more charges). 2026-10-26: built as byte patch SU-0066 (verified against the baseline exe; not yet run in game).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Like Sand (trait)",
+    "intended": "Your Cascading spells consume 2 additional charges while above 50% charges (Master of Stags doubles it).",
+    "actual": "In the unpatched game, the extra cost was 1 (3 with Master of Stags).",
+    "fix": "Now the extra cost is 2, or 4 with Master of Stags.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

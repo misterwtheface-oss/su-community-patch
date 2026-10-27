@@ -1,0 +1,44 @@
+{
+  "id": "SU-0141",
+  "aliases": [
+    "B3#24"
+  ],
+  "title": "Pustule",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Pustule",
+      "runtime_id": 513,
+      "key": "PUSTULE",
+      "text_key": "L_SD_PUSTULE"
+    }
+  ],
+  "problem": "Damage = caster Defense × Small (90%), not Intelligence. The other enemies take 200% of that calculated amount. The text implies Intelligence.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0141",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#24"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Deals only ~10% Int, not \"small\". Evidence: bc_SpellDamage case L1626 @0x141613936 (caster Defense local 0xb818); splash bc_CreatureCast L14367 × 2. Fix sketch: T: \"based on the caster's Defense\". Or S: point the case at the Int local Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. Damage scales off Defense. 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"Target takes a small amount of damage\". Fix: S: bc_SpellDamage L1626 Pustule case, lea rcx,[rsp+0xb818] (caster Defense) @0x141613b07 -> [rsp+0xb7d8] (casting stat): bytes @0x141613b0b 18 b8 -> d8 b7. vs bugged: depends on the caster. 2026-10-26: built as byte patch SU-0141 (verified against the baseline exe; not yet run in game).",
+  "release_notes": {
+    "section": "Spells",
+    "effect": "Pustule (spell)",
+    "intended": "The target takes a small amount of damage and all other enemies take 200% of it.",
+    "actual": "In the unpatched game, the damage was based on the caster's Defense.",
+    "fix": "Now it is based on the caster's Intelligence.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

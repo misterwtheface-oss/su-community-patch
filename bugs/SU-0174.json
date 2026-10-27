@@ -1,0 +1,43 @@
+{
+  "id": "SU-0174",
+  "aliases": [
+    "B4#29-Hate"
+  ],
+  "title": "Hate And Other Triumphs",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Hate And Other Triumphs",
+      "runtime_id": 640,
+      "text_key": "L_TRAIT_DESC_HATEANDOTHERTRIUMPHS"
+    }
+  ],
+  "problem": "One-sided: the code only ignores the effects when the opposing side holds the trait; the text reads global.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0174",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B4#29"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "2026-10-26 realign (text is the contract): text claims \"Effects that activate when creatures die are ignored\". Fix: H: bc_OnDeath L158: stop the on-death list for every death, not only when the opposing side holds it. vs bugged: mixed. USER DECISION: reverses the earlier 'one-sided by design' (CROSS) reading; the global version also cancels the holder's own side's effects User 2026-10-26: global, as the text reads (no prior design ruling by the user). Fix = extend the trait's existing side test to the bearer's side too; no other changes (e.g. Life And Other Illusions: no extra handling of defenders' when-attacked effects). 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Hate And Other Triumphs on your creature (normal battle, not a boss); let one of your creatures with an on-death trait die: the on-death effect should not fire.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Hate And Other Triumphs (trait)",
+    "intended": "Effects that activate when creatures die are ignored (not in boss battles).",
+    "actual": "In the unpatched game, only the effects of the side opposing the holder were ignored.",
+    "fix": "Now on-death effects are ignored for both sides, whichever side holds the trait.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

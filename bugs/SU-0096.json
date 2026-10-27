@@ -1,0 +1,43 @@
+{
+  "id": "SU-0096",
+  "aliases": [
+    "D:Love And Other Disasters"
+  ],
+  "title": "Love And Other Disasters",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Love And Other Disasters",
+      "runtime_id": 639,
+      "text_key": "L_TRAIT_DESC_LOVEANDOTHERDISASTERS"
+    }
+  ],
+  "problem": "one-sided by design (CROSS ruling)",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0096",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:TRIAGE D"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "| 2026-10-26 realign (text is the contract): text claims \"Effects that activate when creatures are afflicted with a buff or debuff are ignored\". Fix: H: bc_OnBuffDebuff L33-L36: exit for every buff/debuff (any source, including none). vs bugged: mixed. USER DECISION: reverses the earlier 'one-sided by design' (CROSS) reading; the global version also cancels the holder's own side's effects User 2026-10-26: global, as the text reads (no prior design ruling by the user). Fix = extend the trait's existing side test to the bearer's side too; no other changes (e.g. Life And Other Illusions: no extra handling of defenders' when-attacked effects). 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Love And Other Disasters on your creature; give your creature a buff that has an 'after gaining a buff' trait reaction (e.g. a trait that reacts to buffs): the reaction should not fire.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Love And Other Disasters (trait)",
+    "intended": "Effects that activate when creatures gain a buff or debuff are ignored.",
+    "actual": "In the unpatched game, only the effects of the side opposing the holder were ignored.",
+    "fix": "Now these effects are ignored for both sides, whichever side holds the trait.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

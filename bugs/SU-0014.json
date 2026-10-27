@@ -1,0 +1,51 @@
+{
+  "id": "SU-0014",
+  "aliases": [
+    "A15",
+    "B5#25"
+  ],
+  "title": "Master of Dragons + Dynamic Dragon Scales",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Master of Dragons",
+      "runtime_id": 1426,
+      "text_key": "L_TRAIT_DESC_MASTEROFDRAGONS"
+    },
+    {
+      "kind": "trait",
+      "name": "Dynamic Dragon Scales",
+      "runtime_id": 314,
+      "text_key": "L_TRAIT_DESC_DYNAMICDRAGONSCALES"
+    }
+  ],
+  "problem": "Repeat tests the caster's side, but the Scales holder is on the other side: a player Dragon party never gets it. Community: Master of Dragons doesn't work with Dynamic Dragon Scales.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0014",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§3",
+    "community:B5#25"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Master of Dragons: give one of your creatures Dynamic Dragon Scales and attack it with an enemy Dragon, then put Scales on an enemy and attack it with your Dragon; the extra activation happens only in the second case (your Dragons). Fix: H",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Master of Dragons with Dynamic Dragon Scales (trait)",
+    "intended": "Your Dragons' innate traits activate 1 additional time.",
+    "actual": "In the unpatched game, the repeat checked the enemy caster instead of your Dragon, so your Dragons never got it.",
+    "fix": "Now the extra activation applies to your Dragons.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

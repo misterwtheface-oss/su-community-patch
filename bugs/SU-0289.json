@@ -1,0 +1,45 @@
+{
+  "id": "SU-0289",
+  "aliases": [
+    "B5#32"
+  ],
+  "title": "Master of Spellmanes",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Master of Spellmanes",
+      "runtime_id": 1815,
+      "text_key": "L_TRAIT_DESC_MASTEROFSPELLMANES"
+    }
+  ],
+  "problem": "The text says no Spell Gems can be sealed, but the code doesn't block sealing. Instead, the gem manager clears `sealed` once per frame for all-Spellmane parties. So a seal still lands, the 'Sealed' floater still shows, and code that runs before the next frame treats the gem as sealed: the rest of the cast, after-cast triggers, castability and gem-list checks, and Heresy's sealed-gem count.",
+  "category": "bug",
+  "confidence": "medium",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0289",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#32"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: If all the creatures in your party are {RACE_Spellmane}s, they are immune to {CONDNAME_DEBUFF_SILENCE} and no Spell Gems can be sealed. Evidence: obj_spellgem_manager_Step_0 (FUN_1476442e0): scr_AnyEnemyHasPassive(1815) @0x147646471, scr_AnyAllyHasPassive(1815) @0x14764665e, bc_AllRace @0x147646788, sealed := false @0x1476467ae. Seal writes have no immunity test, e.g. bc_CreatureCast L18813-L18819 (realm property 54 @0x140a4bf50, trait 319 @0x140a4c1b0 / @0x140a4c385; sealed set @0x140a4bfe2 / @0x140a4c426; floater L18820). Readers of `sealed` (var slot 0x1499e3348): bc_CritCanCastSpell @0x140cc3ac6, bc_GetSpellGems @0x14118641e / @0x141186b85, bc_EventDamage (6 reads), crit_* getters (4), bc_CreatureCast @0x140871b3e / @0x1408f4dac, bc_OnAttack @0x1413840e4, bc_OnDeath @0x1414d4275. Fix sketch: Make the immunity real on the read side. Put a C hook on the listed `sealed` reads (bc_CritCanCastSpell, bc_GetSpellGems x2, bc_EventDamage x6, crit_* x4, bc_CreatureCast x2, bc_OnAttack, bc_OnDeath) that returns false when the gem's owner is on a side where scr_Any{Ally|Enemy}HasPassive(1815) && bc_AllRace(\"Spellmane\", side), the same test the Step uses. Alternative: guard the ~38 `sealed` writes that set true (bc_CreatureCast 19, bc_OnAttack 5, bc_StartupGems 4, bc_CreatureStartOfTurn 3, bc_OnCast 2, bc_MaintainPermanentEffects2 2, and one each in bc_OnBuffDebuff, bc_OnDeath, bc_OnProvoke, bc_StartupStatLoss, inv_SpellGemCopy) and skip the 'Sealed' floater. Reasoning: The text promises that gems can't be sealed. The code lets the seal happen and undoes it a frame later, so it is certain that code and text differ. How visible that is in play depends on which readers run before the next frame, hence medium confidence. The read-side guard makes 'can't be sealed' true wherever sealing is checked, with fewer edits. App note (unpatched game): Master of Spellmanes unseals gems at the end of the frame instead of blocking the seal, so effects in the same action still see the gem as sealed. Source: errata round 2 (2026-10-26). | Patch (batch L, group heavy): the 18 battle reads of gem.sealed (bc_CreatureCast x2, bc_CreatureStartOfTurn x2, bc_EventDamage x6, bc_GetSpellGems x2, bc_OnAttack, bc_OnDeath, crit_attack / defense / intelligence / speed) go through hook_l_su0289_sealed, which answers 'not sealed' when the Step would clear the seal; bc_CritCanCastSpell's read is SU-0137's hook (extended). The Spellmanes test is the Step's own (L77-L78): (AnyEnemyHasPassive(1815) && bc_AllRace('Spellmane', 0)) || (AnyAllyHasPassive(1815) && bc_AllRace('Spellmane', 1)), which like the Step applies to every gem on the field. It is evaluated by a hook on the Step's AnyEnemyHasPassive(1815) call (same answer returned), at most once per timer tick, and ignored when older than 100 ms. Not changed: the seal writes and the 'Sealed' floater (cosmetic), inv_SpellGemCopy and UI reads. Also carries the read side of SU-0212 and extends SU-0137 (Astral Dimension) to these reads.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Master of Spellmanes (trait)",
+    "intended": "If all the creatures in your party are Spellmanes, no Spell Gems can be sealed.",
+    "actual": "In the unpatched game, gems were still sealed and only unsealed a moment later, so for the rest of that action they counted as sealed (castability, copies, after-cast effects, sealed-gem counts).",
+    "fix": "Now gems never count as sealed while the condition holds, including in the same action. The 'Sealed' text may still flash.",
+    "impact": "stronger",
+    "flags": [
+      "heavy"
+    ]
+  }
+}

@@ -1,0 +1,288 @@
+{
+  "patches": [
+    {
+      "id": "SU-0060",
+      "bug": "SU-0060",
+      "default": 1,
+      "title": "Windwalker: 5% avoid chance (up to 80%) for each time ALL your creatures dodged this battle (code counted only the damaged creature's own dodges)",
+      "edits": [
+        {
+          "va": "0x1488bf810",
+          "expect": "000000000000",
+          "write": "ff250a8b6101",
+          "note": "trampoline -> hook_su0060_varget (cave code)"
+        },
+        {
+          "va": "0x140d03978",
+          "expect": "f483bb06",
+          "write": "94bebb07",
+          "note": "bc_EventDamage L181: var get total_dodges -> party total (hook)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8320",
+          "symbol": "hook_su0060_varget"
+        }
+      ]
+    },
+    {
+      "id": "SU-0133",
+      "bug": "SU-0133",
+      "default": 1,
+      "title": "Union: each creature grants its % of Health from its Max Health at battle start, not compounded along the party",
+      "edits": [
+        {
+          "va": "0x1488bf818",
+          "expect": "000000000000",
+          "write": "ff250a8b6101",
+          "note": "trampoline -> hook_su0133_startup (cave code)"
+        },
+        {
+          "va": "0x1488bf820",
+          "expect": "000000000000",
+          "write": "ff250a8b6101",
+          "note": "trampoline -> hook_su0133_varget (cave code)"
+        },
+        {
+          "va": "0x1469c6a09",
+          "expect": "03a4d4fa",
+          "write": "0b8eef01",
+          "note": "battle controller: call bc_StartupStatGain -> snapshot wrapper"
+        },
+        {
+          "va": "0x1417311c9",
+          "expect": "a3ab1806",
+          "write": "53e61807",
+          "note": "bc_StartupStatGain L787: ally.hpmax -> snapshot value"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8328",
+          "symbol": "hook_su0133_startup"
+        },
+        {
+          "slot_va": "0x149ed8330",
+          "symbol": "hook_su0133_varget"
+        }
+      ]
+    },
+    {
+      "id": "SU-0086",
+      "bug": "SU-0086",
+      "default": 1,
+      "title": "5740-NG rank 10: the relic attacks only if the bearer really took no damage this turn (avoided, dodged and prevented hits no longer count)",
+      "edits": [
+        {
+          "va": "0x1488bf828",
+          "expect": "000000000000",
+          "write": "ff250a8b6101",
+          "note": "trampoline -> hook_su0086_turnstart (cave code)"
+        },
+        {
+          "va": "0x1488bf830",
+          "expect": "000000000000",
+          "write": "ff250a8b6101",
+          "note": "trampoline -> hook_su0086_varget (cave code)"
+        },
+        {
+          "va": "0x140b23c3e",
+          "expect": "4e8476ff",
+          "write": "e6bbd907",
+          "note": "bc_CreatureStartOfTurn L54 (damages reset): snapshot party damage_taken"
+        },
+        {
+          "va": "0x140abf4ff",
+          "expect": "6dc8df06",
+          "write": "2d03e007",
+          "note": "bc_CreatureEndOfTurn L210: bearer.damages -> took real damage since turn start"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8338",
+          "symbol": "hook_su0086_turnstart"
+        },
+        {
+          "slot_va": "0x149ed8340",
+          "symbol": "hook_su0086_varget"
+        }
+      ]
+    },
+    {
+      "id": "SU-0128",
+      "bug": "SU-0128",
+      "default": 1,
+      "title": "Born Again: creatures killed by start-of-battle effects (including queued ones like Red Wedding) are resurrected with 50% Health",
+      "edits": [
+        {
+          "va": "0x1488bf838",
+          "expect": "000000000000",
+          "write": "ff250a8b6101",
+          "note": "trampoline -> hook_su0128_turnstart (cave code)"
+        },
+        {
+          "va": "0x1469d339f",
+          "expect": "e86c908bf9",
+          "write": "0f1f440000",
+          "note": "battle Step L1123: drop the early global.bornagain = true (assign call -> nop)"
+        },
+        {
+          "va": "0x140b23bce",
+          "expect": "be8476ff",
+          "write": "66bcd907",
+          "note": "bc_CreatureStartOfTurn L53: set global.bornagain = true at the first turn start"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8348",
+          "symbol": "hook_su0128_turnstart"
+        }
+      ]
+    },
+    {
+      "id": "SU-0151",
+      "bug": "SU-0151",
+      "default": 1,
+      "title": "Filtered Truth: enemies always have equal Attack and Intelligence, whichever FINAL value is lower (code compared base fields before bonuses)",
+      "edits": [
+        {
+          "va": "0x1488bf850",
+          "expect": "000000000000000000000000000000",
+          "write": "48895c24104c89442418e97baceef8",
+          "note": "crit_attack original entry: relocated prologue + jmp back (cave code)"
+        },
+        {
+          "va": "0x1417aa4d0",
+          "expect": "48895c24104c89442418",
+          "write": "ff257ade720890909090",
+          "note": "crit_attack entry -> hook_su0151_attack"
+        },
+        {
+          "va": "0x1417bbc3c",
+          "expect": "c744246056030000",
+          "write": "e9e1010000909090",
+          "note": "crit_attack: skip the early cap against the other stat's base field"
+        },
+        {
+          "va": "0x1488bf860",
+          "expect": "000000000000000000000000000000",
+          "write": "48895c24104c89442418e9abfef0f8",
+          "note": "crit_intelligence original entry: relocated prologue + jmp back (cave code)"
+        },
+        {
+          "va": "0x1417cf710",
+          "expect": "48895c24104c89442418",
+          "write": "ff25428c700890909090",
+          "note": "crit_intelligence entry -> hook_su0151_intelligence"
+        },
+        {
+          "va": "0x1417e2647",
+          "expect": "c7442460a2030000",
+          "write": "e9dd010000909090",
+          "note": "crit_intelligence: skip the early cap against the other stat's base field"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8350",
+          "symbol": "hook_su0151_attack"
+        },
+        {
+          "slot_va": "0x149ed8358",
+          "symbol": "hook_su0151_intelligence"
+        }
+      ]
+    },
+    {
+      "id": "SU-0144",
+      "bug": "SU-0144",
+      "default": 1,
+      "title": "Death Guild: the Debuff Potency bonus is applied once per debuff (code added it once per living party creature, compounding)",
+      "edits": [
+        {
+          "va": "0x1488bf870",
+          "expect": "00000000000000000000000000000000000000000000",
+          "write": "c605e98a610100488bb5600300004531f6e918a675f9",
+          "note": "loop entry: clear the guild-applied flag (cave code)"
+        },
+        {
+          "va": "0x1488bf8a0",
+          "expect": "000000000000000000000000000000000000000000000000000000",
+          "write": "803db98a610100750dc744246030010000e909a875f9e9e5a575f9",
+          "note": "guild add: skip if already applied this call (cave code)"
+        },
+        {
+          "va": "0x1488bf8d0",
+          "expect": "000000000000000000000000",
+          "write": "c605898a610101e9c4a575f9",
+          "note": "after the guild add: set the flag (cave code)"
+        },
+        {
+          "va": "0x142019e94",
+          "expect": "488bb5600300004533f6",
+          "write": "e9d7598a069090909090",
+          "note": "scr_CritAddCondition L296: detour to clear flag"
+        },
+        {
+          "va": "0x14201a0b7",
+          "expect": "c744246030010000",
+          "write": "e9e4578a06909090",
+          "note": "scr_CritAddCondition L304: detour, skip repeat guild add"
+        },
+        {
+          "va": "0x14201a29a",
+          "expect": "e901fcffff",
+          "write": "e931568a06",
+          "note": "scr_CritAddCondition L305 continue: detour, set flag"
+        }
+      ]
+    },
+    {
+      "id": "SU-0134",
+      "bug": "SU-0134",
+      "default": 1,
+      "title": "Artifact Spell Slot: the artifact's chance starts from its own base (+ Smith), not the chance left over from the Nether Stone's spells",
+      "edits": [
+        {
+          "va": "0x1488bf900",
+          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
+          "write": "0f108424206e01000f1105618a6101488925728a6101c605638a610101c78424",
+          "note": "save base + Smith chance (L2573) (cave code)"
+        },
+        {
+          "va": "0x1488bf920",
+          "expect": "00000000000000000000000000",
+          "write": "500102000d0a0000e94911aff8",
+          "note": "save base + Smith chance (L2573) (cave code)"
+        },
+        {
+          "va": "0x1488bf940",
+          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
+          "write": "803d398a6101007418483925388a6101750f0f1005178a61010f118424206e01",
+          "note": "restore before the artifact roll (L2586) (cave code)"
+        },
+        {
+          "va": "0x1488bf960",
+          "expect": "000000000000000000000000000000000000000000000000",
+          "write": "00c605188a610100c78424500102001a0a0000e9271daff8",
+          "note": "restore before the artifact roll (L2586) (cave code)"
+        },
+        {
+          "va": "0x1413b0a6b",
+          "expect": "c78424500102000d0a0000",
+          "write": "e990ee5007909090909090",
+          "note": "bc_OnAttack L2573 marker: detour (save)"
+        },
+        {
+          "va": "0x1413b1694",
+          "expect": "c78424500102001a0a0000",
+          "write": "e9a7e25007909090909090",
+          "note": "bc_OnAttack L2586 marker: detour (restore)"
+        }
+      ]
+    }
+  ]
+}

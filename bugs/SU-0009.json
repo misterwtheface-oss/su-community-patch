@@ -1,0 +1,43 @@
+{
+  "id": "SU-0009",
+  "aliases": [
+    "A09"
+  ],
+  "title": "Starwrath rank 100",
+  "subjects": [
+    {
+      "kind": "relic",
+      "name": "Starwrath, Great Spear of Yseros",
+      "relic_code_id": 13,
+      "rank": 100
+    }
+  ],
+  "problem": "Sets every enemy's Confused chance to 10%, lowering it for enemies that *are* Confused (50%→10%).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0009",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:BR:starwrath_r100"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: H: only raise, never lower Hook batch R (loader/hooks_R.c, research/hooks_R.json). In-game test: Starwrath rank 100: a Confused enemy still redirects about half its attacks/harmful spells (not 10%); an enemy without Confused redirects about 10%.",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "Starwrath, rank 100 (relic)",
+    "intended": "Enemies that are not Confused have a 10% chance to act as if they were Confused.",
+    "actual": "The game applied the 10% to enemies that were already Confused, lowering their real Confused chance to 10%, and did nothing for the others.",
+    "fix": "Now the 10% chance applies to enemies without Confused, and real Confused enemies keep their normal chance.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

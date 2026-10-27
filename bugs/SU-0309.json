@@ -1,0 +1,35 @@
+{
+  "id": "SU-0309",
+  "aliases": [
+    "B6#29"
+  ],
+  "title": "Spook",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Spook",
+      "runtime_id": 202,
+      "text_key": "L_TRAIT_DESC_SPOOK"
+    }
+  ],
+  "problem": "The third sentence does do something. At the start of a creature's turn, Invisible is removed only when its duration has run out, and Spook keeps it then. Invisible is still removed when the creature acts (attack, cast, Defend, Provoke), which the text does not cover.",
+  "category": "not-a-bug",
+  "confidence": "code-certain",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "community:B6#29"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: At the start of battle, this creature gains {CONDNAME_BUFF_INVISIBLE}. This creature deals 200% more damage while it is {CONDNAME_BUFF_INVISIBLE}. This creature's ... Evidence: bc_CreatureStartOfTurn L286-L290: expired-condition removal list, L288 skip for Invisible when scr_CritHasPassive(creature, 202) @0x140b34f4a. Action removals: bc_CreatureAttack L1926 @0x1406f7493, bc_OnDefend / bc_OnProvoke L24-L29. Reasoning: The text promises exactly the turn-start exemption the code has; removal on acting is a separate rule the text never mentions. App note (unpatched game): Spook keeps Invisible when its duration runs out, but acting still removes it. Source: errata round 2 (2026-10-26).",
+  "reason": "works as its text says"
+}

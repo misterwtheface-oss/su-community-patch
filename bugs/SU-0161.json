@@ -1,0 +1,43 @@
+{
+  "id": "SU-0161",
+  "aliases": [
+    "B5#5"
+  ],
+  "title": "Greybeard's Blessing (1881)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Greybeard's Blessing",
+      "runtime_id": 1881,
+      "text_key": "L_TRAIT_DESC_GREYBEARD'SBLESSING"
+    }
+  ],
+  "problem": "Any heal on an opposing creature with Blighted is doubled, whoever heals it: the enemy's own heals, Mending, and your heals too. The code never looks at the healer. The community is right that all sources count, but your own heals are boosted as well.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0161",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#5"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: It doesn't boost your own healing on Blighted enemies; it makes Blighted enemies get +100% from all healing, Mending included. Evidence: bc_EventHeal: scr_CritHasCondition(creature, 16 = Blighted) @0x14103cb09; creature.slot > 0 && scr_AnyEnemyHasPassive(1881) @0x14103cbdd, slot == 0 && scr_AnyAllyHasPassive(1881) @0x14103ccae; amount += @0x14103cd08; no source read. Fix sketch: Add a \"healer is on the holder's side\" test (H), or reword to \"Enemies with Blighted receive 100% more healing\" (T). Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. Every heal on a Blighted opposing creature is boosted, whoever heals it. 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"Your creatures grant 100% more healing to enemies with Blighted\". Fix: H: call-site hook on the Greybeard gates in bc_EventHeal (@0x14103cbdd / 0x14103ccae) adding 'source is on the holder's side'. vs bugged: weaker (enemy self-heals no longer boosted). | In-game test: Greybeard's Blessing vs a Blighted enemy: the enemy's own heals and sourceless heals on it are not doubled; your creatures' heals on it are.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Greybeard's Blessing (trait)",
+    "intended": "Your creatures grant 100% more healing to Blighted enemies.",
+    "actual": "In the unpatched game, every heal on those enemies was doubled, including their own heals.",
+    "fix": "Now only your creatures' heals on them are doubled.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

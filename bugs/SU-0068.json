@@ -1,0 +1,43 @@
+{
+  "id": "SU-0068",
+  "aliases": [
+    "C02"
+  ],
+  "title": "Closure",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Closure",
+      "runtime_id": 800,
+      "text_key": "L_TRAIT_DESC_CLOSURE"
+    }
+  ],
+  "problem": "Code: 25% Health. Text: 35%.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0068",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§14"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Ruling 2026-10-26: align the code to the text. Fix: K — in patch, applied in game 2026-10-26",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Closure (trait)",
+    "intended": "At the end of its turn, the creature gains 35% Current and Maximum Health and provokes.",
+    "actual": "In the unpatched game, it gained 25%.",
+    "fix": "Now it gains 35%.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

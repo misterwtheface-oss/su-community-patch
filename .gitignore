@@ -1,0 +1,9 @@
+loader/build/
+loader/test/*.exe
+loader/test/*.obj
+loader/test/suucp.log
+__pycache__/
+loader/test/*.exe
+loader/test/*.obj
+dist/
+*.obj

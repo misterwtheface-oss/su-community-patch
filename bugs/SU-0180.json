@@ -1,0 +1,53 @@
+{
+  "id": "SU-0180",
+  "aliases": [
+    "B1#11"
+  ],
+  "title": "Class advantage for spells",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Class advantage for spells",
+      "text_key": "L_CODD_CREATURES_CLASSES (vs L_SD_CONVOKETHESPIRITS)"
+    }
+  ],
+  "problem": "For spells, the game uses the spell gem's class (changed by the Class Swap properties), not the caster's class. The Codex says 'your creature's class'. Convoke the Spirits' text ('This spell's class is considered to be whatever class the target is weak against') and the Class Swap texts ('The Spell Gem's class is changed to ...') only make sense if the spell's class decides advantage, which is what the code does.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-text",
+  "status": "patched",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#11"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: When one of your creatures deals damage to an enemy, the damage is increased if your creature's class is strong against that of the enemy. | (Convoke the Spirits) Target takes a ... Evidence: global.spellclass set in bc_CreatureCast and read by the class-advantage step (COMBAT_RULES.md S31 sites); Convoke the Spirits always counts as strong. Fix sketch: Edit L_CODD_CREATURES_CLASSES, second paragraph: \"When one of your creatures deals damage to an enemy, the damage is increased if your creature's class is strong against that of the enemy. For spells, the Spell Gem's class is used instead.\" Reasoning: Two game texts disagree (Codex vs Convoke the Spirits / Class Swap); the code follows the spell-class texts, so the Codex line is the one to correct (ruling 2). App note (unpatched game): Spell damage uses the spell gem's class (Class Swap changes it) for class advantage, not the caster's class. Source: errata round 2 (2026-10-26). | 2026-10-26: text correction shipped via localization_override (loader text module).",
+  "text_fix": [
+    {
+      "file": "codex.csv",
+      "key": "L_CODD_CREATURES_CLASSES",
+      "en_find": "is strong against that of the enemy.",
+      "en_proposed": "is strong against that of the enemy. For spells, the Spell Gem's class is used instead of the caster's.",
+      "en_current_sha256": "1c63627c0330dcea63fca4faa67f54a808ed0a548f163c5617f28f2f0bb1256b"
+    }
+  ],
+  "release_notes": {
+    "section": "Interface text",
+    "effect": "Codex: Classes",
+    "intended": "The Codex explains which class decides class advantage.",
+    "actual": "In the unpatched game, the Codex said your creature's class always decides, while Convoke the Spirits and Class Swap (and the game) use the spell's class for spells.",
+    "fix": "Now the Codex says that for spells, the Spell Gem's class is used.",
+    "impact": "neutral",
+    "flags": [
+      "text"
+    ]
+  }
+}

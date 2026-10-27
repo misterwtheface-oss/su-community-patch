@@ -1,0 +1,43 @@
+{
+  "id": "SU-0002",
+  "aliases": [
+    "A02"
+  ],
+  "title": "Master of Gorgons",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Master of Gorgons",
+      "runtime_id": 1442,
+      "text_key": "L_TRAIT_DESC_MASTEROFGORGONS"
+    }
+  ],
+  "problem": "Bonus has no trait check: every Gorgon gets it, trait does nothing. Confirmed in game 2026-10-19.",
+  "category": "bug",
+  "confidence": "in-game-confirmed",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0002",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:BR:master_of_gorgons"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: H: add the trait gate 2026-10-26: user re-test confirms the bug is still present (no patch yet). Patch built: C hook on the block's bc_CountRace call.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Master of Gorgons (trait)",
+    "intended": "Your creatures deal 35% more damage to Stoned enemies for each Gorgon on your side.",
+    "actual": "The game gave the bonus to any side with Gorgons, even when nobody on that side had Master of Gorgons.",
+    "fix": "Now the bonus only applies when the attacker's side has the trait.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

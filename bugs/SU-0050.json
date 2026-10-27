@@ -1,0 +1,43 @@
+{
+  "id": "SU-0050",
+  "aliases": [
+    "B13"
+  ],
+  "title": "Gambler's Game",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Gambler's Game",
+      "runtime_id": 1760,
+      "text_key": "L_TRAIT_DESC_GAMBLER'SGAME"
+    }
+  ],
+  "problem": "\"Otherwise gains a random trait\": code gives a random debuff.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0050",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§2"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test:  Fix: H | 2026-10-26 realign (text is the contract): text claims \"Otherwise, it gains a random trait\". H: Gambler's Game else-branch (bc_CreatureStartOfTurn L3662) gives a random trait instead of a random debuff. vs bugged: stronger (no debuff). | Batch S: left needs-hook. The random-trait sibling (bc_CreatureStartOfTurn L615-L620) passes 6 bc_EventTrait args whose order (source/value/flags) was not fully confirmed; wiring it blind risks a wrong trait grant. Round-2 C2 2026-10-26: hook_su0050_gambler stands in for the else branch's bc_EventDebuff (bc_CreatureStartOfTurn L3668) and returns bc_EventTrait(-1, creature, scr_GetRandomPassive() rerolled while < 0, true, true, label), the shape of the game's own random-trait grant (L615-L620, bc_OnResurrect). In-game test: a Gambler's Game holder's side, many turns: about half the turns give a random buff, the other half a random TRAIT (shown as a trait gain), never a debuff.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Gambler's Game (trait)",
+    "intended": "At the start of each turn, 50% chance to gain a random buff; otherwise a random trait.",
+    "actual": "In the unpatched game, when the buff roll failed, the creature got a random debuff instead of a trait.",
+    "fix": "Now a failed roll grants a random trait.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

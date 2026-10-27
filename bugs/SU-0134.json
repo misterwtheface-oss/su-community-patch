@@ -1,0 +1,41 @@
+{
+  "id": "SU-0134",
+  "aliases": [
+    "B2#32"
+  ],
+  "title": "Artifact Spell Slot vs Nether Stone",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Artifact Spell Slot with a Nether Stone spell"
+    }
+  ],
+  "problem": "Confirmed. The chance left over from the Nether-stone loop is reused for the artifact Spell Slot, so the Smith bonus is lost and The Truth's 100% carries over.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0134",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B2#32"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: If the Nether Stone has a spell, the artifact slot starts from the Nether chance: no Smith bonus, and The Truth makes it always fire. Evidence: bc_OnAttack L2569-2606: = base @0x1413b07c1, Nether loop = base @0x1413b0e49 / The Truth = 100 @0x1413b1044, no reset before the artifact roll. Fix sketch: S: redo the base (and Smith) assignment after the Nether loop Triage 2026-10-26: Nether chance carries over to the artifact Spell Slot (Smith bonus lost, The Truth = 100%). Hook: recompute the base (+ Smith) before the artifact roll. Batch R: not built. The chance is reassigned by the Nether-stone loop (L2573-2577) and the artifact roll (L2586+) reuses it; a correct fix must save base+Smith after L2571 and restore it before the artifact roll, across several statements. Needs a deeper decode of the L2570-2591 chance flow before patching. Round-2 hook (A2): call-free detours save the artifact Spell Slot chance after base + Smith (bc_OnAttack L2573) and restore it before the artifact roll (L2586), keyed by the frame. In-game test: a Nether Stone with a spell + The Truth: the artifact Spell Slot no longer always fires; with the Smith card set its base chance is x1.1.",
+  "release_notes": {
+    "section": "Spell gems & items",
+    "effect": "Artifact Spell Slot with a Nether Stone spell",
+    "intended": "The Artifact's Spell Slot has its own chance to cast (raised by the Smith card set).",
+    "actual": "In the unpatched game, it reused the chance left over from the Nether Stone's spells, losing the Smith bonus or keeping a 100% chance from The Truth.",
+    "fix": "Now the Artifact's chance starts from its own base, plus the Smith bonus.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

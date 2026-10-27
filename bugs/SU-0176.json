@@ -1,0 +1,43 @@
+{
+  "id": "SU-0176",
+  "aliases": [
+    "SU-0038-followup"
+  ],
+  "title": "Touch of Red counts additional attacks, not each attack",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Touch of Red",
+      "runtime_id": 664,
+      "text_key": "L_TRAIT_DESC_TOUCHOFRED"
+    }
+  ],
+  "problem": "Text: 'the damage of all their attacks is increased by 25% for each attack'. With the multi-hit fix (SU-0038) every hit gets +25% x the ADDITIONAL attacks (2 extra -> +50%); the text counts each attack (3 attacks -> +75%).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0176",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:batch C 2026-10-26"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Found while normalizing SU-0038. Fix: count total attacks (additional + 1) in Touch of Red's term. 2026-10-26 hook batch B2 built (research/hooks_B2.json, loader/hooks_B2.c). The (hits - 1) term at bc_CreatureAttack L1253 becomes hits when the chain has more than one attack (single attacks keep 0). Separate from SU-0038's per-hit pool reset; no shared bytes. In-game test: Touch of Red creature attacking 3 times in a row (e.g. with 2 extra attacks): each hit +75% (with SU-0038 on, every hit; base 320 -> 560 each). A single attack: no bonus.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Touch of Red (trait)",
+    "intended": "When your creatures attack several times in a row, every attack gets 25% more damage for each attack.",
+    "actual": "In the unpatched game, only the additional attacks were counted (3 attacks gave +50%).",
+    "fix": "Now every attack counts, the first one included (3 attacks give +75%). Works with SU-0038.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "id": "SU-0251",
+  "aliases": [
+    "B3#55"
+  ],
+  "title": "Barrier spells (potency notes)",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Barrier spells",
+      "runtime_id": "87 Holy Armor, 88 Holy Bulwark, 235 Corpse Shield, 252 Divine Aegis, 488 Mental Barrier",
+      "text_key": "L_SD_HOLYARMOR (etc.); L_SPELLMOD_INCREASEDDAMAGE / L_SPMOD_INCREASEDDAMAGE; L_CODD_SPELLGEMS_ENCHANTING"
+    }
+  ],
+  "problem": "The bug: the Enchanter offers Moonstone ('Damage Increased By X%') on these gems, because its compatibility test looks for the words 'amount of damage' in the English description ('absorbs a massive amount of damage'); the spells deal no damage, so the property does nothing. In other languages the test falls back to the category tag and the property is not offered.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": null,
+  "status": "open",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#55"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Holy Armor: \"Target gains a {CONDNAME_BUFF_BARRIER} that absorbs a massive amount of damage.\" | Moonstone: \"Damage Increased By {1}%\" / \"The spell deals additional damage.\" | ... Evidence: spell_signatures: Holy Armor / Holy Bulwark / Corpse Shield / Divine Aegis / Mental Barrier -> bc_SpellHealing + bc_EventBuff(Barrier); scr_FixSpellGemProps 0x1460a8080 c10 = desc has \"amount of damage\" (spell_property_compat.json _note); effective column 10 = 1 for all five. Fix sketch: Post-init hook after scr_FixSpellGemProps (or a hook on inv_SpellGemCanHaveProperty) that clears spell[id][10] for ids 87, 88, 235, 252, 488 (and any other non-damaging spell the 'amount of damage' substring catches), so Moonstone is no longer offered. Gems already holding Moonstone keep an inert property. Reasoning: The codex promises incompatible properties can't be enchanted; a substring slip in the English description test offers one anyway. App note (unpatched game): Barrier spells scale like healing spells (healing tiers and spell-healing bonuses), and the Damage Increased property does nothing on them. Source: errata round 2 (2026-10-26)."
+}

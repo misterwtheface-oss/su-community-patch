@@ -1,0 +1,579 @@
+{
+  "patches": [
+    {
+      "id": "SU-0281",
+      "bug": "SU-0281",
+      "default": 1,
+      "title": "Jealousy: the 'only one Imler and one Imling' test uses the shared race count, so Odd One, Shackler's Mastery and Forest Pact apply (code: its own count, which ignored them)",
+      "edits": [
+        {
+          "va": "0x14a343500",
+          "expect": "000000000000000000000000000000000000000000000000000000",
+          "write": "48893d4954b9ff4889354a54b9ffc6054b54b9ff00ff254d54b9ff",
+          "note": "SU-0281 crit_attack stub: save self / other / getter, then hook_j_su0281_count (cave code)"
+        },
+        {
+          "va": "0x1417b6b59",
+          "expect": "935dadfe",
+          "write": "a3c9b808",
+          "note": "crit_attack L577: Imler count == 1 -> bc_CountRace(allies, Imler) == 1"
+        },
+        {
+          "va": "0x1417b6b72",
+          "expect": "7a5dadfe",
+          "write": "8ac9b808",
+          "note": "crit_attack L577: Imling count == 1 -> bc_CountRace(allies, Imling) == 1"
+        },
+        {
+          "va": "0x14a34351b",
+          "expect": "000000000000000000000000000000000000000000000000000000",
+          "write": "4889352e54b9ff4c89352f54b9ffc6053054b9ff01ff253254b9ff",
+          "note": "SU-0281 crit_defense stub: save self / other / getter, then hook_j_su0281_count (cave code)"
+        },
+        {
+          "va": "0x1417ca08c",
+          "expect": "6028acfe",
+          "write": "8b94b708",
+          "note": "crit_defense L630: Imler count == 1 -> bc_CountRace(allies, Imler) == 1"
+        },
+        {
+          "va": "0x1417ca0a2",
+          "expect": "4a28acfe",
+          "write": "7594b708",
+          "note": "crit_defense L630: Imling count == 1 -> bc_CountRace(allies, Imling) == 1"
+        },
+        {
+          "va": "0x14a343536",
+          "expect": "000000000000000000000000000000000000000000000000000000",
+          "write": "4889351354b9ff4c89351454b9ffc6051554b9ff02ff251754b9ff",
+          "note": "SU-0281 crit_intelligence stub: save self / other / getter, then hook_j_su0281_count (cave code)"
+        },
+        {
+          "va": "0x1417de10a",
+          "expect": "e2e7aafe",
+          "write": "2854b608",
+          "note": "crit_intelligence L673: Imler count == 1 -> bc_CountRace(allies, Imler) == 1"
+        },
+        {
+          "va": "0x1417de120",
+          "expect": "cce7aafe",
+          "write": "1254b608",
+          "note": "crit_intelligence L673: Imling count == 1 -> bc_CountRace(allies, Imling) == 1"
+        },
+        {
+          "va": "0x14a343551",
+          "expect": "000000000000000000000000000000000000000000000000000000",
+          "write": "48893df853b9ff488935f953b9ffc605fa53b9ff03ff25fc53b9ff",
+          "note": "SU-0281 crit_speed stub: save self / other / getter, then hook_j_su0281_count (cave code)"
+        },
+        {
+          "va": "0x1417f0d06",
+          "expect": "e6bba9fe",
+          "write": "4728b508",
+          "note": "crit_speed L636: Imler count == 1 -> bc_CountRace(allies, Imler) == 1"
+        },
+        {
+          "va": "0x1417f0d1f",
+          "expect": "cdbba9fe",
+          "write": "2e28b508",
+          "note": "crit_speed L636: Imling count == 1 -> bc_CountRace(allies, Imling) == 1"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a343500",
+          "end": "0x14a34351a",
+          "what": "SU-0281 crit_attack stub"
+        },
+        {
+          "start": "0x14a34351b",
+          "end": "0x14a343535",
+          "what": "SU-0281 crit_defense stub"
+        },
+        {
+          "start": "0x14a343536",
+          "end": "0x14a343550",
+          "what": "SU-0281 crit_intelligence stub"
+        },
+        {
+          "start": "0x14a343551",
+          "end": "0x14a34356b",
+          "what": "SU-0281 crit_speed stub"
+        },
+        {
+          "start": "0x149ed8968",
+          "end": "0x149ed896f",
+          "what": "hook pointer hook_j_su0281_count"
+        },
+        {
+          "start": "0x149ed8950",
+          "end": "0x149ed8957",
+          "what": "SU-0281 self of the running getter"
+        },
+        {
+          "start": "0x149ed8958",
+          "end": "0x149ed895f",
+          "what": "SU-0281 other of the running getter"
+        },
+        {
+          "start": "0x149ed8960",
+          "end": "0x149ed8967",
+          "what": "SU-0281 getter index (byte)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8968",
+          "symbol": "hook_j_su0281_count"
+        }
+      ]
+    },
+    {
+      "id": "SU-0261",
+      "bug": "SU-0261",
+      "default": 1,
+      "title": "Devotion: the 'only one Imler and one Imling' test uses the shared race count, so Odd One, Shackler's Mastery and Forest Pact apply (code: its own count, which ignored them)",
+      "edits": [
+        {
+          "va": "0x14a34356c",
+          "expect": "000000000000",
+          "write": "ff25fe53b9ff",
+          "note": "trampoline -> hook_j_su0261_count (loader/hooks_J.c) (cave code)"
+        },
+        {
+          "va": "0x140e285f6",
+          "expect": "f64246ff",
+          "write": "72af5109",
+          "note": "bc_EventDamage L2777: Imler count == 1 -> bc_CountRace(allies, Imler) == 1"
+        },
+        {
+          "va": "0x140e28613",
+          "expect": "d94246ff",
+          "write": "55af5109",
+          "note": "bc_EventDamage L2777: Imling count == 1 -> bc_CountRace(allies, Imling) == 1"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a34356c",
+          "end": "0x14a343571",
+          "what": "trampoline -> hook_j_su0261_count"
+        },
+        {
+          "start": "0x149ed8970",
+          "end": "0x149ed8977",
+          "what": "hook pointer hook_j_su0261_count"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8970",
+          "symbol": "hook_j_su0261_count"
+        }
+      ]
+    },
+    {
+      "id": "SU-0264",
+      "bug": "SU-0264",
+      "default": 1,
+      "title": "Draconic Arrogance: reads the other creatures' stored stats, so it no longer crashes the game with From Death to Destiny or Lifeblood (code: computed them, and the two traits recursed)",
+      "edits": [
+        {
+          "va": "0x14a343572",
+          "expect": "000000000000",
+          "write": "ff250054b9ff",
+          "note": "trampoline -> hook_j_su0264_highest (loader/hooks_J.c) (cave code)"
+        },
+        {
+          "va": "0x1417aedcb",
+          "expect": "01bd9704",
+          "write": "a347b908",
+          "note": "crit_attack L226 Draconic Arrogance: scr_GetCritNthHighestStatAmt(ally, 1, false) -> the ally's stored stats"
+        },
+        {
+          "va": "0x1417c1fe5",
+          "expect": "e78a9604",
+          "write": "8915b808",
+          "note": "crit_defense L255 Draconic Arrogance: scr_GetCritNthHighestStatAmt(ally, 1, false) -> the ally's stored stats"
+        },
+        {
+          "va": "0x1417e20a7",
+          "expect": "258a9404",
+          "write": "c714b608",
+          "note": "crit_intelligence L898 Draconic Arrogance: scr_GetCritNthHighestStatAmt(ally, 1, false) -> the ally's stored stats"
+        },
+        {
+          "va": "0x1417e7efc",
+          "expect": "d02b9404",
+          "write": "72b6b508",
+          "note": "crit_speed L213 Draconic Arrogance: scr_GetCritNthHighestStatAmt(ally, 1, false) -> the ally's stored stats"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a343572",
+          "end": "0x14a343577",
+          "what": "trampoline -> hook_j_su0264_highest"
+        },
+        {
+          "start": "0x149ed8978",
+          "end": "0x149ed897f",
+          "what": "hook pointer hook_j_su0264_highest"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8978",
+          "symbol": "hook_j_su0264_highest"
+        }
+      ]
+    },
+    {
+      "id": "SU-0234",
+      "bug": "SU-0234",
+      "default": 1,
+      "title": "Memento of Attack / Intelligence / Defense / Speed: also counts while the gem is Sealed (code: a sealed Memento gave nothing)",
+      "edits": [
+        {
+          "va": "0x1417b1fd8",
+          "expect": "64ef1208",
+          "write": "84ef1208",
+          "note": "crit_attack L369 Memento gem list: bc_GetSpellGems sealed argument false -> true"
+        },
+        {
+          "va": "0x1417c481c",
+          "expect": "20c71108",
+          "write": "40c71108",
+          "note": "crit_defense L370 Memento gem list: bc_GetSpellGems sealed argument false -> true"
+        },
+        {
+          "va": "0x1417d7edc",
+          "expect": "60901008",
+          "write": "80901008",
+          "note": "crit_intelligence L398 Memento gem list: bc_GetSpellGems sealed argument false -> true"
+        },
+        {
+          "va": "0x1417eaf20",
+          "expect": "1c600f08",
+          "write": "3c600f08",
+          "note": "crit_speed L356 Memento gem list: bc_GetSpellGems sealed argument false -> true"
+        }
+      ],
+      "reserves": [],
+      "runtime_hooks": []
+    },
+    {
+      "id": "SU-0269",
+      "bug": "SU-0269",
+      "default": 1,
+      "title": "Fallen Star: 50% for every stat (code: 35% for Defense / Intelligence / Speed), a Feared holder does not steal, and Max Health gains can be stolen too",
+      "edits": [
+        {
+          "va": "0x14a343578",
+          "expect": "000000000000",
+          "write": "ff250254b9ff",
+          "note": "trampoline -> hook_j_su0269_holder (loader/hooks_J.c) (cave code)"
+        },
+        {
+          "va": "0x140ff2ad5",
+          "expect": "e7970301",
+          "write": "9f0a3509",
+          "note": "bc_EventGainAttack L307 Fallen Star holder test -> also not Feared"
+        },
+        {
+          "va": "0x141001f55",
+          "expect": "67a30201",
+          "write": "1f163409",
+          "note": "bc_EventGainDefense L315 Fallen Star holder test -> also not Feared"
+        },
+        {
+          "va": "0x141002171",
+          "expect": "8ba98e08",
+          "write": "fba28e08",
+          "note": "bc_EventGainDefense L317 Fallen Star roll 35 -> 50"
+        },
+        {
+          "va": "0x141011b66",
+          "expect": "56a70101",
+          "write": "0e1a3309",
+          "note": "bc_EventGainIntelligence L306 Fallen Star holder test -> also not Feared"
+        },
+        {
+          "va": "0x141011d82",
+          "expect": "1aae8d08",
+          "write": "eaa68d08",
+          "note": "bc_EventGainIntelligence L308 Fallen Star roll 35 -> 50"
+        },
+        {
+          "va": "0x14103054d",
+          "expect": "6fbdff00",
+          "write": "27303109",
+          "note": "bc_EventGainSpeed L310 Fallen Star holder test -> also not Feared"
+        },
+        {
+          "va": "0x141030769",
+          "expect": "63cf8b08",
+          "write": "03bd8b08",
+          "note": "bc_EventGainSpeed L312 Fallen Star roll 35 -> 50"
+        },
+        {
+          "va": "0x14a34357e",
+          "expect": "000000000000",
+          "write": "ff250454b9ff",
+          "note": "trampoline -> hook_j_su0269_maxhp (loader/hooks_J.c) (cave code)"
+        },
+        {
+          "va": "0x14102135f",
+          "expect": "fd021400",
+          "write": "1b223209",
+          "note": "bc_EventGainMaxHP L312 (Currents) bc_GetEnemiesOf -> run the Fallen Star block first"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a343578",
+          "end": "0x14a34357d",
+          "what": "trampoline -> hook_j_su0269_holder"
+        },
+        {
+          "start": "0x149ed8980",
+          "end": "0x149ed8987",
+          "what": "hook pointer hook_j_su0269_holder"
+        },
+        {
+          "start": "0x14a34357e",
+          "end": "0x14a343583",
+          "what": "trampoline -> hook_j_su0269_maxhp"
+        },
+        {
+          "start": "0x149ed8988",
+          "end": "0x149ed898f",
+          "what": "hook pointer hook_j_su0269_maxhp"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8980",
+          "symbol": "hook_j_su0269_holder"
+        },
+        {
+          "slot_va": "0x149ed8988",
+          "symbol": "hook_j_su0269_maxhp"
+        }
+      ]
+    },
+    {
+      "id": "SU-0202",
+      "bug": "SU-0202",
+      "default": 1,
+      "title": "Unstable Horror: the damage uses the master's highest stat, Health included (Maximum Health) (code: the second-highest when Health was highest)",
+      "edits": [
+        {
+          "va": "0x14153f9de",
+          "expect": "7e4a3b08",
+          "write": "9e4d3b08",
+          "note": "bc_OnDefend L510 Unstable Horror: Health highest -> keep the highest (n = 2 -> 1)"
+        },
+        {
+          "va": "0x14a343584",
+          "expect": "000000000000",
+          "write": "ff250654b9ff",
+          "note": "trampoline -> hook_j_su0202_defend (loader/hooks_J.c) (cave code)"
+        },
+        {
+          "va": "0x14153fa4b",
+          "expect": "e1cad4fe",
+          "write": "353be008",
+          "note": "bc_OnDefend L512 Unstable Horror: amount = 0 -> the master's Maximum Health when the stat is Health"
+        },
+        {
+          "va": "0x141568aec",
+          "expect": "f0c43808",
+          "write": "c0c73808",
+          "note": "bc_OnProvoke L163 Unstable Horror: Health highest -> keep the highest (n = 2 -> 1)"
+        },
+        {
+          "va": "0x14a34358a",
+          "expect": "000000000000",
+          "write": "ff250854b9ff",
+          "note": "trampoline -> hook_j_su0202_provoke (loader/hooks_J.c) (cave code)"
+        },
+        {
+          "va": "0x141568b59",
+          "expect": "d339d2fe",
+          "write": "2daadd08",
+          "note": "bc_OnProvoke L165 Unstable Horror: amount = 0 -> the master's Maximum Health when the stat is Health"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a343584",
+          "end": "0x14a343589",
+          "what": "trampoline -> hook_j_su0202_defend"
+        },
+        {
+          "start": "0x149ed8990",
+          "end": "0x149ed8997",
+          "what": "hook pointer hook_j_su0202_defend"
+        },
+        {
+          "start": "0x14a34358a",
+          "end": "0x14a34358f",
+          "what": "trampoline -> hook_j_su0202_provoke"
+        },
+        {
+          "start": "0x149ed8998",
+          "end": "0x149ed899f",
+          "what": "hook pointer hook_j_su0202_provoke"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8990",
+          "symbol": "hook_j_su0202_defend"
+        },
+        {
+          "slot_va": "0x149ed8998",
+          "symbol": "hook_j_su0202_provoke"
+        }
+      ]
+    },
+    {
+      "id": "SU-0275",
+      "bug": "SU-0275",
+      "default": 1,
+      "title": "Grandiose (and Redefined): effects that count buffs / debuffs see the +3 (Lenience, Holy Might, Reckoning, Pandemonium Exploit, Under Stress, Swell, Nighttaker, Ruin, Daybreaker, Heresy and two spells) (code: they counted the raw list)",
+      "edits": [
+        {
+          "va": "0x14a343590",
+          "expect": "000000000000",
+          "write": "ff250a54b9ff",
+          "note": "trampoline -> hook_j_su0275_buffs (loader/hooks_J.c) (cave code)"
+        },
+        {
+          "va": "0x14a343596",
+          "expect": "000000000000",
+          "write": "ff250c54b9ff",
+          "note": "trampoline -> hook_j_su0275_debuffs (loader/hooks_J.c) (cave code)"
+        },
+        {
+          "va": "0x140e1a072",
+          "expect": "6a823200",
+          "write": "1a955209",
+          "note": "bc_EventDamage L2488 Lenience: raw buff count -> bc_CountBuffs"
+        },
+        {
+          "va": "0x140eadf78",
+          "expect": "64432900",
+          "write": "14564909",
+          "note": "bc_EventDamage L5144 Holy Might: raw buff count -> bc_CountBuffs"
+        },
+        {
+          "va": "0x140dc5bd6",
+          "expect": "06c73700",
+          "write": "b6d95709",
+          "note": "bc_EventDamage L902 Reckoning: raw buff count -> bc_CountBuffs"
+        },
+        {
+          "va": "0x140e72f7e",
+          "expect": "5ef32c00",
+          "write": "0e064d09",
+          "note": "bc_EventDamage L4077 Pandemonium Exploit: raw buff count -> bc_CountBuffs"
+        },
+        {
+          "va": "0x1408931b5",
+          "expect": "27f18a00",
+          "write": "d703ab09",
+          "note": "bc_CreatureCast L8705 spell: +10% per buff: raw buff count -> bc_CountBuffs"
+        },
+        {
+          "va": "0x1406df0f2",
+          "expect": "ba39a600",
+          "write": "a044c609",
+          "note": "bc_CreatureAttack L1401 Under Stress: raw debuff count -> bc_CountDebuffs"
+        },
+        {
+          "va": "0x140ecf85f",
+          "expect": "4d322700",
+          "write": "333d4709",
+          "note": "bc_EventDamage L5752 Under Stress: raw debuff count -> bc_CountDebuffs"
+        },
+        {
+          "va": "0x14138231b",
+          "expect": "9107dcff",
+          "write": "7712fc08",
+          "note": "bc_OnAttack L2081 Swell: raw debuff count -> bc_CountDebuffs"
+        },
+        {
+          "va": "0x140dfa2ba",
+          "expect": "f2873400",
+          "write": "d8925409",
+          "note": "bc_EventDamage L1868 Nighttaker: raw debuff count -> bc_CountDebuffs"
+        },
+        {
+          "va": "0x140e28fd4",
+          "expect": "d89a3100",
+          "write": "bea55109",
+          "note": "bc_EventDamage L2786 Ruin: raw debuff count -> bc_CountDebuffs"
+        },
+        {
+          "va": "0x140ec0a4c",
+          "expect": "60202800",
+          "write": "462b4809",
+          "note": "bc_EventDamage L5497 Ruin: raw debuff count -> bc_CountDebuffs"
+        },
+        {
+          "va": "0x140e7559d",
+          "expect": "0fd52c00",
+          "write": "f5df4c09",
+          "note": "bc_EventDamage L4124 Daybreaker: raw debuff count -> bc_CountDebuffs"
+        },
+        {
+          "va": "0x140eb24ca",
+          "expect": "e2052900",
+          "write": "c8104909",
+          "note": "bc_EventDamage L5224 Heresy: raw debuff count -> bc_CountDebuffs"
+        },
+        {
+          "va": "0x1408b2ecb",
+          "expect": "e1fb8800",
+          "write": "c706a909",
+          "note": "bc_CreatureCast L9543 spell: chance per debuff: raw debuff count -> bc_CountDebuffs"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x14a343590",
+          "end": "0x14a343595",
+          "what": "trampoline -> hook_j_su0275_buffs"
+        },
+        {
+          "start": "0x149ed89a0",
+          "end": "0x149ed89a7",
+          "what": "hook pointer hook_j_su0275_buffs"
+        },
+        {
+          "start": "0x14a343596",
+          "end": "0x14a34359b",
+          "what": "trampoline -> hook_j_su0275_debuffs"
+        },
+        {
+          "start": "0x149ed89a8",
+          "end": "0x149ed89af",
+          "what": "hook pointer hook_j_su0275_debuffs"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed89a0",
+          "symbol": "hook_j_su0275_buffs"
+        },
+        {
+          "slot_va": "0x149ed89a8",
+          "symbol": "hook_j_su0275_debuffs"
+        }
+      ],
+      "group": "heavy"
+    }
+  ]
+}

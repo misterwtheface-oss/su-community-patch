@@ -1,0 +1,34 @@
+{
+  "id": "SU-0203",
+  "aliases": [
+    "B1#52"
+  ],
+  "title": "Realm stat boosts in boss fights",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Realm stat boosts in boss fights",
+      "text_key": "L_RB_NAME_ATTACKBOOST (and HEALTH / INTELLIGENCE / SPEED / DEFENSE BOOST) / L_CODD_REALMS_BLESSINGS_OF_THE_GODS"
+    }
+  ],
+  "problem": "Community claim is wrong for stat boosts: the '+10% stat' realm boosts apply in every battle, boss fights included, as long as you are still in that realm. The boost list is only cleared when you return to the castle (and at game init), so fights entered from the castle have none. See B1#52b for the 'Next battle' boosts, which really are switched off in boss fights.",
+  "category": "not-a-bug",
+  "confidence": "code-certain",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "community:B1#52"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: [boost_atkboost] +10% Attack | In each Realm, you'll encounter a variety of interesting objects, some of which will grant your creatures temporary bonuses in battle. ... Each ... Evidence: scr_RealmBoostCount (0x14662f9e0) has no scr_BattleType call; stat use crit_attack/defense/intelligence/speed (e.g. crit_speed L350 @0x1417ead1e) only test slot > 0. realmboosts is cleared by scr_ResetRealmEvents, called from scr_Init @0x14637ce94 and scr_StartupThroneroom @0x1466ff561 (plus two object-event sites). Reasoning: Decoded the open part of the vet: the list survives every in-realm fight and is cleared on entering the castle; no battle-type test exists for stat boosts, matching the text. App note (unpatched game): Realm stat boosts (+10% Attack etc.) apply in every battle while you stay in that realm, boss fights included. Source: errata round 2 (2026-10-26).",
+  "reason": "works as its text says"
+}

@@ -1,0 +1,55 @@
+{
+  "id": "SU-0036",
+  "aliases": [
+    "A38"
+  ],
+  "title": "Domination floater",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Domination",
+      "runtime_id": 366,
+      "key": "DEROGATION",
+      "text_key": "L_P_DEROGATION_DESC"
+    }
+  ],
+  "problem": "Missing localization row (blank floater).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-text",
+  "status": "patched",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§6 item 1"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: T: add the row 2026-10-26: text correction shipped via localization_override (loader text module).",
+  "text_fix": [
+    {
+      "file": "perks.csv",
+      "key": "L_P_DOMINATION",
+      "en_proposed": "Domination",
+      "new_row": true,
+      "copy_other_languages_from": "L_P_DEROGATION"
+    }
+  ],
+  "release_notes": {
+    "section": "Interface text",
+    "effect": "Domination (battle text)",
+    "intended": "The floating text names Domination when it activates.",
+    "actual": "In the unpatched game, the text row was missing, so the floating text was blank.",
+    "fix": "Now the missing 'Domination' text is added.",
+    "impact": "neutral",
+    "flags": [
+      "text"
+    ]
+  }
+}

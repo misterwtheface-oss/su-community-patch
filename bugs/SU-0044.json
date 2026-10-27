@@ -1,0 +1,43 @@
+{
+  "id": "SU-0044",
+  "aliases": [
+    "B07"
+  ],
+  "title": "Master of Revenants",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Master of Revenants",
+      "runtime_id": 1480,
+      "text_key": "L_TRAIT_DESC_MASTEROFREVENANTS"
+    }
+  ],
+  "problem": "Heal inside an ally loop: maybe healed once per ally.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0044",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§14"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: S User 2026-10-26: each Revenant (party of 6 Revenants) heals 50% once at the end of its own turn; the code heals once per ally (the loop element is unused). Fix: heal once. | 2026-10-26 hook batch F1 built (research/hooks_F1.json, loader/hooks_F1.c). bc_CreatureEndOfTurn's Master of Revenants block runs inside a party loop and healed on every pass; the non-matching branch (L1115) now jumps to the loop's continue, so only one pass heals: each Revenant heals 50% once at the end of its own turn. In-game test: all-Revenant party with Master of Revenants; damage one Revenant, end its turn: one heal of 50% of its Health (not one per party member).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Master of Revenants (trait)",
+    "intended": "Each Revenant heals 50% at the end of its own turn.",
+    "actual": "The game healed once for every creature in the party.",
+    "fix": "Now each Revenant heals once, at the end of its own turn.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

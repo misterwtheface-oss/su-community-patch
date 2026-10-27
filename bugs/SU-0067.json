@@ -1,0 +1,43 @@
+{
+  "id": "SU-0067",
+  "aliases": [
+    "C01"
+  ],
+  "title": "Childhood's End",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Childhood's End",
+      "runtime_id": 1301,
+      "text_key": "L_TRAIT_DESC_CHILDHOOD'SEND"
+    }
+  ],
+  "problem": "Code: 40% less Bomb damage. Text: 50%.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0067",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§1 item 3"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Ruling 2026-10-26: align the code to the text. Fix: K — in patch, applied in game 2026-10-26 (effect not yet observed in battle)",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Childhood's End (trait)",
+    "intended": "Enemies share their Bomb potency, but take 50% less damage from Bomb.",
+    "actual": "In the unpatched game, the reduction was 40%.",
+    "fix": "Now enemies take 50% less Bomb damage.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "id": "SU-0152",
+  "aliases": [
+    "B4#45"
+  ],
+  "title": "Firelord (612)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Firelord",
+      "runtime_id": 612,
+      "text_key": "L_TRAIT_DESC_FIRELORD"
+    }
+  ],
+  "problem": "Firelord adds 0.2 × total_attacks × base to the attack's bonus pool. That pool is zeroed only before the hit loop and never between hits, so hit k receives the terms of hits 1..k. total_attacks is raised by the hit count only after the loop. This matches the community's numbers. It is the general multi-hit pile-up bug (R1), which affects every \"% more damage\" term of an attack, not only Firelord.",
+  "category": "not-a-bug",
+  "confidence": "high",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "community:B4#45"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: In a multi-hit attack each hit gets the full accumulated bonus times its position (+120% / +240% / +360%), though each set only adds 20% per hit to the count. Evidence: bc_CreatureAttack L1593-L1594: gate @0x1406e7766, pool([rsp+0x3b8]) += base([rsp+0x350]) × 0.2 × total_attacks @0x1406e797d / 0x1406e798d; pool zeroed L10 / L88 only; hit loop L1076-L1892 (back-jump @0x1406f6748); total_attacks += hits L1922 @0x1406f72dd. Fix sketch: Zero the pool at the start of each hit (H) Triage 2026-10-26: merged into SU-0038.",
+  "reason": "duplicate of SU-0038 (multi-hit bonus pile-up), which is now fixed (normalized, user ruling 2026-10-26); Touch of Red's own term is SU-0176."
+}

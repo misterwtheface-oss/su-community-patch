@@ -1,0 +1,43 @@
+{
+  "id": "SU-0290",
+  "aliases": [
+    "B5#35"
+  ],
+  "title": "Mesmer",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Mesmer",
+      "runtime_id": 1168,
+      "text_key": "L_TRAIT_DESC_MESMER"
+    }
+  ],
+  "problem": "Mesmer turns the enemy into the class the holder is strong against (Life holder: enemy becomes Death). Quantum Flux uses the same phrase, \"the enemy's class weakness\", and its code means the opposite: the class that beats that creature (Life enemy: your creature becomes Nature). That matches the game's 'weak against' wording elsewhere (Convoke the Spirits: 'whatever class the target is weak against'). Read that way, Mesmer's text would make enemies strong against the holder.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0290",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#35"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "User 2026-10-26: change the code to the literal text (the enemy becomes this creature's class weakness, i.e. the class strong against the holder, as Quantum Flux's code reads the phrase). Text: After this creature damages an enemy, the enemy's class is changed to this creature's class weakness. This trait does not stack. Evidence: bc_EventDamage Mesmer L6906-L6917: scr_CritHasPassive(source,1168) @0x140f607ce; scr_CreatureClass(source) 'Life'->L_DEATH @0x140f60a1b, 'Death'->L_CHAOS, 'Chaos'->L_SORCERY, 'Sorcery'->L_NATURE, 'Nature'->L_LIFE. Quantum Flux 1169, L6924-L6938 (@0x140f62408 / @0x140f62608): attacker 'Life'->L_NATURE, 'Death'->L_LIFE, 'Chaos'->L_DEATH, 'Sorcery'->L_CHAOS, 'Nature'->L_SORCERY. Cycle (strong against): Life>Death>Chaos>Sorcery>Nature>Life (class_advantage.json). Texts: L_TRAIT_DESC_QUANTUMFLUX \"their class is changed to the enemy's class weakness\"; L_SD_CONVOKETHESPIRITS. Fix sketch: L_TRAIT_DESC_MESMER (English): \"After this creature damages an enemy, the enemy's class is changed to whatever class is weak against this creature's class. This trait does not stack.\" Code unchanged. Reasoning: Two game texts use one phrase for opposite mappings. Quantum Flux's code and the game's 'weak against' wording define the phrase, and Mesmer's code is the one that doesn't follow it, so Mesmer's text is corrected (ruling 2). Applying ruling 1 strictly instead would make Mesmer harm its own holder, which is not a credible intent; flag this for the user. App note (unpatched game): Mesmer turns the enemy into the class your Mesmer creature is strong against (e.g. Life holder: enemy becomes Death). Source: errata round 2 (2026-10-26). | Patched (batch I, 2026-10-26) per the user ruling (code to the literal text; the text-fix sketch above is superseded, no text change ships): the five class keys loaded in the Mesmer block (lea rdx at 0x140f60b4b / 0x140f60ecd / 0x140f6124f / 0x140f615d1 / 0x140f61953) now point to the keys Quantum Flux's block (L6925-L6935) loads for the same holder class: Life -> L_NATURE, Death -> L_LIFE, Chaos -> L_DEATH, Sorcery -> L_CHAOS, Nature -> L_SORCERY. The builder derives the mapping from the Quantum Flux block itself. Data-reference edits only, no hook.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Mesmer (trait)",
+    "intended": "After this creature damages an enemy, the enemy's class is changed to this creature's class weakness. This trait does not stack.",
+    "actual": "In the unpatched game, the enemy was changed to the class this creature is strong against (a Life creature turned enemies into Death), the opposite of how Quantum Flux reads the same words ('class weakness' = the class strong against it).",
+    "fix": "Now the enemy is changed to this creature's class weakness, the class strong against it (a Life creature turns enemies into Nature), as Quantum Flux reads the phrase.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

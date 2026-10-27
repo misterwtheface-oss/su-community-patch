@@ -1,0 +1,43 @@
+{
+  "id": "SU-0168",
+  "aliases": [
+    "B5#28"
+  ],
+  "title": "Master of Imlers (1449)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Master of Imlers",
+      "runtime_id": 1449,
+      "text_key": "L_TRAIT_DESC_MASTEROFIMLERS"
+    }
+  ],
+  "problem": "The count leaves out the attacker: bc_GetAlliesOf(source, false, false). So each attacker gets 20% per other Imler / Imling (2 of them: +20% instead of +40%; 6: +100% instead of +120%). The sibling Masters (Gorgons, Doom Fortresses, Carvers) include the attacker.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0168",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#28"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: The bonus seems to be 10% per Imler/Imling, not 20%. Evidence: bc_EventDamage L3578-L3587: gates @0x140e56cc5 / 0x140e56ec5; bc_GetAlliesOf @0x140e5715d with both flags 0x1498e0f40 (false) loaded @0x140e5708c / 0x140e570e3; race tests @0x140e572ac / 0x140e5735c; × 0.2 @0x140e57419. Fix sketch: Repoint the include-self argument (lea rdx @0x140e570e3) from 0x1498e0f40 to 0x1498e0f60 (K). Triage 2026-10-26: K: include-self argument @0x140e570e3 from 0x1498e0f40 (false) to 0x1498e0f60 (true), as the sibling Masters do. 2026-10-26: built as byte patch SU-0168 (verified against the baseline exe; not yet run in game).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Master of Imlers (trait)",
+    "intended": "Your Imlers and Imlings deal 20% more damage for each Imler and Imling on your side.",
+    "actual": "In the unpatched game, the attacker didn't count itself.",
+    "fix": "Now the attacker counts too.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

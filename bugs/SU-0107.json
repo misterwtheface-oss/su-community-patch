@@ -1,0 +1,43 @@
+{
+  "id": "SU-0107",
+  "aliases": [
+    "D:Disposability"
+  ],
+  "title": "Disposability",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Disposability",
+      "runtime_id": 512,
+      "text_key": "L_TRAIT_DESC_DISPOSABILITY"
+    }
+  ],
+  "problem": "minions persist too",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0107",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:TRIAGE D"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "| 2026-10-26 realign: text \"Your other creatures' buffs persist through death\"; the code also keeps the holder's own buffs and every minion. Kept as leave (superset; the text doesn't say the holder's buffs are removed) - flagged for the user. User 2026-10-26: 'other creatures means other creatures' — only the holder's OTHER creatures' buffs persist; the holder's own buffs and minions do not. 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Disposability on creature A; creature B (ally) with a buff and a minion dies: B's buff persists, B's minion is removed. A itself dies with a buff: the buff is removed.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Disposability (trait)",
+    "intended": "Your other creatures' buffs persist through death.",
+    "actual": "In the unpatched game, the holder's own buffs and every minion persisted as well.",
+    "fix": "Now only your other creatures' buffs persist; the holder's own buffs and minions are removed on death as usual.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

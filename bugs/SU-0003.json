@@ -1,0 +1,48 @@
+{
+  "id": "SU-0003",
+  "aliases": [
+    "A03"
+  ],
+  "title": "Triumvir rank 80",
+  "subjects": [
+    {
+      "kind": "relic",
+      "name": "Triumvir, Arcane Sceptre of Zonte",
+      "relic_code_id": 14,
+      "rank": 80
+    }
+  ],
+  "problem": "Only gives Arcane to a bearer that already has Arcane (copied from rank 50).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0003",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:BR:triumvir_r80"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true,
+      "verified_in_game": {
+        "date": "2026-10-26",
+        "by": "user",
+        "result": "works as intended: gives Arcane with no Arcane present at the time of the cast (bug itself not observed before the patch)"
+      }
+    }
+  },
+  "notes": "Fix: S: skip the Arcane test — in patch (byte-verified)",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "Triumvir, rank 80 (relic)",
+    "intended": "After the bearer manually casts a spell, it has a 50% chance to gain Arcane.",
+    "actual": "The game only rolled the chance if the bearer already had Arcane, so it could never grant it.",
+    "fix": "Now the chance applies after every manual cast, whether or not the bearer already has Arcane.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

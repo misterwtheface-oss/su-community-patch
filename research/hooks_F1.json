@@ -1,0 +1,163 @@
+{
+  "patches": [
+    {
+      "id": "SU-0044",
+      "bug": "SU-0044",
+      "default": 1,
+      "title": "Master of Revenants: each Revenant heals 50% of its Health at the end of its own turn while your party is all Revenants (code healed once per party creature)",
+      "edits": [
+        {
+          "va": "0x140af8bb8",
+          "expect": "c74424405b040000",
+          "write": "e946070000909090",
+          "note": "bc_CreatureEndOfTurn L1115: non-matching pass -> loop continue (no extra heal)"
+        }
+      ]
+    },
+    {
+      "id": "SU-0045",
+      "bug": "SU-0045",
+      "default": 1,
+      "title": "Unrealized Potential: the stat gain is split evenly over two gains (50% + 50%; code halved the copy again, 50% + 25%)",
+      "edits": [
+        {
+          "va": "0x1488bfcb8",
+          "expect": "000000000000",
+          "write": "ff250a8a6101",
+          "note": "trampoline -> hook_su0045_copy_amount (cave code)"
+        },
+        {
+          "va": "0x140ff3fa0",
+          "expect": "cc7d8c06",
+          "write": "14bd8c07",
+          "note": "bc_EventGainAttack L341: var get amount for the copy -> pre-halving amount (hook)"
+        },
+        {
+          "va": "0x141003420",
+          "expect": "4c898b06",
+          "write": "94c88b07",
+          "note": "bc_EventGainDefense L349: var get amount for the copy -> pre-halving amount (hook)"
+        },
+        {
+          "va": "0x141013030",
+          "expect": "3c8d8a06",
+          "write": "84cc8a07",
+          "note": "bc_EventGainIntelligence L340: var get amount for the copy -> pre-halving amount (hook)"
+        },
+        {
+          "va": "0x141031a14",
+          "expect": "58a38806",
+          "write": "a0e28807",
+          "note": "bc_EventGainSpeed L344: var get amount for the copy -> pre-halving amount (hook)"
+        },
+        {
+          "va": "0x141022065",
+          "expect": "079d8906",
+          "write": "4fdc8907",
+          "note": "bc_EventGainMaxHP L335: var get amount for the copy -> pre-halving amount (hook)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed86c8",
+          "symbol": "hook_su0045_copy_amount"
+        }
+      ]
+    },
+    {
+      "id": "SU-0048",
+      "bug": "SU-0048",
+      "default": 1,
+      "title": "Puppet Master: +20% damage dealt per minion, as the text says (code added a second +10% per temporary ally); the 5% less damage taken per minion is unchanged",
+      "edits": [
+        {
+          "va": "0x140e6832d",
+          "expect": "0f843b060000",
+          "write": "e93c06000090",
+          "note": "L3868: always skip the extra +10% per temporary ally block (to L3883)"
+        }
+      ]
+    },
+    {
+      "id": "SU-0052",
+      "bug": "SU-0052",
+      "default": 1,
+      "title": "Sugar Rush: all of the creature's buffs are removed at the end of its turn (code skipped the buff after each removed one)",
+      "edits": [
+        {
+          "va": "0x1488bfcc0",
+          "expect": "000000000000",
+          "write": "ff250a8a6101",
+          "note": "trampoline -> hook_su0052_remove (cave code)"
+        },
+        {
+          "va": "0x140ac1efc",
+          "expect": "f0bc5701",
+          "write": "c0dddf07",
+          "note": "bc_CreatureEndOfTurn L240: remove buff -> no index skip after a removal"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed86d0",
+          "symbol": "hook_su0052_remove"
+        }
+      ]
+    },
+    {
+      "id": "SU-0064",
+      "bug": "SU-0064",
+      "default": 1,
+      "edits": [],
+      "title": "Careful What You Wish For / Grim Ailment: buffs on that side / debuffs from that side last 1 turn, as the text says (limit was missing). Needs SU-0080 (shared add-condition hook)",
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed86c0",
+          "symbol": "f1_su0064_args"
+        }
+      ]
+    },
+    {
+      "id": "SU-0170-xmas",
+      "bug": "SU-0170",
+      "default": 1,
+      "title": "Master of Stags: Christmas Is Canceled Disarms 6 random enemies instead of 3 (innate traits 100% more effective)",
+      "edits": [
+        {
+          "va": "0x1488bfcc8",
+          "expect": "000000000000",
+          "write": "ff250a8a6101",
+          "note": "trampoline -> hook_su0170_xmas_gate (cave code)"
+        },
+        {
+          "va": "0x1488bfcd0",
+          "expect": "000000000000",
+          "write": "ff250a8a6101",
+          "note": "trampoline -> hook_su0170_xmas_add (cave code)"
+        },
+        {
+          "va": "0x1416b5181",
+          "expect": "3b719700",
+          "write": "43ab2007",
+          "note": "bc_StartupBuffsDebuffs L1414: HasPassive(1020) gate -> remember holder"
+        },
+        {
+          "va": "0x1416b60ee",
+          "expect": "4ef89500",
+          "write": "de9b2007",
+          "note": "bc_StartupBuffsDebuffs L1459: add Disarmed -> +3 targets under Master of Stags"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed86d8",
+          "symbol": "hook_su0170_xmas_gate"
+        },
+        {
+          "slot_va": "0x149ed86e0",
+          "symbol": "hook_su0170_xmas_add"
+        }
+      ]
+    }
+  ]
+}

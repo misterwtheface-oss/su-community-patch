@@ -1,0 +1,51 @@
+{
+  "id": "SU-0121",
+  "aliases": [
+    "B1#22"
+  ],
+  "title": "Cascading",
+  "subjects": [
+    {
+      "kind": "gem_property",
+      "name": "Cascading"
+    }
+  ],
+  "problem": "Code uses 5%. The property's own text (L_SPMOD_CASCADING) already says 5%; only the Enchanter dust item (Aquamarine) still says 3%.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-text",
+  "status": "patched",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#22"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Adds 5% per missing charge, not 3%. Evidence: bc_SpellDamage @0x1415a775e: (charges_max - charges) x 0.05. Fix sketch: T (L_ID_DUST_AQUAMARINE: 3% -> 5%) Triage 2026-10-26: Dust item text says 3%; code and the property text say 5%. Text fix. 2026-10-26: text correction shipped via localization_override (loader text module).",
+  "text_fix": [
+    {
+      "file": "items.csv",
+      "key": "L_ID_DUST_AQUAMARINE",
+      "en_proposed": "This item can be taken to the Enchanter to add the following property to your Spell Gems:\\n\\nCascading: the spell's potency is increased by 5% for each Charge the Spell Gem is missing.",
+      "en_current_sha256": "9172382121568c30f79ed341baf4c3c8eafe91f5f5692942173c94fc759045b5"
+    }
+  ],
+  "release_notes": {
+    "section": "Spell gems & items",
+    "effect": "Aquamarine dust (Cascading gem property)",
+    "intended": "The item description matches the Cascading property: 5% potency per missing charge.",
+    "actual": "In the unpatched game, the dust's description said 3%, while the property itself (and its own description) uses 5%.",
+    "fix": "Now the dust's description says 5%.",
+    "impact": "neutral",
+    "flags": [
+      "text"
+    ]
+  }
+}

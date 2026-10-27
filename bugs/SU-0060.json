@@ -1,0 +1,44 @@
+{
+  "id": "SU-0060",
+  "aliases": [
+    "B23"
+  ],
+  "title": "Windwalker",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Windwalker",
+      "runtime_id": 458,
+      "key": "WINDWALKER",
+      "text_key": "L_P_WINDWALKER_DESC"
+    }
+  ],
+  "problem": "Counts the damaged creature's own dodges (text: all your creatures).",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0060",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§6 item 3"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test:  Fix: H | 2026-10-26 realign (text is the contract): text claims \"for each time all your creatures dodged\". H: Windwalker (bc_EventDamage L181): count the side's total dodges, not the damaged creature's own. vs bugged: stronger. Batch R: not built. Summing total_dodges over the side needs array iteration of crits / enemies from C (runtime array access helper not yet mapped). Round-2 hook (A2): the damaged creature's total_dodges read (bc_EventDamage L181) returns your party's total dodges. In-game test: Windwalker: let several of your creatures dodge, then check a creature that dodged little: its avoid chance follows the party's total (5% per dodge, max 80%).",
+  "release_notes": {
+    "section": "Perks",
+    "effect": "Windwalker (perk)",
+    "intended": "5% chance (up to 80%) to avoid damage for each time all your creatures dodged this battle.",
+    "actual": "The game only counted the dodges of the creature being hit.",
+    "fix": "Now the dodges of your whole party count.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

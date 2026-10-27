@@ -1,0 +1,44 @@
+{
+  "id": "SU-0131",
+  "aliases": [
+    "B2#17"
+  ],
+  "title": "Impending Victory (Gladiator)",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Impending Victory",
+      "runtime_id": 596,
+      "key": "IMPENDINGVICTORY",
+      "text_key": "L_P_IMPENDINGVICTORY_DESC"
+    }
+  ],
+  "problem": "Partly disputed. The perk exists only in the damage spell calculation, and there it works: for a damage Arsenal spell the potency stat becomes 50% Intelligence + 50% highest stat. Arsenal spells that don't deal damage (15 of the 25: 8 Boost, 1 Heal, 2 Buff, 4 Utility) never reach that code, so for them it does nothing, although the text covers all Arsenal spells. It also changes nothing when Intelligence is already the highest stat.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0131",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B2#17"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Doesn't do anything. Evidence: bc_SpellDamage L47-51: perk 596 (@0x1415993fb) && inv_SpellIsEquipment(spellid) -> stat = 0.5 x scr_GetCritNthHighestStatAmt(caster, 1) + 0.5 x stat (@0x1415997a4-0x14159984b); the stat is read later in the formula; no perk-596 site in the heal or stat potency code (perk_signatures). Fix sketch: H (add the same term to the heal / stat potency code), or T (\"damage spells\") Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. Only damaging Arsenal spells reach the code. 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"50% of the potency of your creatures' Arsenal spells is based on their highest stat\". Fix: H: add the same 0.5 x highest-stat blend to bc_SpellHealing and bc_SpellStat (as in bc_SpellDamage L47-51 @0x1415993fb), e.g. a call-site hook on their potency-stat read gated on perk 596 + inv_SpellIsEquipment. vs bugged: stronger (non-damage Arsenal spells benefit). Batch R: not built. Needs the potency-stat read sites in bc_SpellHealing / bc_SpellStat located and a blend hook gated on perk 596 + inv_SpellIsEquipment. 2026-10-26 hook batch B2 built (research/hooks_B2.json, loader/hooks_B2.c). crit_intelligence(caster) at bc_SpellHealing L16 and bc_SpellStat L22 is wrapped with the damage calculator's own test (scr_PerkLevel(596) > 0 and inv_SpellIsEquipment(spell id)) and blend (0.5 x highest stat + 0.5 x Intelligence). Note: here the blend comes at the first potency-stat read; in bc_SpellDamage it comes after the other stat substitutions. In-game test: With Impending Victory, a creature whose Attack is far above its Intelligence casts a healing or buff Arsenal spell: the potency is based on (Attack + Intelligence) / 2. Non-Arsenal spells and creatures whose highest stat is Intelligence are unchanged.",
+  "release_notes": {
+    "section": "Perks",
+    "effect": "Impending Victory (perk)",
+    "intended": "50% of the potency of your Arsenal spells is based on the highest stat instead of Intelligence.",
+    "actual": "In the unpatched game, only Arsenal spells that deal damage got it; healing, buff and stat Arsenal spells did not.",
+    "fix": "Now all Arsenal spells use the blend.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

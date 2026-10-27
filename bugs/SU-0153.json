@@ -1,0 +1,45 @@
+{
+  "id": "SU-0153",
+  "aliases": [
+    "B6#4"
+  ],
+  "title": "Periphery (603)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Periphery",
+      "runtime_id": 603,
+      "text_key": "L_TRAIT_DESC_PERIPHERY"
+    }
+  ],
+  "problem": "All three parts (always dodge, always crit, take 50% more damage) only check whether the player's side has the trait, and only apply to your creatures. There is no enemy version, so an enemy's Periphery does nothing.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0153",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B6#4"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Does nothing for the enemy team when an enemy has it. Evidence: bc_CreatureAttack L1535-L1536 @0x1406e429a; bc_EventDamage L5175-L5176 @0x140eb016b; L5844 @0x140ed38bb. Fix sketch: H: add matching enemy-side checks at the 3 sites. Or T: \"Only works for the player.\" Triage 2026-10-26: All three parts only check the player's side; an enemy holder gets nothing. | 2026-10-26 realign (text is the contract): text claims \"Your creatures always dodge attacks and deal critical damage, but take 50% more damage\". Fix: H: add the enemy-side cases to the three Periphery sites (player side only today). vs bugged: neutral for the player (affects enemy holders). 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Give an ENEMY Periphery (e.g. Trait Launcher): that enemy always dodges your attacks, always crits, and takes 50% more damage. Your own Periphery unchanged.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Periphery (trait)",
+    "intended": "Your creatures always dodge attacks and deal critical damage, but take 50% more damage.",
+    "actual": "In the unpatched game, it only worked for the player's side; an enemy holder got nothing.",
+    "fix": "Now it works for whichever side holds it.",
+    "impact": "neutral",
+    "flags": [
+      "boss"
+    ]
+  }
+}

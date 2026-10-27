@@ -1,0 +1,43 @@
+{
+  "id": "SU-0268",
+  "aliases": [
+    "B4#33"
+  ],
+  "title": "Forbearance + Master of Wights",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Forbearance + Master of Wights",
+      "runtime_id": 1134,
+      "text_key": "L_TRAIT_DESC_FORBEARANCE"
+    }
+  ],
+  "problem": "A Wight with both traits on its side comes back at exactly 100% Health, and its Max Health doesn't grow. The game adds Forbearance's bonus first, then Master of Wights overwrites the amount with Max Health. Both texts can be true at once: Master of Wights sets the base at 100%, Forbearance adds another 100%, so the Wight comes back with 200% and its Max Health rises to match, which is still '100% Health'. So the code throws away the bonus Forbearance promises. Forbearance Forgone (1961) has no connection to Master of Wights at all.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0268",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B4#33"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: When your creatures are resurrected, they are resurrected with 100% additional {STAT_health}. If this amount exceeds their Maximum {STAT_health}, their Maximum {STAT_health} ... Evidence: bc_EventResurrect L142 Forbearance side gate @0x141083b1f / 0x141083bed; L143 pool [rbp+0x170] += amount; L147 amount = scr_Diminish(amount, pool) @0x141083cd1 (pool also holds the Phoenix card terms from L121-L139); L150 Master of Wights gate @0x141083dbc / 0x141083e8a; L151 race == Wight; L152 amount = hpmax @0x141083fb7. Max Health is raised for the excess later (bc_ExecuteEvents resurrect case, Forbearance L1442). Fix sketch: Apply Master of Wights as the base amount before the bonus pool is added. Add a hook at the start of L121 (0x14108341a) that sets amount = hpmax when the side has 1515 and the creature's race is Wight. Change the L152 write (varset @0x141083fb7) to amount = max(amount, hpmax), or skip it. Forbearance then adds 100% of Max Health on top, and its existing Max Health raise applies. Reasoning: Both texts make claims, and they don't conflict. The code satisfies Master of Wights by wiping out Forbearance's bonus. Under ruling 1 the code changes so both texts hold. App note (unpatched game): On a team with Master of Wights, Forbearance gives Wights no extra Health: they resurrect at exactly 100% and their Max Health doesn't grow. Source: errata round 2 (2026-10-26). | Patched (batch M, 2026-10-26): two call redirects in bc_EventResurrect. (1) L147 scr_Diminish(amount, pool) @0x141083cd1 -> hook_m_su0268_diminish: when the side holds 1515 (slot == 0 -> AnyEnemy, else AnyAlly, as the L150 gate) and event.creature.race == \"Wight\", it passes (hpmax, pool x hpmax / amount): every pool term (Forbearance's +amount at L143, the card terms at L134-L139) is a multiple of amount, so the bonuses are rebased on the Wight's Max Health; sets a flag. (2) L151 race == \"Wight\" compare @0x141083f0e -> hook_m_su0268_race: false once the flag is set (consumed), so L152 (amount = hpmax) no longer discards the bonus. The flag is reset at every L147, which always precedes L151. Max Health growth comes from the existing Forbearance step in bc_ExecuteEvents.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Forbearance and Master of Wights (traits)",
+    "intended": "Master of Wights: your Wights always resurrect with 100% Health. Forbearance: your creatures are resurrected with 100% additional Health, and Maximum Health rises by any excess.",
+    "actual": "In the unpatched game, a Wight with both traits on its side came back at exactly 100% Health: Master of Wights overwrote the amount after Forbearance's bonus was added, so Forbearance (and resurrection bonuses from cards) gave Wights nothing and their Maximum Health never grew.",
+    "fix": "Now Master of Wights sets the starting amount (100% Health) and the resurrection bonuses are added on top, so with Forbearance a Wight comes back with 200% and its Maximum Health rises to match.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

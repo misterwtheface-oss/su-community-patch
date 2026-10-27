@@ -1,0 +1,44 @@
+{
+  "id": "SU-0078",
+  "aliases": [
+    "E05"
+  ],
+  "title": "Rodian Aftermath",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Rodian Aftermath",
+      "runtime_id": 1798,
+      "text_key": "L_TRAIT_DESC_RODIANAFTERMATH"
+    }
+  ],
+  "problem": "Its \"+30% damage per death\" block is gated on Oathbreaker (1797): Rodian Aftermath does nothing, Oathbreaker holders get its bonus. Confirmed in game (2026-10-20).",
+  "category": "bug",
+  "confidence": "in-game-confirmed",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0078",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:handoff A",
+    "own:TRAIT_SIGNATURES.md"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: K: gate constant 1797 → 1798 (new static value in the .text tail cave) — in patch (byte-verified)",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Rodian Aftermath (trait)",
+    "intended": "The holder deals 30% more damage for each death this battle.",
+    "actual": "In the unpatched game, the bonus was tied to Oathbreaker instead: Rodian Aftermath did nothing and Oathbreaker holders got the bonus.",
+    "fix": "Now Rodian Aftermath holders get the bonus, and Oathbreaker no longer does.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

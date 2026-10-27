@@ -1,0 +1,43 @@
+{
+  "id": "SU-0162",
+  "aliases": [
+    "B5#6"
+  ],
+  "title": "Haunting Memories (878)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Haunting Memories",
+      "runtime_id": 878,
+      "text_key": "L_TRAIT_DESC_HAUNTINGMEMORIES"
+    }
+  ],
+  "problem": "The trait needs its holder to be dead (hp <= 0), but it is found through scr_CritHasPassive, which skips dead creatures unless their traits stay active while dead (Beyond the Veil 2063, Life After Death, From Beyond the Grave). So on its own the trait can never fire.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0162",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#6"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Only works with Gravebound Eidolon, or a Graveborn / Purgatorian with the \"traits active while dead\" perk. Evidence: bc_CreatureEndOfTurn: bc_GetEnemiesOf(.., true) @0x140b00594; scr_CritHasPassive(e, 878) @0x140b0080b; hp <= 0 @0x140b00868; scr_Roll(50) @0x140b009e9; bc_CreatureAttack @0x140b00c37. Dead filter: scr_CritHasPassive reads lifeafterdeath @0x14202c3a9. Fix sketch: Name the requirement in the text (T), or test the trait without the dead filter in this block (H). Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. Needs an effect that keeps traits active while dead. 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"this creature has a 50% chance to attack it if this creature is dead\". Fix: H: in bc_CreatureEndOfTurn (@0x140b0080b) test trait 878 without the dead filter (scr_CritHasPassive skips dead holders). vs bugged: stronger (works on its own). 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Haunting Memories on a creature with NO Beyond the Veil / Life After Death; let it die: at the end of enemy turns it has a 50% chance to attack them.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Haunting Memories (trait)",
+    "intended": "While dead, the holder has a 50% chance to attack each enemy at the end of its turn.",
+    "actual": "In the unpatched game, dead holders were skipped, so it only worked with an effect that keeps traits active after death.",
+    "fix": "Now it works while its holder is dead.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

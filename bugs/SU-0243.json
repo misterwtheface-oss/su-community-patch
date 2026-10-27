@@ -1,0 +1,43 @@
+{
+  "id": "SU-0243",
+  "aliases": [
+    "B3#37"
+  ],
+  "title": "Teleportation Shrine (choose a Realm Type)",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Teleportation Shrine",
+      "runtime_id": "decoration 273 (obj_realmselector)",
+      "text_key": "L_TELESHRINE_PROMPT_SUF2 (+ L_TELESHRINE_ERROR2)"
+    }
+  ],
+  "problem": "Picking a Realm Type with 1,000 to 1,999 Power takes the 1,000 Power, then says you don't have enough Power and doesn't teleport. The confirm code runs twice: the first pass checks and takes the 1,000 and starts the loading screen; the second pass (from the Step event) checks the cost again against the already-reduced Power and fails. The text promises a 1,000 cost to travel; the player pays and gets no travel, with an error that is false at the moment of choosing. At 2,000 or more it works (the 'finished' flag stops a second charge). Random Realm is free and unaffected.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0243",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#37"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: It costs 1000 {RES_POWER} to travel to the selected Realm. | ERROR2: You do not have enough {RES_POWER} to choose a Realm Type. It does not cost any {RES_POWER} to go to a Random ... Evidence: obj_realmselector_KeyPress_69 (fn 0x1474478e0): GML L52 cost check `ppower - 1000 < 0` @0x14744892b/0x147448938 (rv-int 0x1402c47f0, <int 0x140290d30 @0x147448943, je @0x147448956) -> ERROR2 L53-L55; L57-L59 `if !finished { ppower -= 1000 @0x147448ca3; finished = true }`; L70-L74 `if !instance_exists(obj_loading 584) { instance_create; countdown = 1; exit }` @0x147448770-0x147448914. obj_realmselector_Step_0: L54 `countdown < 3` @0x147437304, L56 `countdown -= 0.5`, L59 `countdown == 0` -> L61 event_perform(keypress, 0x45 'E') @0x1474373da, L62 reset. Second pass re-runs L52 with Power already lowered. Fix sketch: Skip the L52 affordability check on the second (reload) pass. Call redirect: replace `call 0x1402c47f0` @0x147448938 (args: rcx=out @rbp-0x70, rdx=ppower RValue (rsi), r8d=1000) with a C hook that returns ppower-1000 normally but returns 0 (not negative) when self.finished is true (self = the event's instance, same one read at L59 via the `finished` var slot DAT_149940b08). Alternative with the same effect: hook at the je @0x147448956 to also take the skip branch (0x147448b99) when finished==true. Charge/flag logic at L57-L59 stays as is, so the 1,000 is still charged exactly once. Reasoning: The cost check is re-run after the cost has been deducted, because the handler is re-entered from the Step countdown once the loading object exists; the `finished` flag guards only the deduction, not the check. Because the trigger is 'Power below 2,000 after paying', the community's 'exactly 1,000' is a subset of the real range. The text promises travel for 1,000, so it's a code bug. The only inferred piece is the identity of 0x1478f5f60 as event_perform (r9=0x45 matches KeyPress_69); the structure leaves little room for doubt. App note (unpatched game): In the unpatched game, choosing a Realm Type with 1,000-1,999 Power spends 1,000 Power, shows the 'not enough Power' message and does not teleport; you need at least 2,000 Power (or pick Random Realm). Source: errata round 2 (2026-10-26). | Patched (batch M, 2026-10-26): call redirect of the L52 `ppower - 1000` subtraction (runtime 0x1402c47f0 @0x147448938, obj_realmselector KeyPress_69) -> hook_m_su0243_cost: when self.finished is already true (paid on the first pass, L57-L59) it subtracts 0, so the re-entry from the Step countdown passes the check; the payment itself stays guarded by `finished` (charged once). self = the event's rcx home slot [rsp+0x490] (frame: 8 pushes, rbp = rsp+0x100, self at [rbp+0x390]). The 0x1478f5f60 = event_perform identification is not needed by the fix. In-game check: 1,500 Power, choose a Realm Type -> 500 Power left and the teleport happens.",
+  "release_notes": {
+    "section": "Realm",
+    "effect": "Teleportation Shrine (castle feature)",
+    "intended": "It costs 1000 Power to travel to the selected Realm.",
+    "actual": "In the unpatched game, choosing a Realm Type with 1,000 to 1,999 Power took the 1,000 Power, then said you did not have enough Power and did not teleport. The choice is processed twice, and the second time the cost was checked again against the Power already reduced.",
+    "fix": "Now the cost is checked once: with at least 1,000 Power you pay 1,000 and travel.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

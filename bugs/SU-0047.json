@@ -1,0 +1,51 @@
+{
+  "id": "SU-0047",
+  "aliases": [
+    "B10"
+  ],
+  "title": "On-death effects without a death",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "On-death effects without a death"
+    },
+    {
+      "kind": "perk",
+      "name": "Mortal Terror"
+    },
+    {
+      "kind": "trait",
+      "name": "Feast and Famine",
+      "runtime_id": 2117,
+      "text_key": "L_TRAIT_DESC_FEASTANDFAMINE"
+    }
+  ],
+  "problem": "Mortal Terror + Feast and Famine can mark a living enemy \"cannot be resurrected\".",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0047",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§11 item 3"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test:  Fix: H | 2026-10-26 realign (text is the contract): text claims \"Enemies that die with Fear cannot be resurrected\". H: the on-death death-flag blocks (bc_OnDeath L17-L51 area) should require hp <= 0, so Mortal Terror / Anger Management / Afterlife / Feign Death 'on-death' runs can't mark a living creature. vs bugged: weaker (no false 'cannot be resurrected'). | In-game test: Mortal Terror + Feast and Famine (or Epigraphy / End On a High Note / Burn Their Corpses / Endwalker): an enemy that survives the on-death run can still be resurrected later.",
+  "release_notes": {
+    "section": "Combat rules",
+    "effect": "On-death effects on survivors (e.g. Mortal Terror with Feast and Famine)",
+    "intended": "Effects such as 'cannot be resurrected' are given to creatures that die.",
+    "actual": "In the unpatched game, an on-death run could mark a creature that was still alive, so it could not be resurrected later.",
+    "fix": "Now these marks only go to creatures that have really died.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

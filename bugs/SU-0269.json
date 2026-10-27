@@ -1,0 +1,43 @@
+{
+  "id": "SU-0269",
+  "aliases": [
+    "B4#35"
+  ],
+  "title": "Fallen Star",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Fallen Star",
+      "runtime_id": 268,
+      "text_key": "L_TRAIT_DESC_FALLENSTAR"
+    }
+  ],
+  "problem": "Three problems. (1) The steal chance is 50% for Attack but only 35% for Defense, Intelligence and Speed; the text says 50%. (2) A holder with Fear still gains the stolen stats, although Fear's text says 'Fear creatures cannot gain stats' (L_CDESC_DEBUFF_FEAR). This happens because Fear is checked before Fallen Star switches who receives the stats. (3) Max Health gains are never stolen: the Max Health gain event has no Fallen Star block, yet the text says 'stats' without the game's usual '(other than Health)'.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0269",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B4#35"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: When an enemy would gain stats, this creature has a 50% chance to gain them instead. Evidence: Rolls: bc_EventGainAttack lea 50.0 (0x1498ec470) @0x140ff2cee -> scr_Roll @0x140ff2d2b; bc_EventGainDefense lea 35.0 (0x1498ecb00) @0x14100216e -> @0x1410021ab; bc_EventGainIntelligence lea 35.0 (0x1498ecba0) @0x141011d7f -> @0x141011dbc; bc_EventGainSpeed lea 35.0 (0x1498ed6d0) @0x141030766 -> @0x1410307a3; gates scr_CritHasPassive(268) @0x140ff2ad4 / 0x141001f54 / 0x141011b65 / 0x14103054c. Receiver switch: bc_EventGainAttack L307-L312, SETVAR creature @0x140ff31cb (step 8 of the stat event), after the Fear block (step 5). bc_EventGainMaxHP (0x1410187f0) has no reference to 268. Fix sketch: (1) Constant repoint: change the three lea offsets so they load the existing 50.0 at 0x1498ec470. @0x14100216e 48 8D 15 8B A9 8E 08 -> 48 8D 15 FB A2 8E 08; @0x141011d7f 48 8D 15 1A AE 8D 08 -> 48 8D 15 EA A6 8D 08; @0x141030766 48 8D 15 63 CF 8B 08 -> 48 8D 15 03 BD 8B 08. (2) Hook: in the four gain functions, add 'holder does not have Fear' to the Fallen Star gate, using the same condition test as the step-5 Fear block, so a holder with Fear doesn't steal. (3) Hook, medium priority: copy the Fallen Star block into bc_EventGainMaxHP at the same step. Reasoning: The 35% sites are a plain number conflict (ruling 1), fixed by a constant repoint with bytes checked against the exe. Fear's text says the holder can't gain stats, and 'gain them instead' doesn't override that, so skipping the Fear check conflicts with the text. The Max Health gap relies on the game's wording habit ('stats' includes Health unless excluded) and is the least certain of the three. App note (unpatched game): Fallen Star steals Attack gains 50% of the time but Defense, Intelligence and Speed gains only 35%, never steals Max Health, and still steals while its holder has Fear. Source: errata round 2 (2026-10-26). | Patched (batch J, 2026-10-26): (1) constant repoint 35.0 -> 50.0 (0x1498ec470) at bc_EventGainDefense L317 lea @0x14100216e, bc_EventGainIntelligence L308 @0x141011d7f, bc_EventGainSpeed L312 @0x141030766. (2) The holder test scr_CritHasPassive(creatureList[i], 268) in the four gain events (@0x140ff2ad4 / 0x141001f54 / 0x141011b65 / 0x14103054c) -> hook_j_su0269_holder: false when the holder has Feared (condition 32, the gain events' own Fear test). (3) bc_EventGainMaxHP L312 (Currents) bc_GetEnemiesOf(event.creature, true) @0x14102135e -> hook_j_su0269_maxhp: first runs the Fallen Star block as bc_EventGainAttack L305-L312 has it (timeline loop, holder not Feared, opposite side, scr_Roll(50), holder != creature, the L_B_STAT_GAIN_STOLEN floater queued with mode 1, event.creature = holder), then fetches the enemies of the (possibly new) receiver.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Fallen Star (trait)",
+    "intended": "When an enemy would gain stats, this creature has a 50% chance to gain them instead. (Feared: creatures with Fear cannot gain stats.)",
+    "actual": "In the unpatched game, the chance was 50% for Attack but only 35% for Defense, Intelligence and Speed; Maximum Health gains were never stolen; and a Feared Fallen Star creature still gained the stolen stats.",
+    "fix": "Now the chance is 50% for every stat, Maximum Health gains can be stolen too (with the same 'Stolen' message), and a Feared Fallen Star creature does not steal (the enemy keeps the gain).",
+    "impact": "stronger",
+    "flags": []
+  }
+}

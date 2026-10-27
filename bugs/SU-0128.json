@@ -1,0 +1,44 @@
+{
+  "id": "SU-0128",
+  "aliases": [
+    "B2#5"
+  ],
+  "title": "Born Again (Windrunner)",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Born Again",
+      "runtime_id": 442,
+      "key": "BORNAGAIN",
+      "text_key": "L_P_BORNAGAIN_DESC"
+    }
+  ],
+  "problem": "Text: your creatures killed by start-of-battle effects are resurrected. The game uses a global flag: Born Again works only while bornagain is false. Battle setup sets it false; the start-of-battle sequence sets it true right after the last phase-9 effect (Mortal Terror), before the queued phase-9 events resolve. Phase-9 kills (Red Wedding, the classic Born Again partner) are queued, so they land after the flag is already true, and Born Again never fires for them. Deaths that resolve earlier (enemy start-of-battle attacks and spells, phases 7-8) can still trigger it.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0128",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B2#5"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Does nothing, never triggers. Evidence: bc_OnDeath L90: revived == false && global.bornagain == false (@0x1414688f4) && dying.slot > 0 && perk 442 (@0x141468b0e). Only 2 writers (byte scan): battle-controller Create L93 bornagain = false (@0x1469a4d9a); Step L1123 bornagain = true (@0x1469d3398), straight after Mortal Terror's bc_OnDeath (L1114-1122, @0x1469d335b). Red Wedding kills are queued bc_EventOHKO events (START_OF_BATTLE_FINDINGS.md, \"Queued\"). Fix sketch: H: set the flag after the phase-9 event queue has drained (e.g. at the first turn start). Test first: Red Wedding + Born Again Triage 2026-10-26: In-game test: Born Again + Red Wedding (or another start-of-battle kill): are your creatures killed at the start of battle resurrected at 50% Health? Code says Red Wedding's queued kills land after the bornagain flag is set. | 2026-10-26 realign (text is the contract): text claims \"After your creatures are killed from start-of-battle effects, they are resurrected\". H: Born Again: keep the bornagain window open until the queued phase-9 events have resolved (the flag is set before Red Wedding's kills land). vs bugged: stronger. Batch R: not built. No reliable 'start-of-battle phase-9 queue still resolving' signal exists (only per-creature counters such as turns, which can't tell start-of-battle deaths from early-turn ones). Needs a hook that sets global.bornagain at the first creature turn start instead of in the battle-controller Step (L1123). Round-2 hook (A2): the battle Step's early `global.bornagain = true` (L1123) is removed; the flag is set at the first turn start (bc_CreatureStartOfTurn L53), after queued start-of-battle kills resolve. Edge: a start-of-turn activation cast during the start-of-battle phase would close the window early (no such case known). In-game test: Born Again + Red Wedding (or another start-of-battle kill): your creatures killed at the start of battle are resurrected with 50% Health; a creature killed on turn 1 or later is not.",
+  "release_notes": {
+    "section": "Perks",
+    "effect": "Born Again (perk)",
+    "intended": "Your creatures killed by start-of-battle effects are resurrected with 50% Health.",
+    "actual": "In the unpatched game, start-of-battle kills that resolve slightly later (such as Red Wedding) were missed.",
+    "fix": "Now every creature killed by a start-of-battle effect is resurrected, until the first turn starts.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

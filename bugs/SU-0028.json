@@ -1,0 +1,43 @@
+{
+  "id": "SU-0028",
+  "aliases": [
+    "A30"
+  ],
+  "title": "Master of Cataclysms",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Master of Cataclysms",
+      "runtime_id": 2191,
+      "text_key": "L_TRAIT_DESC_MASTER_CATACLYSM"
+    }
+  ],
+  "problem": "The 10% sweep has no side filter: enemies' Wrath traits roll too.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0028",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§1 item 5"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: H: add side test 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: All-Cataclysm party with Master of Cataclysms vs an enemy that has a Wrath trait (2100-2110): the enemy's Wrath trait should never get the extra 10% activation at your turn starts. PARTIAL: enemies' Wrath traits no longer roll. Still open: 'at the start of each creature's turn' — the sweep runs only when a creature of the master's side starts its turn; doing it on every creature's turn needs a per-side 'master + all-Cataclysm party' check at the L748-L749 gate (both sides). Round-2 C2 2026-10-26: remainder built as patch SU-0028-turns (needs SU-0028 on): the L748-L749 gate now runs the sweep on every creature's turn when some side holds Master of Cataclysms with an all-Cataclysm party, and the sweep's holder filter (batch-E slot 0x149ed8478, refilled by SU-0028-turns) lets a Wrath trait roll only when its holder's side qualifies. In-game test: all-Cataclysm party + Master of Cataclysms: your Wrath traits also proc (~10%) at the start of ENEMY turns; an enemy Wrath holder without its own qualifying party never procs.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Master of Cataclysms (trait)",
+    "intended": "If all your creatures are Cataclysms, their traits have a 10% chance to activate at the start of each creature's turn.",
+    "actual": "In the unpatched game, enemies' traits were rolled as well, and the roll only happened on the qualifying side's own turns.",
+    "fix": "Now only the qualifying side's traits roll, at the start of every creature's turn. The every-turn part is a separate switch (SU-0028-turns) that requires SU-0028.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

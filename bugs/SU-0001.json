@@ -1,0 +1,57 @@
+{
+  "id": "SU-0001",
+  "aliases": [
+    "A01",
+    "B2#23"
+  ],
+  "title": "Sleight of Hand, Spin the Wheel, Good Luck (Enemies)",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Sleight of Hand",
+      "runtime_id": 33,
+      "key": "SLEIGHTOFHAND",
+      "text_key": "L_P_SLEIGHTOFHAND_DESC"
+    },
+    {
+      "kind": "trait",
+      "name": "Spin the Wheel",
+      "runtime_id": 1765,
+      "text_key": "L_TRAIT_DESC_SPINTHEWHEEL"
+    },
+    {
+      "kind": "realm_property",
+      "name": "Good Luck (Enemies)",
+      "id": 62
+    }
+  ],
+  "problem": "Re-rolls only run when the battle is *over* (inverted check): they never work in battle. Community confirms.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0001",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:BR:scr_roll_battledone",
+    "community:B2#23"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: S: invert the battledone test — in patch, applied in game 2026-10-26 (effect not yet observed in battle)",
+  "release_notes": {
+    "section": "Combat rules",
+    "effect": "Failed random effects (Sleight of Hand perk, Spin the Wheel trait, Good Luck (Enemies) realm property)",
+    "intended": "When a random effect fails during a battle, these effects give it another roll.",
+    "actual": "The game only ran the extra roll after the battle had ended, so it never helped during turns.",
+    "fix": "Now the extra roll happens during battle, when the random effect fails.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

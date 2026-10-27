@@ -1,0 +1,43 @@
+{
+  "id": "SU-0086",
+  "aliases": [
+    "H07"
+  ],
+  "title": "5740-NG rank 10",
+  "subjects": [
+    {
+      "kind": "relic",
+      "name": "5740-NG, Impenetrable Plate of 4080",
+      "relic_code_id": 28,
+      "rank": 10
+    }
+  ],
+  "problem": "Rank 10's 'took no damage' counter also counts avoided and dodged hits (rank 100)",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0086",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "handoff:HANDOFF_bug_report_candidates.md"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Hook spec: research/handoff_eval.md Batch R: not built. 'Didn't take any damage' should ignore every prevented hit (rank-100 avoid, dodges, Prevented!), not just rank 100's; needs hooks at each prevention exit of bc_EventDamage to undo the L66 damages += 1. Round-2 hook (A2): at the turn-start reset of `damages` (bc_CreatureStartOfTurn L54) each party creature's damage_taken is snapshotted; the rank-10 `damages == 0` read (bc_CreatureEndOfTurn L210) sees 0 unless damage_taken grew since. In-game test: 5740-NG rank 10 (and 100): when every enemy hit is avoided or dodged, the relic still attacks at the end of that enemy's turn; after a hit that deals damage it doesn't.",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "5740-NG, rank 10 (relic)",
+    "intended": "The relic attacks when the bearer took no damage during an enemy's turn.",
+    "actual": "In the unpatched game, avoided, dodged and prevented hits counted as damage taken, so the attack was lost.",
+    "fix": "Now only hits that really deal damage stop the attack.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

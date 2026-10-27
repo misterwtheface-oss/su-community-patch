@@ -1,0 +1,43 @@
+{
+  "id": "SU-0202",
+  "aliases": [
+    "B1#49"
+  ],
+  "title": "Unstable Horror",
+  "subjects": [
+    {
+      "kind": "condition",
+      "name": "Unstable Horror",
+      "runtime_id": 44,
+      "text_key": "L_CDESC_MINION_UNSTABLEHORROR"
+    }
+  ],
+  "problem": "The damage uses the master's highest stat other than Health: if Health is highest, the second-highest stat is used. The text says 'highest stat'. Same pattern as The Walking Dead (SU-0077), already fixed toward the text.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0202",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#49"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: This minion's master has 5% more stats for each {CONDNAME_MINION_UNSTABLEHORROR} it has. After this minion's master {ACTION_defends} or {ACTION_provokes}, it deals damage to all ... Evidence: bc_OnDefend L506 scr_GetCritNthHighestStat(1) @0x14153f947; L507 == 'health' -> L510 scr_GetCritNthHighestStat(2) @0x14153fa25; L513-L527 read attack / defense / intelligence / realspeed by name (no Health case). Same in bc_OnProvoke L159 @0x141568a56, L163 @0x141568b33. Fix sketch: In both blocks, when the highest stat is Health, use the master's Maximum Health (hpmax, the value scr_GetCritNthHighestStatAmt mode 0 uses) as the amount instead of re-picking: detour at L510 (0x14153f99d, bc_OnDefend) and L163 (0x141568aac, bc_OnProvoke) to a hook that writes hpmax into the amount and jumps past the name switch (L529 0x14153fc33 / its bc_OnProvoke counterpart). A simple n=2 -> n=1 byte edit (SU-0077 style) is NOT enough here: the name switch has no Health case, so the amount would be 0. Reasoning: The text says 'highest stat'; the code deliberately skips Health. Precedent SU-0077 aligned the same pattern to the text. App note (unpatched game): Unstable Horror's damage uses its master's highest stat other than Health. Source: errata round 2 (2026-10-26). | Patched (batch J, 2026-10-26): (1) constant repoint: the re-pick scr_GetCritNthHighestStat(master, 2, false) asks for n = 1 (lea of 2.0 -> the 1.0 its first pick uses) at bc_OnDefend L510 @0x14153f9db and bc_OnProvoke L163 @0x141568ae9, so the stat stays 'health'; (2) `amount = 0` right before the stat switch (bc_OnDefend L512 @0x14153fa4a, bc_OnProvoke L165 @0x141568b58) -> hook_j_su0202_defend / _provoke: when the stat is 'health', amount = master.hpmax (the value the highest-stat ranking uses for Health). Other stats unchanged (the switch reads attack / defense / intelligence / realspeed).",
+  "release_notes": {
+    "section": "Conditions & minions",
+    "effect": "Unstable Horror (minion)",
+    "intended": "After this minion's master defends or provokes, it deals damage to all enemies equal to 10% of its master's highest stat for each stack of Unstable Horror it has.",
+    "actual": "In the unpatched game, when the master's highest stat was Health, the damage used its second-highest stat instead.",
+    "fix": "Now the damage uses the master's highest stat, Health included (its Maximum Health).",
+    "impact": "stronger",
+    "flags": []
+  }
+}

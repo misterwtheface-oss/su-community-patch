@@ -1,0 +1,41 @@
+{
+  "id": "SU-0135",
+  "aliases": [
+    "B2#35"
+  ],
+  "title": "Reliquary \"Stat Bonus\" upgrade",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Reliquary Stat Bonus upgrade"
+    }
+  ],
+  "problem": "The upgrade's bonus sits in the stat getters behind an \"is a Relic\" test, but a Relic never gets that far: the getter returns its owner's (the bearer's) stat first. So the upgrade has no effect.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0135",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B2#35"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: \"Increases your relics' stats\" does nothing. Evidence: crit_attack: the owner redirect at L16-17 (@0x1417aaeba, then jumps to the end) comes before the isrelic / reliquary_status block (isrelic read @0x1417b2729; reliquary_status fetched @0x1417aa9d7). Fix sketch: H: apply the Stat Bonus inside the owner redirect for Relic objects Triage 2026-10-26: The Relic's stat getter returns the bearer's stat before the Stat Bonus is reached. Hook: apply the bonus in the owner redirect. 2026-10-26 hook batch B2: left needs-hook. Applying the Stat Bonus inside the stat getters' owner redirect needs the Reliquary's enhancement array (global array read from C); it waits for batch A2's array helper. | 2026-10-26 hook batch F1 built (research/hooks_F1.json, loader/hooks_F1.c). Left needs-hook. The owner redirect (crit_attack L16-L17: return crit_attack(owner) @0x1417aaeba -> 0x1417bc033) can be reached, but the Stat Bonus formula at L394 (after the isrelic test at L393) goes through an undecoded runtime call (0x147895860(self)) and frame locals, Abandoned Altar (656) doubles it at L395-L396, and L398+ applies other effects, so jumping into that block from the redirect is not safe. Needs the L394 formula decoded and re-implemented in C inside the redirect. | 2026-10-26 patched (hooks_G4, SU-0135): the owner redirect in crit_attack (L17), crit_defense (L13), crit_intelligence (L13) and crit_speed (L14) is hooked. When the getter's creature is a Relic (isrelic > -1), the mirrored stat is multiplied by 1 + 0.01 x the Stat Bonus rank (global), doubled when scr_PerkLevel(656 Abandoned Altar, side) > 0. This is the game's own L393-L398 formula, which the redirect returned before. Only the Relic's value changes; the bearer's own stats are untouched. In-game test: with Reliquary Stat Bonus at rank N, a creature's Relic shows Attack / Defense / Intelligence / Speed about N% above its bearer's (2N% with Abandoned Altar); at rank 0 they are equal.",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "Reliquary Stat Bonus upgrade",
+    "intended": "Increases your relics' stats by 1% per rank.",
+    "actual": "In the unpatched game, the upgrade had no effect.",
+    "fix": "Now relics' stats are 1% higher per rank (doubled with Abandoned Altar).",
+    "impact": "stronger",
+    "flags": []
+  }
+}

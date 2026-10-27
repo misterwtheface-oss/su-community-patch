@@ -1,0 +1,45 @@
+{
+  "id": "SU-0160",
+  "aliases": [
+    "B5#3a",
+    "B5#3b"
+  ],
+  "title": "Grandiose (1982)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Grandiose",
+      "runtime_id": 1982,
+      "text_key": "L_TRAIT_DESC_GRANDIOSE"
+    }
+  ],
+  "problem": "It adds 3 at the start of your creatures' turns.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0160",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#3a",
+    "community:B5#3b"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: The turn counter rises at the start of the turn, not the end. Evidence: bc_CreatureStartOfTurn scr_AnyAllyHasPassive(1982) @0x140b24601 → battleturns @0x140b24649 / 0x140b2467c. Fix sketch: Reword \"At the end\" to \"At the start\" (T). Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. The turn counter rises at the start of the turn. 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"At the end of your creatures' turns, their turn counter increases by 3\". Fix: H: move the +3 battleturns from bc_CreatureStartOfTurn (@0x140b24601) to the end of the turn. vs bugged: neutral (timing). | In-game test: Grandiose holder: its turn counter shows +3 only after its turn ends (check a turn-count trait or the counter before and after the turn); no change at the start of the turn.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Grandiose (trait)",
+    "intended": "At the end of your creatures' turns, their turn counter increases by 3 more.",
+    "actual": "In the unpatched game, the +3 came at the start of the turn.",
+    "fix": "Now it comes at the end of the turn.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

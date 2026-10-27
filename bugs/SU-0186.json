@@ -1,0 +1,35 @@
+{
+  "id": "SU-0186",
+  "aliases": [
+    "B1#21"
+  ],
+  "title": "Nether Stone drop chance: Lifelong Respite and realm bonus",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Nether Stone drop chance: Lifelong Respite and realm bonus",
+      "runtime_id": 581,
+      "text_key": "L_P_LIFELONGRESPITE_DESC / L_MENU_ITEMBONUS"
+    }
+  ],
+  "problem": "The Nether Stone roll compares a whole number (1..N) with the boosted value X, so fractions of X are thrown away. Lifelong Respite multiplies X by 1.25, which on its own changes nothing (1 in 5000 stays 1 in 5000); it only matters when it pushes X across a whole number. The same rounding eats most of the realm item bonus (nothing below +60%).",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#21"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "User 2026-10-26: leave. Text: You have a 25% increased chance to find Nether Stones. This perk is always active, even if your specialization is not {SPEC_PARIAH}. | Realm Item Bonus: {1}% Evidence: inv_Loot L246 X = 1; L247 X += X x realmbonus/100; L248 X += X x 0.25 (unconditional, xmm7); L249 scr_SpecIsAscended(37) @0x141d82199 (Pariah ascension = perk 581 Lifelong Respite) -> L250 X += X x 0.25; L252-L257 N = 5000/2000/8000 by mode; L259 irandom_range(1, N) @0x141d822f3 compared <= X by 0x141d7bd10 @0x141d822fc; inv_NetherStoneCreate @0x141d823d1. Fix sketch: Make the roll real-valued: redirect irandom_range @0x141d822f3 (inv_Loot L259) to a C hook returning a uniform real in (0, N]; the existing '<= X' compare then gives exactly X / N. Side effect to decide: the ungated L248 '+25%' term would then also count (base 1 in 4000 instead of 1 in 5000 on Normal). To keep today's base rate, also skip L248's add (detour 0x141d820f1..0x141d82126) so only realm bonus and Lifelong Respite raise X. Reasoning: Lifelong Respite's text promises a 25% higher chance; the integer roll gives 0% on its own. Numbers in text win (ruling 1). Confidence high rather than certain only for the purpose of the ungated L248 term (no enclosing condition found). App note (unpatched game): Lifelong Respite and the realm item bonus only raise the Nether Stone chance in whole steps: Respite alone does nothing, and realm bonus does nothing below 60%. Source: errata round 2 (2026-10-26).",
+  "reason": "user ruling 2026-10-26: leave the Nether Stone roll rounding as is"
+}

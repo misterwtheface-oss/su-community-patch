@@ -1,0 +1,35 @@
+{
+  "id": "SU-0311",
+  "aliases": [
+    "B6#39"
+  ],
+  "title": "Ultimate Trickery",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Ultimate Trickery",
+      "runtime_id": 1299,
+      "text_key": "L_TRAIT_DESC_ULTIMATETRICKERY"
+    }
+  ],
+  "problem": "The transform sets the creature id, class, race and sprite of the copied species, so the holder counts as that species for every species check (e.g. perks keyed to a creature id). That is what \"transforms into a copy\" means. It keeps its own innate trait (Ultimate Trickery) and appends the 3rd creature's innate and the 4th creature's fused trait to its extra traits. The fake-Animatus case cannot arise on your side: the Animatus is always in party slot 1, and Ultimate Trickery copies slot 2.",
+  "category": "not-a-bug",
+  "confidence": "high",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "community:B6#39"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: At the start of battle, this creature transforms into a copy of the second creature in your party, gains the innate trait of the third creature in your party, and gains the fused ... Evidence: bc_StartupTraits L277-L287: gate @0x1417745e8, crits[2] must exist and not be the holder (L278), bc_EventTransform(holder, crits[2].critconstant, holder.passive) queued @0x141774a34; L283 crits[3].passive and L287 crits[4].passive2 appended to extrapassives; enemy branch L291-L294 uses enemies[]. Transform applied in bc_ExecuteEvents @0x1410b2613-0x1410b4500 (critconstant, class, race, sprite). Animator perks test creature id 955. Reasoning: A copy that carries the copied creature id is the literal meaning of the text; species-keyed perks applying to it follows from that. Nothing to change. Source: errata round 2 (2026-10-26).",
+  "reason": "works as its text says"
+}

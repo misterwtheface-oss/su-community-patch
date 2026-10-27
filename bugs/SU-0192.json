@@ -1,0 +1,53 @@
+{
+  "id": "SU-0192",
+  "aliases": [
+    "B1#33"
+  ],
+  "title": "Generous + Obelisk",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Generous + Obelisk",
+      "runtime_id": 1195,
+      "text_key": "L_TRAIT_DESC_OBELISK (vs L_SPMOD_SHARED)"
+    }
+  ],
+  "problem": "Generous copies are Ethereal gems, so Obelisk's text says they keep full charges while Generous's text says they have only 1. The code follows Generous: the 'shared gem -> 1 charge' rule runs after Obelisk.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-text",
+  "status": "patched",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#33"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Your creatures' [temporary] Ethereal Spell Gems have the same number of {STAT_charges} they'd have if they weren't Ethereal. | At the start of battle, your other creatures gain an ... Evidence: inv_SpellGemsUpdate L210-L221 (Ethereal x0.25 unless Obelisk 1195 @0x141db9770 / 0x141db9829); L253-L254 @0x141db9f82 shared == true -> charges_max = 1; Generous copies shared = true in bc_StartupGems @0x1416ce59d. Fix sketch: L_TRAIT_DESC_OBELISK: \"Your creatures' [temporary] Ethereal Spell Gems have the same number of {STAT_charges} they'd have if they weren't Ethereal. Generous copies still have only 1 {STAT_charge}.\" Reasoning: Two game texts contradict for Generous copies; the code follows the Generous text, so Obelisk's text is corrected (ruling 2). App note (unpatched game): Obelisk does not affect Generous copies: they always have 1 charge. Source: errata round 2 (2026-10-26). | 2026-10-26: text correction shipped via localization_override (loader text module).",
+  "text_fix": [
+    {
+      "file": "traits.csv",
+      "key": "L_TRAIT_DESC_OBELISK",
+      "en_proposed": "Your creatures' [temporary] Ethereal Spell Gems have the same number of {STAT_charges} they'd have if they weren't Ethereal. Copies created by Generous still have only 1 {STAT_charge}.",
+      "en_current_sha256": "8e4d877bc9be404bebb85b7cb446fea03007f9bb335f99943659a2c3c4dfd28e"
+    }
+  ],
+  "release_notes": {
+    "section": "Interface text",
+    "effect": "Obelisk (trait)",
+    "intended": "Ethereal Spell Gems keep their normal charges.",
+    "actual": "In the unpatched game, Obelisk's text contradicted Generous: Generous copies always have only 1 charge, even with Obelisk.",
+    "fix": "Now Obelisk's text says Generous copies keep 1 charge.",
+    "impact": "neutral",
+    "flags": [
+      "text"
+    ]
+  }
+}

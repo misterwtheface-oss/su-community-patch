@@ -1,0 +1,65 @@
+{
+  "id": "SU-0182",
+  "aliases": [
+    "B1#15"
+  ],
+  "title": "Starting Timeline: conflicting start effects",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Starting Timeline: conflicting start effects",
+      "runtime_id": [
+        540,
+        112,
+        1025,
+        863,
+        1652
+      ],
+      "text_key": "L_TRAIT_DESC_SURPRISE! / L_TRAIT_DESC_CONTRADICTION / L_TRAIT_DESC_NASTYSURPRISE! / L_TRAIT_DESC_COVERT / L_TRAIT_DESC_PREPARED"
+    }
+  ],
+  "problem": "The Timeline is sorted once at battle start and never re-sorted when Speed changes (consistent with the Codex: Speed 'determines the creature's starting location'). When a creature is under both a 'top' and a 'bottom' effect, the bottom one always wins, so Surprise!'s 'always starts at the top' is false against Contradiction, Nasty Surprise!, Boneyard, Ultimate Trickery or Imposter Syndrome. When one side has both Covert and Prepared, Prepared (Intelligence) wins, so Covert's 'determined by Attack' is false then.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-text",
+  "status": "patched",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#15"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: This creature always starts battle at the top of the {TIMELINE}. | This creature starts battles with 200% more {STAT_speed}, but also starts battles at the bottom of the ... Evidence: bc_CreateCreatureList 0x1406953b0: base key crit_speed, Covert then Prepared (later wins); override table in code order, TOP = 1999999999999099 before BOTTOM = 1 blocks (TIMELINE_FINDINGS §2); turnspeed has no in-battle writer. Fix sketch: L_TRAIT_DESC_SURPRISE!: \"This creature always starts battle at the top of the {TIMELINE}, unless an effect places it at the bottom.\" L_TRAIT_DESC_COVERT: \"Your creatures' {TIMELINE} placement at the start of battle is determined by their {STAT_attack} rather than their {STAT_speed}, unless Prepared applies.\" (Mid-battle no-resort needs no text change.) Reasoning: Pairs of game texts both claim 'always' / 'determined by' for the same creature and contradict each other; the code consistently picks the later block, so the text it doesn't follow (Surprise!, Covert) gets an in-line qualifier (ruling 2). App note (unpatched game): The Timeline is set once at battle start (Speed changes later don't reorder it); a 'start at the bottom' effect beats 'start at the top', and Prepared beats Covert. Source: errata round 2 (2026-10-26). | 2026-10-26: text correction shipped via localization_override (loader text module).",
+  "text_fix": [
+    {
+      "file": "traits.csv",
+      "key": "L_TRAIT_DESC_SURPRISE!",
+      "en_proposed": "This creature always starts battle at the top of the {TIMELINE}, unless an effect places it at the bottom.",
+      "en_current_sha256": "f2aa7fa604136bf36a6f10f9377eea79ccdc95c56d45a0b08d38dd8bdc0b7ea5"
+    },
+    {
+      "file": "traits.csv",
+      "key": "L_TRAIT_DESC_COVERT",
+      "en_proposed": "Your creatures' {TIMELINE} placement at the start of battle is determined by their {STAT_attack} rather than their {STAT_speed}. Prepared takes priority over this trait.",
+      "en_current_sha256": "9c3cb6fc2b66a9df43ea131d364f830d2c0014facb3823ff95e2f887d10bcbfe"
+    }
+  ],
+  "release_notes": {
+    "section": "Interface text",
+    "effect": "Surprise! and Covert (traits)",
+    "intended": "Start-of-battle Timeline effects say which one wins when they conflict.",
+    "actual": "In the unpatched game, Surprise! said 'always at the top' and Covert said placement uses Attack, yet 'start at the bottom' effects (Contradiction, Nasty Surprise!) beat Surprise!, and Prepared beats Covert.",
+    "fix": "Now Surprise! and Covert say so.",
+    "impact": "neutral",
+    "flags": [
+      "text"
+    ]
+  }
+}

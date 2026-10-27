@@ -1,0 +1,41 @@
+{
+  "id": "SU-0025",
+  "aliases": [
+    "A27"
+  ],
+  "title": "Instant kills",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Instant kill (OHKO) resolution"
+    }
+  ],
+  "problem": "Skip Fable rank 80 and Master of Rift Dancers repeats that damage deaths get.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0025",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§11 item 1"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: H | Left needs-hook (batch C): repeating instant kills under Skip Fable rank 80 / Master of Rift Dancers means routing the instant-kill path through the same repeat logic as damage deaths; the repeat is part of SU-0046's bc_OnDeath rework, which is not a call-site change. Round-2 C2 2026-10-26: still needs-hook; depends on the SU-0046 design (the instant-kill path would reuse the same repeat). Round-3 F2 2026-10-26: built. The instant-kill base on-death pass (bc_ExecuteEvents L986) is followed by one more pass for a Fable rank 80 bearer (relic 29 perk 8, dead bearer allowed) and one more when Master of Rift Dancers applies (side holds 1481, all Rift Dancers, Dark Dance), matching damage deaths. In-game test: kill a Fable 80 bearer with an instant-kill effect: its on-death effects fire twice (as for a damage death).",
+  "release_notes": {
+    "section": "Combat rules",
+    "effect": "Instant kills (combat)",
+    "intended": "On-death effects that activate additional times (Fable rank 80, Master of Rift Dancers) work for every death.",
+    "actual": "In the unpatched game, creatures killed instantly did not get the extra activations that damage deaths get.",
+    "fix": "Now instant kills get the same extra on-death activations as deaths from damage.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

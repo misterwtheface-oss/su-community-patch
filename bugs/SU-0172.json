@@ -1,0 +1,43 @@
+{
+  "id": "SU-0172",
+  "aliases": [
+    "B5#36"
+  ],
+  "title": "Necronomicon (115)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Necronomicon",
+      "runtime_id": 115,
+      "text_key": "L_TRAIT_DESC_NECRONOMICON"
+    }
+  ],
+  "problem": "The extra casts are the holder's only, but the 50% less Intelligence is applied to every Death spell cast by anyone on the holder's side. The test is \"the caster's side has Necronomicon\", not \"the caster has it\". This is in spell damage, healing and stat-change potency. Only Death spells are affected, not all spells.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0172",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#36"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Necronomicon on one creature only: cast a Death spell with an ally that lacks it and with the holder; only the holder's Death spells take the drawback. Community claim: The drawback hits your whole team. Evidence: bc_SpellDamage: inv_SpellGemClass == \"Death\" @0x1415a1e86; slot == 0 && scr_AnyEnemyHasPassive(115) @0x1415a2079, slot > 0 && scr_AnyAllyHasPassive(115) @0x1415a2242; halve @0x1415a23fc. Same in bc_SpellHealing @0x1416468b4 / 0x14164695b and bc_SpellStat @0x1416543f0 / 0x141654497; extra casts scr_CritHasPassive @0x1407521ad. Fix sketch: Replace the side checks with scr_CritHasPassive(caster, 115) (H). Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. The 50% less Intelligence applies to every Death spell cast on the holder's side. 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"these spells act as if this creature has 50% less Intelligence\". Fix: H: in bc_SpellDamage / bc_SpellHealing / bc_SpellStat replace the side checks (scr_AnyAllyHasPassive / scr_AnyEnemyHasPassive(115) @0x1415a2079/0x1415a2242, 0x1416468b4/0x14164695b, 0x1416543f0/0x141654497) with scr_CritHasPassive(caster, 115), e.g. call-site hooks. vs bugged: stronger for the holder's allies.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Necronomicon (trait)",
+    "intended": "The holder casts Death spells 2 additional times, but these spells act as if it has 50% less Intelligence.",
+    "actual": "In the unpatched game, the penalty hit every Death spell cast by the holder's side.",
+    "fix": "Now only the holder's own Death spells get the penalty.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

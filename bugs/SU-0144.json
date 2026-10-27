@@ -1,0 +1,41 @@
+{
+  "id": "SU-0144",
+  "aliases": [
+    "B3#36"
+  ],
+  "title": "Death Guild",
+  "subjects": [
+    {
+      "kind": "guild",
+      "name": "Death Guild"
+    }
+  ],
+  "problem": "On a debuff to an enemy, the code loops over your 6 party slots. For each living creature without Godforge 16 it adds the guild bonus again, compounding (e.g. +15% six times = ×2.31). It stops at the first creature that has Godforge 16 (that creature's Godforge bonus applies instead). The guild bonus clearly belongs outside the loop.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0144",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#36"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Debuff Potency bonus is applied once per creature in the party. Evidence: scr_CritAddCondition L295-L305: loop head @0x142019ea0, guild add @0x14201a226, jmp 0x142019ea0 @0x14201a29a (continue). Fix sketch: H: move the guild add out of the loop. Approximate S: change that jmp to 0x14201a493 (applies once, but stops the Godforge search early) Triage 2026-10-26: Guild Debuff Potency bonus compounds once per living party creature. Hook: apply it once outside the loop (S stopgap ends the Godforge search early). Batch R: not built. Applying the guild add once needs a per-call reset of the add (scr_CritAddCondition has 371 callers); the stopgap (exit the loop after the add) would end the Godforge 16 search early. Needs a function-entry reset or a loop-index test. Round-2 hook (A2): three call-free detours in scr_CritAddCondition's party loop: clear a flag at loop entry, set it after the guild add, skip later guild adds; the Godforge 16 search continues. In-game test: Death Guild with 6 living creatures: a debuff on an enemy gets the guild Debuff Potency bonus once (same potency as with 1 creature alive).",
+  "release_notes": {
+    "section": "Perks",
+    "effect": "Death Guild (guild bonus)",
+    "intended": "The guild's Debuff Potency bonus applies to debuffs on enemies.",
+    "actual": "In the unpatched game, the bonus was applied once for each living creature in the party, compounding.",
+    "fix": "Now it applies once per debuff.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

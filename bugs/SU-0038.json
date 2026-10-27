@@ -1,0 +1,45 @@
+{
+  "id": "SU-0038",
+  "aliases": [
+    "B01",
+    "B4#45",
+    "B6#38"
+  ],
+  "title": "Multi-hit attacks",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Multi-hit attacks (bonus pool)"
+    }
+  ],
+  "problem": "The bonus pool is never reset between hits: hit k gets the bonuses of hits 1..k (150/200/250/300 instead of 150×4). Large impact.",
+  "category": "bug",
+  "confidence": "in-game-confirmed",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0038",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§5",
+    "community:B4#45",
+    "community:B6#38"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Effectively confirmed in game by the community: their Touch of Red numbers (480 / 640 / 800 for +2 attacks at 320 base) are exactly this pool growth (community_vet_B6). Fix touches every multi-hit \"more damage\" bonus: a balance call. Fix: H: reset per hit Also confirmed by the community's Firelord (612) numbers (SU-0152). Also confirmed by the community's Touch of Red (664) numbers (SU-0157). User 2026-10-26: normalize, no ramp. Fix: reset the attack's bonus pool at the start of each hit (pool zeroed at L10 / L88 only, hit loop L1076-L1892 in bc_CreatureAttack) so every hit gets each bonus once. After the fix, re-check the merged Touch of Red / Firelord against their texts: Touch of Red 'all attacks +25% for each attack' (3 attacks -> +75% each), Firelord '+20% per attack this battle' (same bonus on every hit of one attack). | In-game test: a 4-hit attack (e.g. +3 additional attacks) with one '% more damage' bonus active: all four hits deal the same damage (no 150/200/250/300 ramp). Touch of Red after the fix: each hit gets +25% per additional attack (2 extra attacks -> +50% on every hit, not the text's +75% for 3 attacks); Firelord: every hit gets the same +20% x attacks-this-battle, matching its text.",
+  "release_notes": {
+    "section": "Combat rules",
+    "effect": "Multi-hit attacks (combat)",
+    "intended": "Each hit of an attack gets each '% more damage' bonus once.",
+    "actual": "In the unpatched game, the bonuses piled up from hit to hit, so later hits grew much stronger than the first (e.g. 150%, 200%, 250%, 300%).",
+    "fix": "Now every hit of the attack gets each bonus once, so all hits deal the same damage. Touch of Red's count is corrected separately (SU-0176).",
+    "impact": "weaker",
+    "flags": []
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "id": "SU-0082",
+  "aliases": [
+    "H03"
+  ],
+  "title": "Squash realm minigame",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Squash realm minigame"
+    }
+  ],
+  "problem": "Squash realm minigame: squash2 writes digit 2 (code wrote 0), so all 10 Squash combos can happen like Fruit and Tarot. Playtest-confirmed bug",
+  "category": "bug",
+  "confidence": "in-game-confirmed",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0082",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "handoff:HANDOFF_bug_report_candidates.md"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Details: research/handoff_eval.md",
+  "release_notes": {
+    "section": "Realm",
+    "effect": "Squash realm minigame",
+    "intended": "All of the Squash minigame's combinations can come up, as with the Fruit and Tarot minigames.",
+    "actual": "In the unpatched game, one slot was recorded wrongly, so some combinations could never happen.",
+    "fix": "Now all 10 combinations can happen.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

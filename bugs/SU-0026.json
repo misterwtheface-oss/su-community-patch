@@ -1,0 +1,54 @@
+{
+  "id": "SU-0026",
+  "aliases": [
+    "A28"
+  ],
+  "title": "Giran (Nether boss)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Lifeblood (Giran, Nether boss)",
+      "runtime_id": 1312
+    },
+    {
+      "kind": "trait",
+      "name": "Lifeblood (Giran, Nether boss)",
+      "runtime_id": 1313
+    },
+    {
+      "kind": "trait",
+      "name": "Lifeblood (Giran, Nether boss)",
+      "runtime_id": 1314
+    }
+  ],
+  "problem": "Adds % of allies' stats to all its stats, but every stat reads Attack.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0026",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:NETHER_BOSS_BEHAVIOR_FINDINGS.md #9"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: S: per-stat variable fix — in patch (byte-verified; 9 calls, tiers 1312/1313/1314) 2026-10-26 check: tier 1 loops bc_GetAlliesOf ('your other creatures'), tiers 2-3 loop global.creatureList, both sides ('all other creatures'); every Lifeblood holder is skipped inside the loop (no self-recursion, also safe for the crit_defense/intelligence/speed redirect). Matches the text; no further change.",
+  "release_notes": {
+    "section": "Bosses & Nether bosses",
+    "effect": "Giran's Lifeblood (Nether boss trait)",
+    "intended": "Each of the boss's stats gains a share of the same stat from the other creatures.",
+    "actual": "In the unpatched game, every stat took its share from the others' Attack.",
+    "fix": "Now each stat reads the matching stat (Defense from Defense, Speed from Speed, and so on).",
+    "impact": "neutral",
+    "flags": [
+      "boss"
+    ]
+  }
+}

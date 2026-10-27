@@ -1,0 +1,41 @@
+{
+  "id": "SU-0056",
+  "aliases": [
+    "B19"
+  ],
+  "title": "Class cards power 1 (Ophan, Lich, Cerberus, Imp, Occultist)",
+  "subjects": [
+    {
+      "kind": "card",
+      "name": "Class cards power 1 (Ophan, Lich, Cerberus, Imp, Occultist)"
+    }
+  ],
+  "problem": "Two effects: −10% target Defense *and* +10% damage; text names one.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0056",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§4 item 2"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test:  Fix: S | 2026-10-26 realign (text is the contract): text claims \"Your X spells deal 10% more damage\". The extra 10% Defense cut is a hidden bonus beyond the text. vs bugged: -. User 2026-10-26: remove the extra 10% target-Defense cut (the text promises only '10% more damage'). Fix: skip the Defense-cut block in bc_SpellDamage (L217-L229); keep the +10% damage block (L2301-L2313). 2026-10-26: built as byte patch SU-0056 (verified against the baseline exe; not yet run in game).",
+  "release_notes": {
+    "section": "Cards",
+    "effect": "Ophan, Lich, Cerberus, Imp and Occultist card sets, power 1 (cards)",
+    "intended": "Your spells of that class deal 10% more damage.",
+    "actual": "The game also cut the target's Defense by 10%.",
+    "fix": "Now it is only 10% more damage.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

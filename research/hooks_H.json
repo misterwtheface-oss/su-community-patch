@@ -1,0 +1,261 @@
+{
+  "patches": [
+    {
+      "id": "SU-0055",
+      "bug": "SU-0055",
+      "default": 1,
+      "group": "heavy",
+      "title": "Redirected attacks (Guardian, Vigilance, Pocket Tank, Provoke and the other intercepts) are computed with the interceptor's Defense (code: the first target's)",
+      "edits": [
+        {
+          "va": "0x1488bfcd8",
+          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
+          "write": "483925198a61017414488925088a6101ffb424980000008f050b8a6101c74424",
+          "note": "SU-0055 D0 (L182): record the first target, or let the replay pass through (cave code)"
+        },
+        {
+          "va": "0x1488bfcf8",
+          "expect": "00000000000000000000",
+          "write": "40b6000000e92d8bdef7",
+          "note": "SU-0055 D0 (L182): record the first target, or let the replay pass through (cave code)"
+        },
+        {
+          "va": "0x1488bfd02",
+          "expect": "0000000000000000000000000000000000000000000000000000",
+          "write": "483925ef8961010f846b89dff7c744244097010000e95a62dff7",
+          "note": "SU-0055 D1 (L407): the replay pass skips L407-L447 (Hoodwink / Invisible re-target, already done) (cave code)"
+        },
+        {
+          "va": "0x1488bfd1c",
+          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
+          "write": "483925d58961017515488325cb89610100c7442440b8020000e92222e0f7c744",
+          "note": "SU-0055 D2 (L478): the replay pass ends here and skips the intercepts (already resolved) (cave code)"
+        },
+        {
+          "va": "0x1488bfd3c",
+          "expect": "0000000000000000000000",
+          "write": "2440de010000e945a1dff7",
+          "note": "SU-0055 D2 (L478): the replay pass ends here and skips the intercepts (already resolved) (cave code)"
+        },
+        {
+          "va": "0x1488bfd47",
+          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
+          "write": "483925a28961017527488325988961010050488b8424a0000000483b05988961",
+          "note": "SU-0055 D3 (L696): target changed by an intercept -> re-run L182-L476 for the new target (cave code)"
+        },
+        {
+          "va": "0x1488bfd67",
+          "expect": "0000000000000000000000000000000000000000000000000000000000",
+          "write": "0158740c48892586896101e9b08adef7c7442440b8020000e9d821e0f7",
+          "note": "SU-0055 D3 (L696): target changed by an intercept -> re-run L182-L476 for the new target (cave code)"
+        },
+        {
+          "va": "0x1406a8827",
+          "expect": "c7442440b6000000",
+          "write": "e9ac742108909090",
+          "note": "bc_CreatureAttack L182 marker -> SU-0055 D0"
+        },
+        {
+          "va": "0x1406b5f6e",
+          "expect": "c744244097010000",
+          "write": "e98f9d2008909090",
+          "note": "bc_CreatureAttack L407 marker -> SU-0055 D1"
+        },
+        {
+          "va": "0x1406b9e84",
+          "expect": "c7442440de010000",
+          "write": "e9935e2008909090",
+          "note": "bc_CreatureAttack L478 marker -> SU-0055 D2"
+        },
+        {
+          "va": "0x1406c1f54",
+          "expect": "c7442440b8020000",
+          "write": "e9eedd1f08909090",
+          "note": "bc_CreatureAttack L696 marker -> SU-0055 D3"
+        }
+      ],
+      "runtime_hooks": [],
+      "reserves": [
+        {
+          "start": "0x1488bfcd8",
+          "end": "0x1488bfd01",
+          "what": "SU-0055 D0 stub (L182)"
+        },
+        {
+          "start": "0x1488bfd02",
+          "end": "0x1488bfd1b",
+          "what": "SU-0055 D1 stub (L407)"
+        },
+        {
+          "start": "0x1488bfd1c",
+          "end": "0x1488bfd46",
+          "what": "SU-0055 D2 stub (L478)"
+        },
+        {
+          "start": "0x1488bfd47",
+          "end": "0x1488bfd83",
+          "what": "SU-0055 D3 stub (L696)"
+        },
+        {
+          "start": "0x149ed86f0",
+          "end": "0x149ed86f7",
+          "what": "SU-0055 frame (rsp) of the attack being resolved"
+        },
+        {
+          "start": "0x149ed86f8",
+          "end": "0x149ed86ff",
+          "what": "SU-0055 frame (rsp) in the replay pass"
+        },
+        {
+          "start": "0x149ed8700",
+          "end": "0x149ed8707",
+          "what": "SU-0055 first target value"
+        }
+      ]
+    },
+    {
+      "id": "SU-0136",
+      "bug": "SU-0136",
+      "default": 1,
+      "group": "heavy",
+      "title": "Fleshripper rank 50: the extra damage is a real Bleed tick, so every Bleed-damage modifier and reaction applies (code: a plain hit of the Bleed amount)",
+      "edits": [
+        {
+          "va": "0x1488bfd84",
+          "expect": "000000000000",
+          "write": "ff257e896101",
+          "note": "trampoline -> hook_h_su0136_damage (cave code)"
+        },
+        {
+          "va": "0x1488bfd8a",
+          "expect": "000000000000",
+          "write": "ff2580896101",
+          "note": "trampoline -> hook_h_su0136_addevent (cave code)"
+        },
+        {
+          "va": "0x1488bfd90",
+          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
+          "write": "81bc2468600200360155530f85de2526f84883a424385d0200004883a424585d",
+          "note": "SU-0136 S1 (start of turn L2): bleed-only call -> the Bleed tick count (L1059) (cave code)"
+        },
+        {
+          "va": "0x1488bfdb0",
+          "expect": "0000000000000000",
+          "write": "020000e953cd2af8",
+          "note": "SU-0136 S1 (start of turn L2): bleed-only call -> the Bleed tick count (L1059) (cave code)"
+        },
+        {
+          "va": "0x1488bfdb8",
+          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
+          "write": "81bc2468600200360155530f8431f02af8c78424205d02003b040000e930db2a",
+          "note": "SU-0136 S2 (start of turn L1083): bleed-only call skips L1083-L1095 (not Bleed) (cave code)"
+        },
+        {
+          "va": "0x1488bfdd8",
+          "expect": "00",
+          "write": "f8",
+          "note": "SU-0136 S2 (start of turn L1083): bleed-only call skips L1083-L1095 (not Bleed) (cave code)"
+        },
+        {
+          "va": "0x1488bfdd9",
+          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
+          "write": "81bc2468600200360155530f84451c40f8c78424205d0200e4040000e96a992b",
+          "note": "SU-0136 S3 (start of turn L1252): bleed-only call returns after the Bleed tick (cave code)"
+        },
+        {
+          "va": "0x1488bfdf9",
+          "expect": "00",
+          "write": "f8",
+          "note": "SU-0136 S3 (start of turn L1252): bleed-only call returns after the Bleed tick (cave code)"
+        },
+        {
+          "va": "0x140b22374",
+          "expect": "c78424205d020002000000",
+          "write": "e917dad907909090909090",
+          "note": "bc_CreatureStartOfTurn L2 marker -> SU-0136 S1"
+        },
+        {
+          "va": "0x140b6d8fe",
+          "expect": "c78424205d02003b040000",
+          "write": "e9b524d507909090909090",
+          "note": "bc_CreatureStartOfTurn L1083 marker -> SU-0136 S2"
+        },
+        {
+          "va": "0x140b79759",
+          "expect": "c78424205d0200e4040000",
+          "write": "e97b66d407909090909090",
+          "note": "bc_CreatureStartOfTurn L1252 marker -> SU-0136 S3"
+        },
+        {
+          "va": "0x141346d91",
+          "expect": "8b3a99ff",
+          "write": "ef8f5707",
+          "note": "bc_OnAttack L1427 Fleshripper rank 50 bc_EventDamage -> hook: run one Bleed tick"
+        },
+        {
+          "va": "0x141346e20",
+          "expect": "0ccaba00",
+          "write": "668f5707",
+          "note": "bc_OnAttack L1427 scr_AddEventToStack -> hook: skip when the tick replaced the hit"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8708",
+          "symbol": "hook_h_su0136_damage"
+        },
+        {
+          "slot_va": "0x149ed8710",
+          "symbol": "hook_h_su0136_addevent"
+        }
+      ],
+      "reserves": [
+        {
+          "start": "0x1488bfd84",
+          "end": "0x1488bfd89",
+          "what": "trampoline -> hook_h_su0136_damage"
+        },
+        {
+          "start": "0x1488bfd8a",
+          "end": "0x1488bfd8f",
+          "what": "trampoline -> hook_h_su0136_addevent"
+        },
+        {
+          "start": "0x1488bfd90",
+          "end": "0x1488bfdb7",
+          "what": "SU-0136 S1 stub (L2)"
+        },
+        {
+          "start": "0x1488bfdb8",
+          "end": "0x1488bfdd8",
+          "what": "SU-0136 S2 stub (L1083)"
+        },
+        {
+          "start": "0x1488bfdd9",
+          "end": "0x1488bfdf9",
+          "what": "SU-0136 S3 stub (L1252)"
+        },
+        {
+          "start": "0x149ed8708",
+          "end": "0x149ed870f",
+          "what": "hook pointer hook_h_su0136_damage"
+        },
+        {
+          "start": "0x149ed8710",
+          "end": "0x149ed8717",
+          "what": "hook pointer hook_h_su0136_addevent"
+        },
+        {
+          "start": "0x149ed8718",
+          "end": "0x149ed871b",
+          "what": "SU-0136 skip-the-push flag"
+        },
+        {
+          "start": "0x149ed871c",
+          "end": "0x149ed871f",
+          "what": "SU-0136 nesting depth"
+        }
+      ]
+    }
+  ]
+}

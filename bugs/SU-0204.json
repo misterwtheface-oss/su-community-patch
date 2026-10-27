@@ -1,0 +1,42 @@
+{
+  "id": "SU-0204",
+  "aliases": [
+    "B1#52b"
+  ],
+  "title": "Realm 'Next battle' boosts in boss and special fights (new finding while decoding B1#52)",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Realm 'Next battle' boosts in boss and special fights",
+      "text_key": "L_RB_NAME_NEXTCRIT / NEXTDODGE / NEXTCHARGES / NEXTLESSDAMAGE / NEXTMOREDAMAGE / NEXTTIMELINE / NEXTCHEST / NEXTRESISTANT / NEXTMOREATTACKS / NEXTMORECASTS / NEXTFEWERGEMS"
+    }
+  ],
+  "problem": "All 'Next battle' boosts are switched off in any battle that is not an ordinary realm battle (portal and Nether bosses, False Gods, mimic and other special fights), but one copy is still removed after that battle. So a boss fight right after picking one up wastes it. Only the random-kill boost says 'non-boss'.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0204",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:errata-round2 (found decoding B1#52)"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: [boost_alwayscrit] Next battle, your creatures always deal critical damage | [boost_moredmg] Next battle, your creatures deal +30% damage | ... (compare L_RB_NAME_NEXTRANDOMKILL: ... Evidence: scr_RealmBoostExists 0x146630070: instance_exists(battle) && scr_BattleType(battletype) @0x146630278 != 0 -> return false (jne @0x1466302c6 is the only way past). bc_HandleBattleAftermath L42 calls scr_RemoveNextBattleRealmBoosts @0x14118fd88 with no battle-type test (none inside it either). Boost 17 (random kill) has its own scr_BattleType == 0 gate (sob_tables #494). Fix sketch: Byte edit in scr_RealmBoostExists: @0x1466302c6 75 0F (jne) -> EB 0F (jmp), so 'Next battle' boosts apply in the next battle of any type, as their texts say; the random-kill boost keeps its own non-boss gate. Alternative (keeps current design): skip the L42 removal call when scr_BattleType != 0 (call redirect @0x14118fd88) so the boost waits for the next ordinary battle. Reasoning: Text says 'Next battle' (and the one exception says 'non-boss' explicitly); code disables them in non-ordinary fights and still consumes them. Not in the registry; propose a new record. App note (unpatched game): 'Next battle' realm boosts do nothing in boss and special fights but are still used up by them. Source: errata round 2 (2026-10-26). | Patched (batch K, 2026-10-26): scr_RealmBoostExists @0x1466302c6 jne -> jmp (75 0F -> EB 0F), so the `scr_BattleType(battletype) != 0 -> return false` exit is never taken; boost 17 (random kill) keeps its own scr_BattleType == 0 gate. Skip audit: the jmp lands where the jne already landed; r15d is zeroed at 0x14663027d before the branch (the audit's r15 report for 0x1466302d4 is a false positive). The guaranteed-chest boost now also sets guaranteed_chest after special battles (bc_HandleBattleAftermath L37-L38); whether a chest then appears depends on that battle's own reward code.",
+  "release_notes": {
+    "section": "Realm",
+    "effect": "'Next battle' realm boosts",
+    "intended": "Next battle, your creatures always deal critical damage / always dodge / deal +30% damage / ... (only the random-kill boost says 'next non-boss battle').",
+    "actual": "In the unpatched game, 'Next battle' boosts did nothing in boss and special battles (portal and Nether bosses, False Gods, mimics and other special fights) but were still used up by them.",
+    "fix": "Now they apply in the next battle of any kind. The random-kill boost still waits for a non-boss battle, as its text says.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

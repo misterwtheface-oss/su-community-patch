@@ -1,0 +1,44 @@
+{
+  "id": "SU-0129",
+  "aliases": [
+    "B2#11"
+  ],
+  "title": "Double Time (Gladiator)",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Double Time",
+      "runtime_id": 586,
+      "key": "DOUBLETIME",
+      "text_key": "L_P_DOUBLETIME_DESC"
+    }
+  ],
+  "problem": "The extra copy of a Trick-slot debuff goes through the buff routine. It skips debuff immunity and resistance, \"on debuff\" effects don't fire for it, and \"on buff\" effects do. That matches the report.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0129",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B2#11"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Its debuff copy triggers \"when a buff is gained\" effects (Be Careful What You Wish For, Glitch in the System). Evidence: bc_EventDamage Trick block (L7922 / L8043): perk clause @0x140fcf171 -> bc_GetAlliesOf @0x140fcf44e -> call to bc_EventBuff (0x140ccac40) @0x140fcfd48 instead of bc_EventDebuff (0x140fdb040). Fix sketch: S: retarget the call at 0x140fcfd48 to bc_EventDebuff if the argument lists match (else H) Triage 2026-10-26: S: retarget the call @0x140fcfd48 from bc_EventBuff (0x140ccac40) to bc_EventDebuff (0x140fdb040); both take the same 9 arguments (checked: all 64 calls in bc_EventDamage pass 9). 2026-10-26: built as byte patch SU-0129 (verified against the baseline exe; not yet run in game).",
+  "release_notes": {
+    "section": "Perks",
+    "effect": "Double Time (perk)",
+    "intended": "Your Trick Slots that apply buffs and debuffs affect 1 additional creature.",
+    "actual": "In the unpatched game, the extra debuff was applied as if it were a buff: it skipped debuff immunity and resistance, and set off on-buff effects instead of on-debuff effects.",
+    "fix": "Now the extra debuff is applied as a normal debuff.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

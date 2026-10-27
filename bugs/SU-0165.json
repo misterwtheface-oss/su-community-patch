@@ -1,0 +1,43 @@
+{
+  "id": "SU-0165",
+  "aliases": [
+    "B5#17"
+  ],
+  "title": "Kiichi's Persistence (1257)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Kiichi's Persistence",
+      "runtime_id": 1257,
+      "text_key": "L_TRAIT_DESC_KIICHI'SPERSISTENCE"
+    }
+  ],
+  "problem": "The extra hit calls bc_CalculateBleedDamage again. That function contains Master of Pilwizes (and the Pilwiz card), so these do change it, even though the text says effects that affect Bleeding don't. Bleed-only boosts that live in the damage pipeline don't apply, as the text says. Kiichi's Onslaught: not checked.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0165",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#17"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Affected by Master of Pilwizes; general damage boosts apply, Bleed-only ones don't. Evidence: bc_CreatureEndOfTurn: gate @0x140ace8ca / 0x140acea9c; bc_CalculateBleedDamage @0x140acec38; Master of Pilwizes gates in bc_CalculateBleedDamage @0x1406724a3 / 0x14067267a. Fix sketch: Add \"except Master of Pilwizes\" (T). Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. Master of Pilwizes changes it. 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"This damage is not modified by traits and other effects that affect Bleeding\". Fix: H: the extra hit (bc_CreatureEndOfTurn @0x140acec38) should use the Bleed amount without Master of Pilwizes / the Pilwiz card. vs bugged: weaker with Master of Pilwizes. | In-game test: Persistence's extra Bleed hit is the same size with or without Master of Pilwizes in the party.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Kiichi's Persistence (trait)",
+    "intended": "Bleeding enemies take the damage again at the end of their turn; this extra damage is not modified by effects that affect Bleeding.",
+    "actual": "In the unpatched game, Master of Pilwizes and the Pilwiz card set still changed it.",
+    "fix": "Now the extra hit ignores those Bleed modifiers.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

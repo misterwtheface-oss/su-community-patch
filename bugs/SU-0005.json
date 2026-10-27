@@ -1,0 +1,48 @@
+{
+  "id": "SU-0005",
+  "aliases": [
+    "A05"
+  ],
+  "title": "Lamora rank 70",
+  "subjects": [
+    {
+      "kind": "relic",
+      "name": "Lamora, Gilded Scimitar of Friden",
+      "relic_code_id": 5,
+      "rank": 70
+    }
+  ],
+  "problem": "Checks the healed enemy for the relic, so it never applies.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0005",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:BR:lamora_r70"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true,
+      "verified_in_game": {
+        "date": "2026-10-26",
+        "by": "user",
+        "result": "works: the bearer's healing on enemy-side (Blighted) targets is increased"
+      }
+    }
+  },
+  "notes": "Fix: S: read source instead of creature (×2) — in patch (byte-verified)",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "Lamora, rank 70 (relic)",
+    "intended": "The relic and its bearer grant 50% more healing to Blighted enemies.",
+    "actual": "The game checked the wrong creature, so the bonus never applied.",
+    "fix": "Now heals from the relic or its bearer on Blighted enemies get the 50% bonus.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

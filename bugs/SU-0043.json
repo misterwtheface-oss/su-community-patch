@@ -1,0 +1,56 @@
+{
+  "id": "SU-0043",
+  "aliases": [
+    "B06"
+  ],
+  "title": "Cloak of Shadows, Immobility, Enchanted Arrows",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Cloak of Shadows",
+      "runtime_id": 1522,
+      "text_key": "L_TRAIT_DESC_CLOAKOFSHADOWS"
+    },
+    {
+      "kind": "perk",
+      "name": "Immobility",
+      "runtime_id": 506,
+      "key": "IMMOBILITY",
+      "text_key": "L_P_IMMOBILITY_DESC"
+    },
+    {
+      "kind": "trait",
+      "name": "Enchanted Arrows",
+      "runtime_id": 1523,
+      "text_key": "L_TRAIT_DESC_ENCHANTEDARROWS"
+    }
+  ],
+  "problem": "Run once per condition the creature has, and never with none.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0043",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§1 item 1"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Immobility: count Aggravate on 0 vs 4 conditions Fix: H: move out of the loop | 2026-10-26 realign (text is the contract): text claims \"10% chance per turn (Immobility); gain Invisible at the start of the turn (Cloak of Shadows); Enchanted Arrows once per turn\". H: run the three blocks (bc_CreatureStartOfTurn L327-L354) once per turn, outside the per-condition loop. vs bugged: weaker with many conditions, stronger with none. | In-game test: Cloak of Shadows / Immobility / Enchanted Arrows holder with 0, 1 and 3 conditions: each activates exactly once per turn (was once per condition, never with none).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Cloak of Shadows, Immobility and Enchanted Arrows (traits)",
+    "intended": "Each activates once per turn.",
+    "actual": "The game ran them once for every buff or debuff the creature had, and not at all when it had none.",
+    "fix": "Now each activates once per turn.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

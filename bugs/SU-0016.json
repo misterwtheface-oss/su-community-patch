@@ -1,0 +1,43 @@
+{
+  "id": "SU-0016",
+  "aliases": [
+    "A17"
+  ],
+  "title": "Celestial Nexus",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Celestial Nexus",
+      "runtime_id": 1710,
+      "text_key": "L_TRAIT_DESC_CELESTIALNEXUS"
+    }
+  ],
+  "problem": "Checks Barrier/Shell on the creature that was hit, not the Nexus holder.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0016",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§6 item 6"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: S: swap the creature read 2026-10-26 build check: not a byte edit. bc_EventDamage L395 tests Barrier (6) / Shelled (13) on the hit creature BEFORE the holder loop (L396-L399: allies = bc_GetAlliesOf(creature); first ally with passive 1710 takes the hit), so the holder isn't known at the test. Hook spec: (1) make the L395 Barrier/Shell test always pass (redirect its two scr_CritHasCondition calls @0x140d4a435 / 0x140d4a634 to a stub returning true, or jump over the test); (2) replace the L398 scr_CritHasPassive(ally, 1710) call @0x140d4ab42 with a C hook that returns true only if the ally has 1710 AND (scr_CritHasCondition(ally, 6) or scr_CritHasCondition(ally, 13)). | In-game test: Nexus holder intercepts only while it has Barrier or Shell; with neither it does not intercept.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Celestial Nexus (trait)",
+    "intended": "The holder takes hits for its allies while it has Barrier or Shell.",
+    "actual": "The game checked whether the creature being hit had Barrier or Shell, not the holder.",
+    "fix": "Now the holder's own Barrier or Shell decides whether it takes the hit.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

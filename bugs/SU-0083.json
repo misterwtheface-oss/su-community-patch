@@ -1,0 +1,48 @@
+{
+  "id": "SU-0083",
+  "aliases": [
+    "H04"
+  ],
+  "title": "Brambleskin rank 20",
+  "subjects": [
+    {
+      "kind": "relic",
+      "name": "Brambleskin, Spiked Carapace of Genaros",
+      "relic_code_id": 25,
+      "rank": 20
+    }
+  ],
+  "problem": "Brambleskin rank 20: additional damage = 10% of the damage the bearer has taken this battle (code: 10% x damage x turns taken)",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0083",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "handoff:HANDOFF_bug_report_candidates.md"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true,
+      "verified_in_game": {
+        "date": "2026-10-26",
+        "by": "code only",
+        "result": "user ruling: code validation suffices"
+      }
+    }
+  },
+  "notes": "Details: research/handoff_eval.md 2026-10-26 clarification for the user: the unpatched code is bonus = 0.1 x this hit x the bearer's battleturns (a per-turn ramp, no damage-taken term at all; almost certainly the wrong variable). Patched: 0.1 x the bearer's damage_taken. Remaining gap: when the Relic object itself attacks, the patch reads the Relic's own damage_taken (likely 0) instead of the bearer's; the text ('this relic and its bearer') needs a hook to read the bearer's total. Tracked here. 2026-10-26: gap closed with hook_su0083_varget (relic attacks read relic.owner.damage_taken).",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "Brambleskin, rank 20 (relic)",
+    "intended": "The relic and its bearer deal additional damage equal to 10% of the damage the bearer has taken this battle.",
+    "actual": "In the unpatched game, the bonus was 10% of the current hit for each turn the bearer had taken, unrelated to damage taken.",
+    "fix": "Now the bonus is 10% of the damage the bearer has taken, for both the bearer's and the relic's attacks.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "SU-0041",
+  "aliases": [
+    "B04"
+  ],
+  "title": "Focused Magicks",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Focused Magicks",
+      "runtime_id": 2001,
+      "text_key": "L_TRAIT_DESC_FOCUSEDMAGICKS"
+    }
+  ],
+  "problem": "Multiplies 30% by 10%×missing: 0% with a full party, 3% per missing creature.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0041",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§4 item 1"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Focused Magicks: cast a damage spell on enemies with different Defense; the ignored Defense follows each target's Defense. Fix: H | 2026-10-26 realign (text is the contract): text claims \"ignore 30% of enemies' Defense, plus 10% more for each creature missing\". H: bc_SpellDamage L164-L171: Def -= Def x (0.3 + 0.1 x missing) instead of (0.3 x Def) x (0.1 x missing). vs bugged: stronger.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Focused Magicks (trait)",
+    "intended": "Ethereal spell gems ignore 30% of enemies' Defense, plus 10% for each creature missing from your party.",
+    "actual": "The game multiplied the parts together, so with a full party the gems ignored no Defense.",
+    "fix": "Now the parts add up: 30% plus 10% per missing creature.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

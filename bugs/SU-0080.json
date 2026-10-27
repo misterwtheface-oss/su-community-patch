@@ -1,0 +1,70 @@
+{
+  "id": "SU-0080",
+  "aliases": [
+    "H01",
+    "B2#15"
+  ],
+  "title": "Primordial Curse / Forsaken Wonder",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Primordial Curse",
+      "runtime_id": 654,
+      "key": "PRIMORDIALCURSE",
+      "text_key": "L_P_PRIMORDIALCURSE_DESC"
+    },
+    {
+      "kind": "perk",
+      "name": "Forsaken Wonder",
+      "runtime_id": 655,
+      "key": "FORSAKENWONDER",
+      "text_key": "L_P_FORSAKENWONDER_DESC"
+    }
+  ],
+  "problem": "Primordial Curse / Forsaken Wonder: stop 'lasts forever' landing on the wrong creature (debuffs on your own Relic / Synchronicity creature became permanent). In-game confirmed bug. Partial fix: the intended 'Relic-inflicted lasts forever' needs a hook (H01b)",
+  "category": "bug",
+  "confidence": "in-game-confirmed",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0080",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "handoff:HANDOFF_bug_report_candidates.md",
+    "community:B2#15"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true,
+      "verified_in_game": {
+        "date": "2026-10-26",
+        "by": "user",
+        "result": "partial: spread works (unchanged, was never broken); permanence on your own Avatar holding its own god's Relic is gone (fixed); Relic-inflicted debuffs / Relic-granted buffs are NOT permanent (expected: needs H01b hook)"
+      },
+      "history": [
+        {
+          "date": "2026-10-26",
+          "by": "user",
+          "result": "v2 crashed (no error dialog) on the first spell cast from an Avatar. Cause: cave code used absolute addresses, invalid under ASLR. v3: logic moved to a C hook in the loader (trampoline via pointer slot), absolute-address guard added to the builder."
+        },
+        {
+          "date": "2026-10-26",
+          "by": "user",
+          "result": "v3 works: buffs and debuffs on the primary target are permanent, on either side (consistent with the text, which sets no side limit). Spread copies were not permanent: they are created with source -1 and default duration. v4: spread copies get duration -2; source stays -1 so they can't re-spread."
+        }
+      ]
+    }
+  },
+  "notes": "Details: research/handoff_eval.md Community/vet: Community claim: The \"buffs last forever\" part doesn't work. Evidence: scr_CritAddCondition: scr_PerkLevel(655, holder.slot == 0 ? 1 : 0) @0x142017016 / 0x1420170da -> duration := -2 @0x1420170f3. Fix sketch: S: swap the two side constants (testing the inflicter as the text says needs H) 2026-10-26 in-game test (user): H01 behaves as designed; the intended permanence needs H01b (set the event duration to -2 in bc_EventDebuff / bc_EventBuff when the source is the Relic pseudo-creature or passes scr_CritHasAncientSyn, perk 654/655 is owned, and the target is on the opposite / same side). 2026-10-26 v2 (tools/build_h01b.py): hook replaces the partial fix. The 3 buff/debuff event sites in bc_ExecuteEvents pass the event's source to scr_CritAddCondition's own Curse/Wonder checks (holder slot swapped with the inflicter for the duration of those two blocks); adds that don't come from an event, or with no source, skip the blocks; Wonder side constants fixed; the game's own duration = -2 writes restored. Limitation: start-of-battle / 'always has' adds have no event, so they get no permanence. Awaiting the user's in-game re-test. v3 2026-10-26: C hook (loader/hooks.c) + trampoline; awaiting re-test. v4 2026-10-26: spread copies permanent (duration -2). Finding for the extract (PERK_SIGNATURES.md Open item): the spread copies are sourced -1. | 2026-10-26 (batch K, SU-0216): the 'partial' is closed. The start-of-battle Relic buffs (Arbiter, Ferro, Prime & Ventus, Salus, Triumvir, Whisper; Forsaken Wonder) and Blazefury 40's start-of-battle Burning (Primordial Curse) get duration -2 through SU-0216's hooks on those direct adds; 'always has' adds already pass -2 (and are re-added when missing). The start-of-battle permanence therefore needs SU-0216 switched on. No double spread: SU-0080's hook still covers only the three event sites, and SU-0216's spread copies are source -1 events.",
+  "release_notes": {
+    "section": "Perks",
+    "effect": "Primordial Curse and Forsaken Wonder (perks)",
+    "intended": "Debuffs inflicted (or buffs granted) by your creatures' Relics last forever and spread to all other enemies (or allies).",
+    "actual": "In the unpatched game, the 'lasts forever' landed on the wrong creature (e.g. debuffs on your own Relic creature became permanent) and the Relic's own debuffs and buffs did not.",
+    "fix": "Now Relic debuffs and buffs (including Ancient Synchronicity creatures) and their spread copies last forever, including the ones Relics give at the start of battle.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

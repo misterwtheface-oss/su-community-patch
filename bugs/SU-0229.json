@@ -1,0 +1,43 @@
+{
+  "id": "SU-0229",
+  "aliases": [
+    "B3#9"
+  ],
+  "title": "Death Siphon (not cast by Velox / Lagopus)",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Death Siphon",
+      "runtime_id": 37,
+      "text_key": "L_TRAIT_DESC_VELOX; L_TRAIT_DESC_LAGOPUS; L_SD_DEATHSIPHON"
+    }
+  ],
+  "problem": "Same as Dark Ritual: it gives the caster stats but is filed as UTILITY, so Velox and Lagopus never cast it.",
+  "category": "bug",
+  "confidence": "medium",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0229",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#9"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Velox / Lagopus: \"... first 3 permanent, stat-manipulating Spell Gems each have a 50% / 20% chance to be {ACTION_cast} automatically at the start of battle.\" | Death Siphon: ... Evidence: Spell DB field 4 of id 37 = \"UTILITY\" (store @0x1458d9aa5); bc_StartupCasting L153 / L293 as #8. Fix sketch: Same hook as B3#8 (one hook covers ids 35 and 37). Reasoning: Identical to #8; ship as one record with #8. App note (unpatched game): Velox and Lagopus never cast Death Siphon, because the game files it as a utility spell even though it gives stats. Source: errata round 2 (2026-10-26). | Patch (batch L): flag patch; the SU-0228 hook also accepts spell 37 when this patch is on. Needs SU-0228.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Velox and Lagopus (traits) with Death Siphon",
+    "intended": "The first 3 permanent, stat-manipulating Spell Gems have a chance to be cast at the start of battle.",
+    "actual": "In the unpatched game, Death Siphon was never picked although it gives the caster stats, because the game files it as a utility spell.",
+    "fix": "Now Death Siphon counts as a stat-manipulating Spell Gem for Velox and Lagopus.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

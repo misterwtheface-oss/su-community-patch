@@ -1,0 +1,44 @@
+{
+  "id": "SU-0037",
+  "aliases": [
+    "A40"
+  ],
+  "title": "Tumble",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Tumble",
+      "runtime_id": 1198,
+      "text_key": "L_TRAIT_DESC_TUMBLE"
+    }
+  ],
+  "problem": "The +50% potency goes to Cascading gems cast by the side opposing the holder (all three calculators); the 3-charge cost tests the right side.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0037",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§4 item 7",
+    "own:handoff B"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: S: swap the two side calls at each of 3 sites — in patch (byte-verified)",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Tumble (trait)",
+    "intended": "Your creatures' Cascading spell gems get 50% more potency.",
+    "actual": "In the unpatched game, the bonus went to the opposing side's Cascading gems.",
+    "fix": "Now the bonus goes to the holder's side.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

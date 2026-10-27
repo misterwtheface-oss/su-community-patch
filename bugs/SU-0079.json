@@ -1,0 +1,46 @@
+{
+  "id": "SU-0079",
+  "aliases": [
+    "E06",
+    "B2#25"
+  ],
+  "title": "Turn the Tables (Gladiator perk)",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Turn the Tables",
+      "runtime_id": 592,
+      "key": "TURNTHETABLES",
+      "text_key": "L_P_TURNTHETABLES_DESC"
+    }
+  ],
+  "problem": "\"Attack a random enemy for 50% more damage\": code attacks at 50% of normal (damage-reduction argument 50).",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0079",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:B2 #25",
+    "community:B2#25"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: K: 50 → −50 — in patch (byte-verified)",
+  "release_notes": {
+    "section": "Perks",
+    "effect": "Turn the Tables (perk)",
+    "intended": "After your creatures manually cast an Arsenal spell, they attack a random enemy for 50% more damage.",
+    "actual": "In the unpatched game, the attack dealt 50% of normal damage.",
+    "fix": "Now it deals 50% more damage.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

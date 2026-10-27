@@ -1,0 +1,46 @@
+{
+  "id": "SU-0280",
+  "aliases": [
+    "B5#12"
+  ],
+  "title": "Improbable Catapult",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Improbable Catapult",
+      "runtime_id": 1763,
+      "text_key": "L_TRAIT_DESC_IMPROBABLECATAPULT"
+    }
+  ],
+  "problem": "Enemies do get the copy. But ten Avatar innate traits are coded for the player side only, so on the enemy side the copy does nothing: Prayer Position, Avenged Sevenfold, Firelord, Expanded Power, The End, Perfect Imperfection, The Truth, The Black, Brothel, I HATE YOU !@#$ING ALL. Avatar traits that already have an enemy-side or per-creature check do work.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0280",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B5#12"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: At the start of this creature's turn, enemies gain a copy of its innate trait. This trait can only activate once per side. Evidence: Copy: bc_CreatureStartOfTurn @0x140c802bc (once per side via `improbable`). Player-only gates (scr_AnyAllyHasPassive, no enemy mirror; trait_signatures.json, two spot-checked): Prayer Position 598: bc_EventDamage @0x140e1cca2, bc_CreatureEndOfTurn @0x140b07d59. Avenged Sevenfold 611: bc_EventDamage @0x140e969e1. Firelord 612: bc_CreatureAttack L1593 @0x1406e7766 (slot > 0 && AnyAlly, verified). Expanded Power 607: bc_SpellDamage @0x1415aff0c. The End 604: bc_CreatureEndOfTurn L1306 @0x140b06b36 (slot == 0 && AnyAlly, verified), @0x140b0710b, @0x140b0729f. Perfect Imperfection 609: bc_EventDamage @0x140e19b0a / @0x140ea4fec, bc_StartupGems @0x1416e460c. The Truth 605: bc_OnCast @0x14145c615, bc_OnDefend @0x141536bb8, bc_OnProvoke @0x14156b960, bc_CreatureStartOfTurn @0x140c5ddd9, bc_OnAttack @0x1413b100e, inv_NetherStoneGetStat @0x141d9a829. The Black 600: bc_MaintainPermanentEffects @0x1412b8c50 / @0x1412b8cf5. Brothel 608: bc_StartupTraits @0x14178523e / @0x1417852bb. I HATE YOU 610: bc_EventDamage @0x140e1c795, bc_CreatureEndOfTurn @0x140b079cf. Fix sketch: Rule 5: extend each listed gate to the missing side by mirroring the existing test. Where the code has `slot > 0 && scr_AnyAllyHasPassive(id)`, add `slot == 0 && scr_AnyEnemyHasPassive(id)`. Where it has `slot == 0 && scr_AnyAllyHasPassive(id)` (The End: 'each enemy'), add `slot > 0 && scr_AnyEnemyHasPassive(id)`, looking up the holder on the enemy side (bc_GetEnemiesOf / enemy crits) wherever the block reads the player holder. The Black and the end-of-turn effects (Prayer Position Defend, I HATE YOU Provoke) get the mirrored loop over the player's creatures. Brothel (bc_StartupTraits) and Perfect Imperfection's Timewalk grant (bc_StartupGems) run at start of battle. Mirroring them fixes natural enemy holders, but a copy gained at the start of a turn is too late for those two parts either way; that is timing, not a new bug. Reasoning: The text promises that enemies gain the trait, but a trait whose code only ever looks at the player side gives them nothing. Ruling 5 says to extend the existing per-side logic to the missing side, not to invent other changes. The two start-of-battle parts are a timing limit, so they are noted rather than raised as separate bugs. App note (unpatched game): On enemies, Improbable Catapult's copy does nothing for ten Avatar traits that only work on the player's side (Prayer Position, Avenged Sevenfold, Firelord, Expanded Power, The End, Perfect Imperfection, The Truth, The Black, Brothel, I HATE YOU). Source: errata round 2 (2026-10-26). | Patched (batch M, 2026-10-26; group heavy, partial). Every listed gate's `slot > 0` test (The End: `slot == 0`) is NOP'ed (je -> 6-byte nop) and its scr_AnyAllyHasPassive call is redirected to one trampoline -> hook_m_su0280_any_ally, which picks the side by the return address: the subject's own side (Firelord bc_CreatureAttack @0x1406e7766 attacker [rsp+0x68]; Prayer Position bc_EventDamage @0x140e1cca2 creature and bc_CreatureEndOfTurn @0x140b07d59 creatureturn; Avenged Sevenfold @0x140e969e1; Expanded Power bc_SpellDamage @0x1415aff0c caster; Perfect Imperfection @0x140e19b0a creature / @0x140ea4fec source; The Truth bc_OnCast @0x14145c615, bc_OnDefend @0x141536bb8, bc_OnProvoke @0x14156b960, bc_CreatureStartOfTurn @0x140c5ddd9, bc_OnAttack @0x1413b100e, inv_NetherStoneGetStat @0x141d9a829 owner) or the opposite side (The End gate @0x140b06b36 and its two holder lookups @0x140b0710b / @0x140b0729f: the enemy holder deals the damage and its highest stat is used). The Black (bc_MaintainPermanentEffects L562 gate @0x1412b8c50, L564 holder @0x1412b8cf5): the block runs for your holder, and when the enemy side also holds 600 a cave stub at the block end (L588 marker @0x1412b95e7) jumps back to L564 once for the enemy holder (bc_GetEnemiesOf(enemy holder) = your creatures); no register is carried between the passes (checked) and nothing jumps into the block. Known limit: a nested bc_MaintainPermanentEffects inside the block would reset the pass state (worst case one pass missed). Not changed: I HATE YOU (SU-0178 covers both halves), Brothel (bc_StartupTraits) and Perfect Imperfection's Timewalk grant (bc_StartupGems): start-of-battle, before a copy exists. Unchanged elsewhere: per-creature Avatar checks already worked.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Improbable Catapult (trait)",
+    "intended": "At the start of this creature's turn, enemies gain a copy of its innate trait. This trait can only activate once per side.",
+    "actual": "In the unpatched game, enemies got the copy, but several Avatar traits only ever checked your side, so on enemies the copy did nothing: Prayer Position, Avenged Sevenfold, Firelord, Expanded Power, The End, Perfect Imperfection, The Truth and The Black (I HATE YOU is fixed separately).",
+    "fix": "Now these traits work for whichever side holds them: an enemy copy defends and cuts its side's damage taken (Prayer Position), casts Scourge spells, adds Firelord / Perfect Imperfection damage, upgrades spell potency, deals The End damage to your creatures, powers enemy Nether Stones, and gives your creatures The Black's conditions. Perfect Imperfection's Timewalk spell and Brothel act at the start of battle, before any copy exists, so a copy still cannot use them.",
+    "impact": "stronger",
+    "flags": [
+      "heavy",
+      "partial"
+    ]
+  }
+}

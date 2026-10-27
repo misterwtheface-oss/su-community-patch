@@ -1,0 +1,35 @@
+{
+  "id": "SU-0255",
+  "aliases": [
+    "B4#8"
+  ],
+  "title": "Blue Tether",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Blue Tether",
+      "runtime_id": 1933,
+      "text_key": "L_TRAIT_DESC_BLUETETHER"
+    }
+  ],
+  "problem": "When an attack or spell hits an adjacent creature, the damage is moved onto the holder, keeping its type and source. The attack or spell itself is not re-aimed, so effects that check who was attacked still see the original creature. If two holders are adjacent to the target, the one that comes last in the adjacency list takes the hit.",
+  "category": "not-a-bug",
+  "confidence": "code-certain",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "community:B4#8"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: When an adjacent creature would take attack or spell damage, or gain a buff or debuff, this creature becomes the new target instead. Evidence: bc_EventDamage L388 bc_GetAdjacentCreatures @0x140d49e90; L390 scr_CritHasPassive(adj,1933) @0x140d4a128 and dtype > -1 @0x140d4a174 (attack/spell only); L391 creature := holder @0x140d4a1ea; loop has no break. Reasoning: The text promises that the holder becomes the target of attack and spell damage, and the code does exactly that. App note (unpatched game): Blue Tether takes the damage of attacks and spells that hit adjacent creatures, but the attack still counts as aimed at the original creature; if two Blue Tethers are next to the target, the one later in slot order takes the hit. Source: errata round 2 (2026-10-26).",
+  "reason": "works as its text says"
+}

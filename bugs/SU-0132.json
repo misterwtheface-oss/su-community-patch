@@ -1,0 +1,44 @@
+{
+  "id": "SU-0132",
+  "aliases": [
+    "B2#18"
+  ],
+  "title": "Life After Death (Purgatorian)",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Life After Death",
+      "runtime_id": 307,
+      "key": "LIFEAFTERDEATH",
+      "text_key": "L_P_LIFEAFTERDEATH_DESC"
+    }
+  ],
+  "problem": "These two traits never ask \"does this creature have the trait\" about a dead holder, so the perk can't help. Death's Bite tests hp > 0 on each holder before the trait check. Sugar and Slice walks the list of living enemies of the burning creature. The perk text says traits stay active while dead and only exempts intercept / take-damage traits.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0132",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B2#18"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Doesn't work with Sugar and Slice or Death's Bite. Evidence: Death's Bite: bc_CreatureEndOfTurn L1213: holder > -1 && holder.hp > 0 (@0x140b01b36-0x140b01b4e) && HasPassive(124) (@0x140b01d1c). Sugar and Slice: bc_CreatureStartOfTurn L1732-1734: bc_GetEnemiesOf(burning creature, false) (@0x140ba1490) -> HasPassive(1841) (@0x140ba1720). Fix sketch: S: NOP Death's Bite's hp > 0 jump. K: pass true (include dead) to that bc_GetEnemiesOf call (0x1498e0f40 -> 0x1498e0f60 @0x140ba1416). Safe: the trait check still says no for dead holders without the perk Triage 2026-10-26: S: NOP Death's Bite's hp > 0 jump (bc_CreatureEndOfTurn L1213); K: Sugar and Slice's bc_GetEnemiesOf include-dead flag 0x1498e0f40 -> 0x1498e0f60 @0x140ba1416. Dead holders without the perk still fail the trait check. 2026-10-26: built as byte patch SU-0132 (verified against the baseline exe; not yet run in game).",
+  "release_notes": {
+    "section": "Perks",
+    "effect": "Life After Death (perk)",
+    "intended": "Your creatures' traits are active even while they're dead.",
+    "actual": "In the unpatched game, Death's Bite and Sugar and Slice still needed a living holder.",
+    "fix": "Now those two traits also work while their holder is dead.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

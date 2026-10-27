@@ -1,0 +1,43 @@
+{
+  "id": "SU-0069",
+  "aliases": [
+    "C03"
+  ],
+  "title": "Peekaboo!",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Peekaboo!",
+      "runtime_id": 270,
+      "text_key": "L_TRAIT_DESC_PEEKABOO!"
+    }
+  ],
+  "problem": "Code: +300% holder / +250% side (+550% for the holder's own attacks). Text: +150%.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0069",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§7"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Ruling 2026-10-26: align the code to the text. Fix: S+K: holder block skipped, side ×2.5 → ×1.5 (a large nerf) — in patch, applied in game",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Peekaboo! (trait)",
+    "intended": "Your creatures deal 150% more damage to Invisible creatures.",
+    "actual": "In the unpatched game, the holder got +300% and its allies +250%, and the holder's own attacks got both (+550%).",
+    "fix": "Now every creature on the side gets 150% more damage against Invisible creatures.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

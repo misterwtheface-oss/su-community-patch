@@ -1,0 +1,47 @@
+{
+  "id": "SU-0212",
+  "aliases": [
+    "B2#9"
+  ],
+  "title": "Diabolism (Rune Knight) / Straight Up / Unstoppable Force: 'cannot be Sealed'",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Diabolism (Rune Knight) / Straight Up / Unstoppable Force: 'cannot be Sealed'",
+      "runtime_id": [
+        292,
+        608,
+        313
+      ],
+      "text_key": "L_P_DIABOLISM_DESC; L_P_STRAIGHTUP_DESC; L_P_UNSTOPPABLEFORCE_DESC"
+    }
+  ],
+  "problem": "The text says these gems cannot be Sealed. The game seals them like any other gem and only clears the seal on the spell-gem manager's next frame update. Anything that checks the gem in between sees it as sealed. With 'Gems Sealed After Casting' or any other per-cast seal, an extra cast in the same action, or a copy by Purple Tether / Lip Animation / Projection, is refused because the gem is 'sealed'.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0212",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B2#9"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Your creatures are immune to {CONDNAME_DEBUFF_SILENCE} and their Rune Spell Gems cannot be Sealed. | Creatures' {SPELL_alcohol}s cannot be Sealed. | {SPELL_ultimate} Gems cannot be Sealed. Evidence: Unseal: gml_Object_obj_spellgem_manager_Step_0: is_ultimate (var 0x1499354c8) && scr_PerkLevel(313) @0x147645c96 -> sealed (var 0x1499e3348) = 0 @0x147645d2e; spellid test + scr_PerkLevel(608) @0x14764623c; spellid test + scr_PerkLevel(292) @0x147646951. Seal per cast: bc_CreatureCast L18813-L18819 @0x140a4bf7f / @0x140a4c3c3. Cast blocker: bc_CritCanCastSpell L16 sealed read @0x140cc3acd (already hooked by SU-0137). Copy path: bc_OnCast L221-L222 @0x14144a7b1. Fix sketch: Extend SU-0137's hook_su0137_sealed (bc_CritCanCastSpell L16, call_rel @0x140cc3acd -> cave 0x1488bfc68, loader/hooks_S.c) so the sealed read also returns 0 when the gem qualifies. Use the same tests as obj_spellgem_manager_Step_0: (a) gem.is_ultimate && scr_PerkLevel(313) > 0 (Unstoppable Force); (b) gem.spellid passes the Step's Alcohol test && scr_PerkLevel(608) > 0 (Straight Up, any creature's gem per its text); (c) gem.spellid passes the Step's Rune test && scr_PerkLevel(292) > 0 && the gem's owner is on your side (Diabolism). Copy the Step's spellid tests (the compares after @0x14764623c and @0x147646951) rather than re-deriving the lists. No new patch site. Reasoning: The text makes an absolute claim ('cannot be Sealed'). The code allows the seal and undoes it a frame later, with visible effects: copies and repeat casts are refused. Not covered: SU-0137 is Astral Dimension only. App note (unpatched game): Gems that 'cannot be Sealed' (Diabolism Runes, Straight Up Alcohol, Unstoppable Force Ultimates) still count as sealed for the rest of the action that sealed them, so copies and extra casts of them in that action fail. Source: errata round 2 (2026-10-26). | Patch (batch L): flag patch. The perks' rules are applied wherever a gem's 'sealed' value is read: in bc_CritCanCastSpell through SU-0137's hook (hooks_S.c hook_su0137_sealed now also calls l_gem_unsealable) and at the 18 other battle reads through SU-0289's read hook. Rules copied from obj_spellgem_manager Step_0: Unstoppable Force = is_ultimate && scr_PerkLevel(313) > 0 (L55-L57); Straight Up = inv_SpellIsBooze(spellid) && perk 608 (L71-L73); Diabolism = spellid 431-435 && perk 292 (L81-L83). Perk levels and the Booze test per spell id are refreshed by the Step itself (SU-0289's Step hook), since the read hooks have no self/other for script calls. Needs SU-0289 and SU-0137 (both default on). Diabolism keeps the Step's scope (any Rune gem, no side test; the sketch's 'owner on your side' was not added, to match the game's own unseal).",
+  "release_notes": {
+    "section": "Perks",
+    "effect": "Diabolism, Straight Up and Unstoppable Force (perks)",
+    "intended": "Rune Spell Gems (Diabolism), Alcohol Spell Gems (Straight Up) and Ultimate Spell Gems (Unstoppable Force) cannot be Sealed.",
+    "actual": "In the unpatched game, these gems were sealed like any other and only unsealed a moment later, so for the rest of the action that sealed them they counted as sealed: extra casts and copies of them (Purple Tether, Lip Animation, Projection) were refused.",
+    "fix": "Now these gems never count as sealed, including in the same action.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

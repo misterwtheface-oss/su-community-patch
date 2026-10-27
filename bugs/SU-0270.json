@@ -1,0 +1,43 @@
+{
+  "id": "SU-0270",
+  "aliases": [
+    "B4#36"
+  ],
+  "title": "Father Shadow",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Father Shadow",
+      "runtime_id": 1300,
+      "text_key": "L_TRAIT_DESC_FATHERSHADOW"
+    }
+  ],
+  "problem": "Extra finding: the trigger never checks sides, so it also goes off when the holder's attack or spell damages one of its own allies (Confused or forced attacks, spells that hit everyone). The text says 'damages an enemy'.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0270",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B4#36"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: After this creature damages an enemy with an attack or spell, it deals damage to a random enemy equal to 20% of the damage dealt. Evidence: bc_EventDamage L6547 gate: dtype > -1, source > -1, scr_CritHasPassive(source,1300) @0x140f2cf2e, amount > 0; no slot or side comparison (neighbouring blocks L6501 / L6508 / L6535 do compare slots). L6548 bc_GetEnemiesOf(source) @0x140f2d187; L6549 bc_EventDamage(source, random enemy, 0.2 x amount, ..., -1) @0x140f2d9a5. Fix sketch: Add a side check to the L6547 gate so it fires only when (source.slot > 0) != (creature.slot > 0). Implement it by redirecting the scr_CritHasPassive(source,1300) call @0x140f2cf2e to a hook that returns false when source and creature are on the same side. Reasoning: Sourced indirect damage is an implied behaviour (ruling 3). The missing enemy check contradicts 'damages an enemy'. Nearby reactions in the same function do compare sides, so this one stands out. App note (unpatched game): Father Shadow's extra hit counts as this creature's own damage, so its damage-dealt bonuses raise it, and it also goes off when this creature damages an ally. Source: errata round 2 (2026-10-26). | Patched (batch I, 2026-10-26): call-site hook on the L6547 scr_CritHasPassive(source, 1300) gate (0x140f2cf2e) -> hook_i_su0270_father: false when source and damaged creature are on the same side; unknown sides keep the game's answer. Same helper as Ravish (SU-0297).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Father Shadow (trait)",
+    "intended": "After this creature damages an enemy with an attack or spell, it deals damage to a random enemy equal to 20% of the damage dealt.",
+    "actual": "In the unpatched game, the extra hit also went off when this creature's attack or spell damaged one of its own allies (a Confused or forced attack, a spell that hits everyone).",
+    "fix": "Now the extra hit only follows damage this creature deals to an enemy.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

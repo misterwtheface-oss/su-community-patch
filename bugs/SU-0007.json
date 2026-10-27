@@ -1,0 +1,47 @@
+{
+  "id": "SU-0007",
+  "aliases": [
+    "A07",
+    "B2#38",
+    "B2#39"
+  ],
+  "title": "Brambleskin rank 100",
+  "subjects": [
+    {
+      "kind": "relic",
+      "name": "Brambleskin, Spiked Carapace of Genaros",
+      "relic_code_id": 25,
+      "rank": 100
+    }
+  ],
+  "problem": "Its relic check needs a living bearer, so the resurrection never happens.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0007",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:BR:brambleskin_r100",
+    "community:B2#38",
+    "community:B2#39"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: H: call with \"allow dead\" Hook batch R (loader/hooks_R.c, research/hooks_R.json). In-game test: Brambleskin at rank 100 on a creature that is killed: it resurrects with 100% Health and gains 50% Attack/Intelligence/Defense/Speed (once per battle).",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "Brambleskin, rank 100 (relic)",
+    "intended": "The first time the bearer is killed, it resurrects with 100% Health and 50% more stats.",
+    "actual": "In the unpatched game, the resurrection never happened.",
+    "fix": "Now the bearer resurrects the first time it is killed, with full Health and the stat boost.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "id": "SU-0042",
+  "aliases": [
+    "B05"
+  ],
+  "title": "Reliquary heal upgrade (+ Abandoned Altar)",
+  "subjects": [
+    {
+      "kind": "system",
+      "name": "Reliquary heal upgrade"
+    },
+    {
+      "kind": "trait",
+      "name": "Abandoned Altar"
+    }
+  ],
+  "problem": "Computed, then never used.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0042",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§12 item 7"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Relic creature's heal with / without the upgrade Fix: H | 2026-10-26 realign (text is the contract): text claims \"(Reliquary heal upgrade description: relics heal more)\". H: bc_EventHeal L249-L251: add the computed Reliquary heal bonus (and Abandoned Altar's doubling) to the heal; it is computed into a scratch local nothing reads. vs bugged: stronger. Hook batch R (loader/hooks_R.c, research/hooks_R.json). In-game test: a heal cast by your Relic with the Reliquary heal upgrade heals more than without it; with Abandoned Altar, the extra is doubled.",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "Reliquary healing upgrade (with Abandoned Altar)",
+    "intended": "The upgrade increases the healing your relics grant by 1% per rank (doubled with Abandoned Altar).",
+    "actual": "In the unpatched game, the bonus was calculated but never applied to the heal.",
+    "fix": "Now relic heals get the upgrade's bonus.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

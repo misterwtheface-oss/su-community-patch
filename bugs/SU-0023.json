@@ -1,0 +1,43 @@
+{
+  "id": "SU-0023",
+  "aliases": [
+    "A25"
+  ],
+  "title": "Book of the Arsonist",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Book of the Arsonist",
+      "runtime_id": 404,
+      "text_key": "L_TRAIT_DESC_BOOKOFTHEARSONIST"
+    }
+  ],
+  "problem": "Boosts every debuff the holder applies, not only Burning.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0023",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§13"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: H: add the Burning test | In-game test: Arsonist: only a Burned enemy takes the +30%; other conditions and your own Burned creatures do not.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Book of the Arsonist (trait)",
+    "intended": "Burned debuffs it applies are 30% more powerful.",
+    "actual": "The game boosted every debuff it applied, not just Burned.",
+    "fix": "Now only Burned gets the bonus.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

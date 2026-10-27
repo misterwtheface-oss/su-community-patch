@@ -1,0 +1,46 @@
+{
+  "id": "SU-0074",
+  "aliases": [
+    "E01",
+    "B3#12"
+  ],
+  "title": "Entropic Swing",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Entropic Swing",
+      "runtime_id": 671,
+      "key": "ENTROPICSWING",
+      "text_key": "L_SD_ENTROPICSWING"
+    }
+  ],
+  "problem": "\"All creatures' end-of-turn effects are activated\": an explicit break stops the loop after the first creature. Loop termination re-checked (the back-edge runs i++ then i <= count). Watch in game for side effects of running every creature's end-of-turn effects at once.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0074",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:B3 #12",
+    "community:B3#12"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: S: NOP the break — in patch (byte-verified)",
+  "release_notes": {
+    "section": "Spells",
+    "effect": "Entropic Swing (spell)",
+    "intended": "All creatures' end-of-turn effects activate and the Timeline is shuffled.",
+    "actual": "In the unpatched game, only the first creature's end-of-turn effects activated.",
+    "fix": "Now every creature's end-of-turn effects activate.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

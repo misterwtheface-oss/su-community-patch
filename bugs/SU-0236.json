@@ -1,0 +1,34 @@
+{
+  "id": "SU-0236",
+  "aliases": [
+    "B3#26"
+  ],
+  "title": "Short Fuse (gem properties)",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Short Fuse",
+      "runtime_id": 663,
+      "text_key": "L_SD_SHORTFUSE; L_SPELLMOD_INCREASEDDAMAGE / L_SPMOD_INCREASEDDAMAGE; L_CODD_SPELLGEMS_ENCHANTING"
+    }
+  ],
+  "problem": "The damage itself matches the text (the Bomb's own damage formula, 100%). But it skips the spell-damage calculator, so every damage / potency property the Enchanter lets you put on it (Moonstone, Magnetic, Singular, Cascading, the 'potency based on' stones) does nothing, which the codex says can't happen.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": null,
+  "status": "open",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#26"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Short Fuse: \"Enemies take damage equal to 100% of the potency of their {CONDNAME_DEBUFF_BOMB} debuffs.\" | Moonstone: \"Damage Increased By {1}%\" / \"The spell deals additional ... Evidence: bc_CreatureCast L8658-L8659 @0x140890fb7 (bc_CalculateBombDamage -> bc_EventDamage). Compat column 10 = 1 (DAMAGE tag); Moonstone only in bc_SpellDamage @0x14163dfea. Fix sketch: Proposed family record (one record for all fixed-amount spells): spells whose damage / heal / stat amount is a fixed formula sent straight to the event (no bc_SpellDamage / bc_SpellHealing / bc_SpellStat call) still accept the matching gem properties at the Enchanter (scr_FixSpellGemProps 0x1460a8080 sets the compat columns from tags / description), but those properties and the 'spells deal / heal X% more' bonuses live only in the calculators (inv_SpellGemGetStat has 40 callers: 10 bc_SpellDamage, 10 bc_SpellStat, 9 bc_SpellHealing, none in the event code). Candidate population from spell_signatures + spell_property_compat: 25 Moonstone-compatible damage spells with no damage calculator, 8 Obsidian-compatible heals with no healing calculator, 14 Malachite-compatible stat spells with no stat calculator (verify per spell before shipping). For damage: either (a) apply the 'increased' properties (Moonstone GetStat(gem,1)/100, Magnetic / Singular / Cascading as multipliers) at the bc_EventDamage call of each fixed-damage spell via a C hook, and refuse the 'X% of Potency Based On' stones (19/21/22/5) for these ids since they replace an Intelligence base the spell doesn't have; or (b) smallest edit: a post-hook on scr_FixSpellGemProps clearing the damage / potency compat columns for these spell ids so the Enchanter stops offering them (matches the codex; already-enchanted gems keep an inert property). Reasoning: The spell text is followed, but the Enchanter offers properties that can't work, which the codex rules out and whose own texts promise more damage. Ship as part of the fixed-amount family record. App note (unpatched game): Short Fuse deals exactly the Bombs' own damage; damage and potency gem properties on it have no effect. Source: errata round 2 (2026-10-26)."
+}

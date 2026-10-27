@@ -1,0 +1,46 @@
+{
+  "id": "SU-0137",
+  "aliases": [
+    "B3#2",
+    "B6#21"
+  ],
+  "title": "Astral Dimension",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Astral Dimension",
+      "runtime_id": 288,
+      "key": "ASTRALDIMENSION",
+      "text_key": "L_SD_ASTRALDIMENSION"
+    }
+  ],
+  "problem": "The text says \"This Spell Gem cannot be Sealed\", but nothing in the code implements that. No code anywhere checks for spell 288 except its own spell case and its database entry. Every sealing effect (realm property \"Gems Sealed After Casting\", Seal Magic, Shorted Out, Begrudge, Spell Leak and others) seals it like any other gem, and a sealed gem can't be cast.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0137",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#2",
+    "community:B6#21"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Astral Dimension: seal Astral Dimension's gem / cast it while sealed effects are active; it is not treated as sealed. Community claim: \"Some issues with sealing\" (see #44). Evidence: Exhaustive scans: mov edx,288 + compare = 0 hits outside the switch table; RValue 288.0 refs = perk 288 only; string L_SN/L_SD_ASTRALDIMENSION refs = DB only. Seal sites bc_CreatureCast L18813-L18819 @0x140a4bf7f / @0x140a4c3c3; bc_CritCanCastSpell sealed == 1 @0x140cc3ac6. Fix sketch: H: add a spell id 288 skip at the seal sites (or in bc_CritCanCastSpell). Or T: drop the sentence. Triage 2026-10-26: 'This Spell Gem cannot be Sealed' is not implemented anywhere. Hook: skip spell 288 at the seal sites.",
+  "release_notes": {
+    "section": "Spells",
+    "effect": "Astral Dimension (spell)",
+    "intended": "This spell gem cannot be Sealed.",
+    "actual": "In the unpatched game, nothing prevented it from being Sealed.",
+    "fix": "Now it can't be Sealed.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

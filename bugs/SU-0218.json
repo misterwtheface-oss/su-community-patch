@@ -1,0 +1,46 @@
+{
+  "id": "SU-0218",
+  "aliases": [
+    "B2#20"
+  ],
+  "title": "Photosynthesis (Grovetender)",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Photosynthesis",
+      "runtime_id": 325,
+      "text_key": "L_P_PHOTOSYNTHESIS_DESC"
+    }
+  ],
+  "problem": "Decoded (was needs-ingame). The counter has no turn test, and the stat getters read it live. So a minion the Herbling gets from any cast counts at once, including start-of-battle casts. The community claim that these never count is wrong for minions that land on the Herbling itself; minions given to another creature never count, as the text says. What doesn't count is everything put on directly at the start of battle: 'start battle with' minions (Mega Spider Blast's Spiderling, Ripplevein rank 10's Zombies), start-of-battle buffs (e.g. Relic rank 10 buffs on a Herbling bearer) and start-of-battle stat gains. The text says every buff, minion or stat gain it receives in battle counts.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0218",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B2#20"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "User 2026-10-26: fix: start-of-battle grants trigger the same 'after it gains' reactions. Text: Your Herbling has 3% more stats (other than {STAT_health}) for each time it has received healing, gained stats, received buffs or minions, or has been resurrected in battle. Every ... Evidence: Counter herbwater (var 0x1499e1648): reset in obj_battlecontroller_Create L188 @0x1469a5ec0 and bc_CleanUpBattle @0x14068745c; +1 in bc_OnMinion L24-L25 (Herbling && perk 325 @0x14156059c && slot > 0; varset @0x141560644), bc_OnBuffDebuff, bc_OnHeal, bc_OnResurrect and the bc_ExecuteEvents stat-gain cases. Read live by crit_attack @0x1417ae3ba, crit_defense @0x1417bf8f4, crit_intelligence @0x1417e142d, crit_speed @0x1417e5e1e. bc_OnMinion's only caller is bc_ExecuteEvents L1565 @0x1410e861e (no turn gate). Spells summon through bc_EventMinion (42 calls in bc_CreatureCast), and the controller drains events before each start-of-battle phase. No bc_Startup* function calls bc_EventMinion, bc_EventBuff or bc_EventGain*: all start-of-battle grants are direct. Fix sketch: Count the direct start-of-battle grants. Redirect the scr_CritAddCondition calls in bc_StartupBuffsDebuffs (phase 3) to a C hook. The hook calls the original, then, if the target is your Herbling (same test as bc_OnMinion L24: critconstant var 0x1499e0738 == Herbling, scr_PerkLevel(325) > 0, slot > 0) and the condition is a buff (scr_ConditionIsBuff @0x141fa4c50) or a minion (scr_ConditionIsMinion), it does herbwater += 1. To match exactly, also mirror bc_OnMinion's Fertility (455) step at L26 @0x1415606ce. Add the same +1 after each bc_StartupStatGain write that raises a Herbling stat (one per effect, not one per stat). Share the hook with B2#16 (same call sites). Leave 'always has' re-adds out so they can't add a count every time they are re-applied. Reasoning: The code settles this, so the suggested test isn't needed. The turn-1 theory is wrong (there's no turn gate, and events are processed at battle start). But the direct start-of-battle grants don't meet the text's 'each time it has ... received buffs or minions'. This row shares its root with B2#16 (start-of-battle grants bypass the reaction hooks). App note (unpatched game): Photosynthesis doesn't count minions, buffs or stats the Herbling is given directly at the start of battle (e.g. Mega Spider Blast's Spiderling); minions from spells count at any time, including start-of-battle casts, if the Herbling itself receives them. Source: errata round 2 (2026-10-26). | Patched, buffs and minions only (batch K, 2026-10-26; user: start-of-battle grants trigger the same 'after it gains' reactions): 162 of the 171 scr_CritAddCondition calls in bc_StartupBuffsDebuffs -> hook_k_su0218_add (the other 9: the 8 Relic sites owned by SU-0216, whose hook does the same count while SU-0218 is on, and SU-0170-xmas's Disarmed add). After the original add: Herbling (critconstant 970) + scr_PerkLevel(325) + slot > 0 + buff or minion + the Herbling holds the condition afterwards -> herbwater += 3, and += 1.5 with Fertility (455), exactly bc_OnBuffDebuff / bc_OnMinion's in-battle step. 'Always has' re-adds are left out. NOT built: start-of-battle stat gains (bc_StartupStatGain). That phase mixes 'gain' effects with static 'has more' bonuses, equipment (artifact / Relic) stats and set / swap effects in about 260 direct stat writes; counting them needs a per-effect ruling on which are 'gained stats' (counting every raise would give every Herbling +3% per artifact stat each battle). Group heavy (162 redirected start-of-battle calls).",
+  "release_notes": {
+    "section": "Perks",
+    "effect": "Photosynthesis (perk)",
+    "intended": "Your Herbling has 3% more stats (other than Health) for each time it has received healing, gained stats, received buffs or minions, or been resurrected in battle.",
+    "actual": "In the unpatched game, buffs and minions given to the Herbling directly at the start of battle (for example Mega Spider Blast's Spiderling, Ripplevein's Zombies or a Relic's start-of-battle buff) did not count; only ones received during battle did.",
+    "fix": "Now buffs and minions it receives at the start of battle count too. Stat gains at the start of battle still do not count.",
+    "impact": "stronger",
+    "flags": [
+      "heavy",
+      "partial"
+    ]
+  }
+}

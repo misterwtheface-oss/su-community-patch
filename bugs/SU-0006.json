@@ -1,0 +1,42 @@
+{
+  "id": "SU-0006",
+  "aliases": [
+    "A06"
+  ],
+  "title": "Lamora rank 90",
+  "subjects": [
+    {
+      "kind": "relic",
+      "name": "Lamora",
+      "rank": 90
+    }
+  ],
+  "problem": "No rank check: active from rank 30.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0006",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:BR:lamora_r90"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: H: add the rank test Hook batch R (loader/hooks_R.c, research/hooks_R.json). In-game test: Lamora below rank 90 (e.g. 30-80): the relic's Minor Healing on Blighted enemies gets no +30%-per-Blighted-enemy bonus; at rank 90+ it does.",
+  "release_notes": {
+    "section": "Relics",
+    "effect": "Lamora, rank 90 (relic)",
+    "intended": "From rank 90, the bearer gains 30% more Intelligence for each Blighted enemy.",
+    "actual": "The game turned the bonus on from rank 30 instead of rank 90.",
+    "fix": "Now the bonus starts at rank 90, as the relic's rank list says.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

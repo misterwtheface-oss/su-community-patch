@@ -1,0 +1,51 @@
+{
+  "id": "SU-0122",
+  "aliases": [
+    "B1#23"
+  ],
+  "title": "Singular",
+  "subjects": [
+    {
+      "kind": "gem_property",
+      "name": "Singular"
+    }
+  ],
+  "problem": "Code uses 50%. The property's own text (L_SPMOD_SINGULAR) already says 50%; only the Enchanter dust item (Aventurine) still says 30%.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-text",
+  "status": "patched",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#23"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Adds 50% per empty spell slot, not 30%. Evidence: bc_SpellDamage @0x1415a7930: bc_CritGetEmptySpellSlots x 0.5. Fix sketch: T (L_ID_DUST_AVENTURINE: 30% -> 50%) Triage 2026-10-26: Dust item text says 30%; code and the property text say 50%. Text fix. 2026-10-26: text correction shipped via localization_override (loader text module).",
+  "text_fix": [
+    {
+      "file": "items.csv",
+      "key": "L_ID_DUST_AVENTURINE",
+      "en_proposed": "This item can be taken to the Enchanter to add the following property to your Spell Gems:\\n\\nSingular: the spell's potency is increased by 50% for each empty Spell Gem slot the creature has.",
+      "en_current_sha256": "173ed3d10ce757d692acad30130c314d04004f7090db71613fe66dcd8d7ca8a2"
+    }
+  ],
+  "release_notes": {
+    "section": "Spell gems & items",
+    "effect": "Aventurine dust (Singular gem property)",
+    "intended": "The item description matches the Singular property: 50% potency per empty spell gem slot.",
+    "actual": "In the unpatched game, the dust's description said 30%, while the property itself (and its own description) uses 50%.",
+    "fix": "Now the dust's description says 50%.",
+    "impact": "neutral",
+    "flags": [
+      "text"
+    ]
+  }
+}

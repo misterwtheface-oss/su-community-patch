@@ -1,0 +1,36 @@
+{
+  "id": "SU-0130",
+  "aliases": [
+    "B2#15"
+  ],
+  "title": "Forsaken Wonder (Antiquarian): duration",
+  "subjects": [
+    {
+      "kind": "perk",
+      "name": "Forsaken Wonder",
+      "runtime_id": 655,
+      "key": "FORSAKENWONDER",
+      "text_key": "L_P_FORSAKENWONDER_DESC"
+    }
+  ],
+  "problem": "The \"lasts forever\" check looks at the creature that receives the buff, and its side test is reversed, so buffs on your creatures never become permanent. Confirmed in game 2026-10-20.",
+  "category": "not-a-bug",
+  "confidence": "high",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "community:B2#15"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Merged into SU-0080.",
+  "reason": "duplicate of SU-0080"
+}

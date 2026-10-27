@@ -1,0 +1,41 @@
+{
+  "id": "SU-0126",
+  "aliases": [
+    "B1#47"
+  ],
+  "title": "Spiderlings",
+  "subjects": [
+    {
+      "kind": "condition",
+      "name": "Spiderlings (minion)"
+    }
+  ],
+  "problem": "The burst fires after the master takes any hit that has a source; there is no check that the source is an enemy. Each burst hits whoever dealt the damage, so an ally that hits the master gets blown up. The burst is sent as indirect damage with no source (source -1), so effects that need a source don't apply. Also (known): it uses 50% of the master's max Health per stack, not current Health as the text says. Text says \"takes damage from an enemy ... dealing damage to the enemy\".",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0126",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B1#47"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Community claim: Allies that damage each other (e.g. Stand as One) set it off, so it hurts your own creatures; the damage has no source, so Nature Transformation can't stop or convert it. Evidence: bc_EventDamage L6595 @0x140f34261-0x140f3449a: source > -1 && scr_CritHasCondition(creature,45); amount = hpmax x 0.5 x stacks (@0x140f345e1, 0x140f34725, 0x140f34794); burst bc_EventDamage @0x140f35926 with source -1 (@0x140f355bb), target = the damage source, dtype -1 (@0x140f357a7). Fix sketch: H: add \"source is on the other side\" test at L6595 (and K/S to read hp instead of hpmax if current Health is intended); or T: \"after its master takes damage from a creature, ... deals damage to that creature equal to 50% of the master's Maximum Health\" Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. Any sourced hit (allies too) sets it off; damage uses Maximum Health. 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"takes damage from an enemy ... 50% of the master's Current Health\". Fix: H: call-site hook on scr_CritHasCondition(creature, 45) at bc_EventDamage L6595 adding 'source on the opposite side'; S: the burst amount reads hpmax -> hp (repoint the var-id slot at the amount read @0x140f345e1..0x140f34794; slot of `hp` to resolve). vs bugged: mixed: no ally trigger (weaker); current vs max Health (weaker when hurt). 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Creature with Spiderlings at e.g. 50% Health; an enemy hits it: each Spiderling deals 50% of its CURRENT Health to that enemy (half of max-Health bursts). An ally hitting it (e.g. Stand As One / Confused): no burst.",
+  "release_notes": {
+    "section": "Conditions & minions",
+    "effect": "Spiderlings (minion)",
+    "intended": "After the master takes damage from an enemy, they explode on that enemy for 50% of the master's Current Health.",
+    "actual": "In the unpatched game, any hit with a source triggered them, allies included, and the damage used the master's Maximum Health.",
+    "fix": "Now only damage from enemies triggers them, and the damage uses the master's Current Health.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

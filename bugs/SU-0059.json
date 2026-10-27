@@ -1,0 +1,43 @@
+{
+  "id": "SU-0059",
+  "aliases": [
+    "B22"
+  ],
+  "title": "Time Fracture Resonance",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Time Fracture Resonance",
+      "runtime_id": 2061,
+      "text_key": "L_TRAIT_DESC_TIMEFRACTURERESONANCE"
+    }
+  ],
+  "problem": "Any creature of the side at the bottom counts (text: THIS creature).",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0059",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§4 item 8"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Time Fracture Resonance: compare the holder's spells/damage/healing/stat effects at the bottom of the Timeline vs anywhere else; bonus only at the bottom, and only for the holder. Fix: H | 2026-10-26 realign (text is the contract): text claims \"While this creature is at the bottom of the Timeline\". H: Time Fracture Resonance (all three calculators): require the holder itself at the bottom. vs bugged: weaker.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Time Fracture Resonance (trait)",
+    "intended": "While this creature is at the bottom of the Timeline, your creatures' spells cost no charges, always crit and have 100% more potency.",
+    "actual": "In the unpatched game, it worked while any creature of the holder's side was at the bottom.",
+    "fix": "Now it only works while the holder itself is at the bottom of the Timeline.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

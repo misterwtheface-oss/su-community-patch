@@ -1,0 +1,250 @@
+{
+  "patches": [
+    {
+      "id": "SU-0007",
+      "bug": "SU-0007",
+      "default": 1,
+      "title": "Brambleskin rank 100: the first time the bearer is killed, it resurrects with 100% Health and gains 50% stats (its rank test never passed on a real death)",
+      "edits": [
+        {
+          "va": "0x1488bf760",
+          "expect": "000000000000",
+          "write": "ff259a8a6101",
+          "note": "trampoline -> hook_su0007_relicperk_allow_dead (cave code)"
+        },
+        {
+          "va": "0x1415055a6",
+          "expect": "5680b200",
+          "write": "b6a13b07",
+          "note": "bc_OnDeath L1945: scr_CritHasRelicPerk(dying, 25, 10) -> hook (adds allow_dead = true)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8200",
+          "symbol": "hook_su0007_relicperk_allow_dead"
+        }
+      ]
+    },
+    {
+      "id": "SU-0008",
+      "bug": "SU-0008",
+      "default": 1,
+      "title": "Fable rank 80: the bearer's on-death effects activate 1 additional time (its rank test never passed on a real death)",
+      "edits": [
+        {
+          "va": "0x1488bf770",
+          "expect": "000000000000",
+          "write": "ff25928a6101",
+          "note": "trampoline -> hook_su0008_relicperk_allow_dead (cave code)"
+        },
+        {
+          "va": "0x1410a6f23",
+          "expect": "d966f800",
+          "write": "49888107",
+          "note": "bc_ExecuteEvents L453: scr_CritHasRelicPerk(creature, 29, 8) -> hook (adds allow_dead = true)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8208",
+          "symbol": "hook_su0008_relicperk_allow_dead"
+        }
+      ]
+    },
+    {
+      "id": "SU-0006",
+      "bug": "SU-0006",
+      "default": 1,
+      "title": "Lamora rank 90: +30% Intelligence per enemy with Blighted only from rank 90 (code applied it from rank 30)",
+      "edits": [
+        {
+          "va": "0x1488bf780",
+          "expect": "000000000000",
+          "write": "ff258a8a6101",
+          "note": "trampoline -> hook_su0006_damage (cave code)"
+        },
+        {
+          "va": "0x1415a715a",
+          "expect": "b23ea800",
+          "write": "22863107",
+          "note": "bc_SpellDamage L354: Blighted count scr_CritHasCondition -> hook (0 unless Lamora rank 90)"
+        },
+        {
+          "va": "0x1488bf790",
+          "expect": "00000000000000000000000000",
+          "write": "48892d698b6101ff257b8a6101",
+          "note": "trampoline -> hook_su0006_healing (cave code)"
+        },
+        {
+          "va": "0x14164807e",
+          "expect": "8e2f9e00",
+          "write": "0e772707",
+          "note": "bc_SpellHealing L139-148: Blighted count -> hook (rbp handed over)"
+        },
+        {
+          "va": "0x1488bf7a0",
+          "expect": "00000000000000000000000000",
+          "write": "48892d618b6101ff25738a6101",
+          "note": "trampoline -> hook_su0006_stat (cave code)"
+        },
+        {
+          "va": "0x141655a1c",
+          "expect": "f0559d00",
+          "write": "809d2607",
+          "note": "bc_SpellStat L177-186: Blighted count -> hook (rbp handed over)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8210",
+          "symbol": "hook_su0006_damage"
+        },
+        {
+          "slot_va": "0x149ed8218",
+          "symbol": "hook_su0006_healing"
+        },
+        {
+          "slot_va": "0x149ed8220",
+          "symbol": "hook_su0006_stat"
+        }
+      ]
+    },
+    {
+      "id": "SU-0085",
+      "bug": "SU-0085",
+      "default": 1,
+      "title": "Covenant: once your creatures have cast each Rune spell, their on-attack effects activate 1 additional time, only with Covenant (code gave it to any caster without the perk)",
+      "edits": [
+        {
+          "va": "0x1488bf7b0",
+          "expect": "000000000000",
+          "write": "ff25728a6101",
+          "note": "trampoline -> hook_su0085_covenant_add (cave code)"
+        },
+        {
+          "va": "0x1408be002",
+          "expect": "2a62a3ff",
+          "write": "aa170008",
+          "note": "bc_CreatureCast L9798 Rune case: n += 1 -> hook (only for your caster with perk 289)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8228",
+          "symbol": "hook_su0085_covenant_add"
+        }
+      ]
+    },
+    {
+      "id": "SU-0127",
+      "bug": "SU-0127",
+      "default": 1,
+      "title": "Bolster: less damage from attacks and spells only (code also cut indirect damage)",
+      "edits": [
+        {
+          "va": "0x1488bf7c0",
+          "expect": "000000000000",
+          "write": "ff256a8a6101",
+          "note": "trampoline -> hook_su0127_bolster_gate (cave code)"
+        },
+        {
+          "va": "0x140e06373",
+          "expect": "994d6e05",
+          "write": "4994ab07",
+          "note": "bc_EventDamage L2092: scr_PerkLevel(58) -> hook (0 unless dtype is attack 0 / spell 1)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8230",
+          "symbol": "hook_su0127_bolster_gate"
+        }
+      ]
+    },
+    {
+      "id": "SU-0009",
+      "bug": "SU-0009",
+      "default": 1,
+      "title": "Starwrath rank 100: enemies without Confused get a 10% chance to act as if Confused; Confused enemies keep their normal chance (code lowered them to 10%)",
+      "edits": [
+        {
+          "va": "0x1488bf7d0",
+          "expect": "000000000000",
+          "write": "ff25628a6101",
+          "note": "trampoline -> hook_su0009_attack (cave code)"
+        },
+        {
+          "va": "0x1406a303e",
+          "expect": "ee94beff",
+          "write": "8ec72108",
+          "note": "bc_CreatureAttack L100: chance = 10 -> hook (skipped for a Confused actor)"
+        },
+        {
+          "va": "0x1488bf7e0",
+          "expect": "000000000000",
+          "write": "ff255a8a6101",
+          "note": "trampoline -> hook_su0009_cast (cave code)"
+        },
+        {
+          "va": "0x140715ae1",
+          "expect": "4b6ab7ff",
+          "write": "fb9c1a08",
+          "note": "bc_CreatureCast L208: chance = 10 -> hook (skipped for a Confused caster)"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8238",
+          "symbol": "hook_su0009_attack"
+        },
+        {
+          "slot_va": "0x149ed8240",
+          "symbol": "hook_su0009_cast"
+        }
+      ]
+    },
+    {
+      "id": "SU-0042",
+      "bug": "SU-0042",
+      "default": 1,
+      "title": "Reliquary heal upgrade: heals from your Relics are increased by the Reliquary heal upgrade, doubled with Abandoned Altar (code computed the bonus and never applied it)",
+      "edits": [
+        {
+          "va": "0x1488bf7f0",
+          "expect": "00000000000000000000000000",
+          "write": "48892d198b6101ff254b8a6101",
+          "note": "trampoline -> hook_su0042_assign (cave code)"
+        },
+        {
+          "va": "0x14103f06e",
+          "expect": "9ed324ff",
+          "write": "7e078807",
+          "note": "bc_EventHeal L249: scratch = bonus (assign) -> hook adds it to the heal bonus pool"
+        },
+        {
+          "va": "0x1488bf800",
+          "expect": "00000000000000000000000000",
+          "write": "48892d118b6101ff25438a6101",
+          "note": "trampoline -> hook_su0042_double (cave code)"
+        },
+        {
+          "va": "0x14103f2a3",
+          "expect": "891825ff",
+          "write": "59058807",
+          "note": "bc_EventHeal L251 (Abandoned Altar): scratch *= 2 -> hook adds it to the pool again"
+        }
+      ],
+      "runtime_hooks": [
+        {
+          "slot_va": "0x149ed8248",
+          "symbol": "hook_su0042_assign"
+        },
+        {
+          "slot_va": "0x149ed8250",
+          "symbol": "hook_su0042_double"
+        }
+      ]
+    }
+  ]
+}

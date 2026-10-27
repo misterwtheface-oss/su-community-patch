@@ -1,0 +1,43 @@
+{
+  "id": "SU-0039",
+  "aliases": [
+    "B02"
+  ],
+  "title": "Roulette",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Roulette",
+      "runtime_id": 271,
+      "text_key": "L_TRAIT_DESC_ROULETTE"
+    }
+  ],
+  "problem": "Damage branch is ×0.5 (halves), text says +50%. Community: Roulette doesn't trigger on-attack.",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0039",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:EO§5"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Compare hit sizes when it triggers Fix: K: 0.5 → 1.5 | 2026-10-26 realign (text is the contract): text claims \"Otherwise, it deals 50% more damage\". K: bc_CreatureAttack L1780 big_mult(dmg, RValue 0.5) lea rdx @0x1406f13e6 -> static RValue 1.5 @0x1498eb790 (disp @0x1406f13e9). vs bugged: stronger. 2026-10-26: built as byte patch SU-0039 (verified against the baseline exe; not yet run in game).",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Roulette (trait)",
+    "intended": "When the roll fails, the attack deals 50% more damage.",
+    "actual": "In the unpatched game, on a failed roll the game halved the damage.",
+    "fix": "Now a failed roll gives 50% more damage.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

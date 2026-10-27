@@ -1,0 +1,43 @@
+{
+  "id": "SU-0267",
+  "aliases": [
+    "B4#30"
+  ],
+  "title": "Emerald Attunement",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Emerald Attunement",
+      "runtime_id": 44,
+      "text_key": "L_TRAIT_DESC_EMERALDATTUNEMENT"
+    }
+  ],
+  "problem": "The real text conflict is different. There is one +50% block per side and both run, so when both teams have Emerald Attunement every hit gets +100%. The text says it does not stack.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0267",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B4#30"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: All creatures deal 50% more damage. This trait does not stack. Evidence: bc_EventDamage L4306 scr_AnyEnemyHasPassive(44) @0x140e7fc82 -> L4308 pool += amount x 0.5 (big_mult @0x140e7fe9b, add @0x140e7feab); falls through to L4310 scr_AnyAllyHasPassive(44) @0x140e80016 -> L4312 pool += amount x 0.5 (@0x140e8022f / add @0x140e8023f); L4316 @0x140e80244. Fix sketch: Make the second block run only when the first doesn't. (1) At 0x140e7fca1, retarget je 0x140e7feb0 to je 0x140e7febb (0F 84 09 02 00 00 -> 0F 84 14 02 00 00), so the 'enemy side has none' path enters L4310 just after its line-marker store. (2) Overwrite the L4310 line-marker store at 0x140e7feb0 (C7 84 24 78 01 03 00 D6 10 00 00, 11 bytes) with jmp 0x140e80244 (E9 8F 03 00 00 + 6 x 90), so the 'enemy side has it' path skips the ally block. These are the only jumps into the area: je @0x140e7fca1 (to 0x140e7feb0), jne @0x140e7ff7f (loops back to 0x140e7febb), je @0x140e80035 (to 0x140e80244). Reasoning: Whether it counts as damage dealt or damage taken, and its effect on sourceless damage, are implied behaviours (ruling 3). The two independent side blocks directly contradict 'This trait does not stack', and the text's number wins. Two in-place jump edits fix it. App note (unpatched game): Emerald Attunement makes every creature take 50% more damage, including damage with no source such as Poison and Burn; if both sides have it, every hit gets +100%. Source: errata round 2 (2026-10-26). | Patched (batch I, 2026-10-26) with two in-place jump edits as sketched: je @0x140e7fca1 -> 0x140e7febb (enemy side without it enters the ally-side block past its line marker), and the L4310 marker @0x140e7feb0 -> jmp L4316 (after the enemy side's +50% the ally side's is skipped). Builder checks: the only jump into [L4310, L4316) from outside is that je, nothing lands inside the marker, the block only leaves to L4316. Skip audit on the merged table: clean.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Emerald Attunement (trait)",
+    "intended": "All creatures deal 50% more damage. This trait does not stack.",
+    "actual": "In the unpatched game, each side's Emerald Attunement added its own +50%, so when both teams had it every hit got +100%.",
+    "fix": "Now Emerald Attunement adds +50% once, whichever side or sides have it.",
+    "impact": "weaker",
+    "flags": []
+  }
+}

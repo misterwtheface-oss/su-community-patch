@@ -1,0 +1,43 @@
+{
+  "id": "SU-0081",
+  "aliases": [
+    "H02"
+  ],
+  "title": "Master of Angels",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Master of Angels",
+      "runtime_id": 1396,
+      "text_key": "L_TRAIT_DESC_MASTEROFANGELS"
+    }
+  ],
+  "problem": "Master of Angels: copies Black Hole Halo's Scorned onto your Angels' attacks (code applied Bomb)",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0081",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "handoff:HANDOFF_bug_report_candidates.md"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Details: research/handoff_eval.md",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Master of Angels (trait)",
+    "intended": "Your Angels' attacks apply the debuffs your other Angels' innate traits apply.",
+    "actual": "In the unpatched game, for Black Hole Halo, the game applied Bomb instead of Scorned.",
+    "fix": "Now Black Hole Halo's Scorned is copied.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

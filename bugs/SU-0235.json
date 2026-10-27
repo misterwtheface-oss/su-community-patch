@@ -1,0 +1,45 @@
+{
+  "id": "SU-0235",
+  "aliases": [
+    "B3#25"
+  ],
+  "title": "Shellbust",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Shellbust",
+      "runtime_id": 174,
+      "text_key": "L_SD_SHELLBUST"
+    }
+  ],
+  "problem": "The damage is 150% of the planned Defense loss from the stat calculator, not of the amount actually reduced. When the loss is blocked (Warded, Inertia, Giran's Rigor, Starwrath ...), redirected (Reflection), turned into a gain (Hallucination), cut, boosted, or clamped at the minimum stat, the damage still uses the planned amount. Also part of the fixed-amount family: the damage skips the spell-damage calculator, so the Damage Increased (Moonstone) property the Enchanter offers on it does nothing; the target's Defense isn't subtracted (text silent, hidden).",
+  "category": "bug",
+  "confidence": "high",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0235",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#25"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Target loses a moderate amount of {STAT_defense} and takes damage equal to 150% of the amount reduced. Evidence: bc_CreatureCast L9419 bc_SpellStat @0x1408ae146 (planned amount); L9420 bc_EventLoseDefense @0x1408ae52f -> scr_AddEventToStack @0x1408ae5be (queued; blocks/reductions in the builder, EFFECT_ORDER 'Stat loss'); L9432 amount x 1.5 (0x1498e5fc0 @0x1408aea50, big_mult @0x1408aeb58) -> bc_EventDamage @0x1408aedbc. Fix sketch: C hook: wrap bc_EventLoseDefense @0x1408ae52f to record the returned event's final amount (0 when it returns undefined / the loss was dropped); redirect the big_mult @0x1408aeb58 to a hook that uses that recorded amount x 1.5. This covers prevention, reflection, conversion and the builder's cuts/boosts; the minimum-stat clamp at landing would need the damage computed at execution time (a queued-event hook) if exactness there matters. For the Moonstone half see the family note in B3#14/#26. Reasoning: The text ties the damage to 'the amount reduced'; the code ties it to a number computed before any prevention or adjustment runs. They differ whenever the loss is changed, which is common, so this is a code bug. App note (unpatched game): Shellbust's damage is 150% of the planned Defense loss even if the loss is blocked or reduced, and spell-damage bonuses don't apply to it. Source: errata round 2 (2026-10-26). | Patch (batch L): bc_CreatureCast L9420 bc_EventLoseDefense @0x1408ae52f and L9432 big_mult @0x1408aeb58 go to hooks. Per target k ([rsp+0x2fd80], keyed by the frame) the first records the built event's final amount: 0 when the builder returns -1 (prevented, or Hallucination's conversion) or when the event's creature is not the target (Reflection), else event.amount. The second uses that amount x 1.5. Partial: the minimum-Defense clamp at landing is not seen (the damage can exceed the loss when the target is near its minimum), and the Damage Increased (Moonstone) half of the fixed-amount family is not addressed. A fully blocked loss now queues a 0 damage hit.",
+  "release_notes": {
+    "section": "Spells",
+    "effect": "Shellbust (spell)",
+    "intended": "The target loses a moderate amount of Defense and takes damage equal to 150% of the amount reduced.",
+    "actual": "In the unpatched game, the damage was 150% of the planned Defense loss, even when the loss was blocked, reflected back, turned into a gain, cut or boosted.",
+    "fix": "Now the damage is 150% of the Defense loss the target is actually dealt (0 when it is blocked, reflected or turned into a gain).",
+    "impact": "weaker",
+    "flags": [
+      "partial"
+    ]
+  }
+}

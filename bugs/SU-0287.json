@@ -1,0 +1,35 @@
+{
+  "id": "SU-0287",
+  "aliases": [
+    "B5#29"
+  ],
+  "title": "Master of Lepers",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Master of Lepers",
+      "runtime_id": 1455,
+      "text_key": "L_TRAIT_DESC_MASTEROFLEPERS"
+    }
+  ],
+  "problem": "It works. A debuff qualifies when it has a source creature, passes the normal debuff event's immunity/resist exits, and the source's whole party is Lepers with the Master. Then one random extra debuff is queued on the same target with no source. It never fires for debuffs put on without the debuff event (start-of-battle debuffs, 'always has' effects, direct adds) or with no source. The extra debuff can't chain, because it has no source and carries its own tag.",
+  "category": "not-a-bug",
+  "confidence": "high",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "community:B5#29"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: If all the creatures in your party are {RACE_Leper}s, they afflict an additional debuff on enemies when they afflict them with a debuff. This trait does not stack. Evidence: bc_EventDebuff L373-L377: source > -1 @0x140fe456d; source.slot == 0 @0x140fe45d4 && scr_AnyEnemyHasPassive(1455) && bc_AllRace(\"Leper\", 0) @0x140fe463b / @0x140fe46d1; slot > 0 && scr_AnyAllyHasPassive(1455) && bc_AllRace(\"Leper\", 1) @0x140fe47a6 / @0x140fe4836; subscript != \"(Master of Lepers)\" @0x140fe488f; bc_GetRandomDebuff @0x140fe4a4f; bc_EventDebuff(source -1, ...) queued @0x140fe4dbe. Only exits before it are L48-L194 (jmp to L431). The side test reads the source's slot (var `source`), which is the correct side. bc_AllRace 0x140601da0 is the standard 1..6 loop used by every all-race Master. Reasoning: Decoded instead of tested. The gate reads the source's side, the all-Leper test is the standard one, and the extra debuff is queued unconditionally after it, so 'doesn't work' is wrong. 'Rarely' fits debuffs that skip the debuff event or have no source. No crash and no dead path. App note (unpatched game): Master of Lepers only triggers on debuffs a Leper afflicts through a normal debuff (spells, attacks, most traits), not on debuffs placed at the start of battle or by 'always has' effects. Source: errata round 2 (2026-10-26).",
+  "reason": "works as its text says"
+}

@@ -1,0 +1,44 @@
+{
+  "id": "SU-0139",
+  "aliases": [
+    "B3#7"
+  ],
+  "title": "Corpse Explosion",
+  "subjects": [
+    {
+      "kind": "spell",
+      "name": "Corpse Explosion",
+      "runtime_id": 28,
+      "key": "CORPSEEXPLOSION",
+      "text_key": "L_SD_CORPSEEXPLOSION"
+    }
+  ],
+  "problem": "Damage = Int × Moderate (110%) × number of dead creatures. The text says \"a small amount of damage, increased by the number of dead creatures\". With nobody dead it deals 0.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0139",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "community:B3#7"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "In-game test: Corpse Explosion with 0, 1 and 2 dead creatures: damage = Small potency x 1, x 2, x 3. Community claim: Damage is multiplied by the number of dead creatures. Evidence: bc_SpellDamage case L1678-L1684: count of hp <= 0 in creatureList, then (amount + Int × DMG_MODERATE) × count (multiply @0x14161925a). Fix sketch: T: \"Enemies take a moderate amount of damage for each dead creature on the battlefield.\" Triage 2026-10-26: Ruling 2026-10-26 (stat/scope/trigger wording): text matches code. Moderate damage x number of dead creatures (0 with none dead). 2026-10-26: text correction shipped via localization_override (loader text module). | 2026-10-26 realign (text is the contract): text claims \"small amount of damage, increased by the number of dead creatures\". Fix: H + user decision on the formula: text implies Small damage that grows with the dead count (not Moderate x count, which is 0 with nobody dead); proposed Small x (1 + dead count). vs bugged: stronger with 0 dead, weaker with many. User 2026-10-26: agreed the 0-dead case must deal damage; formula Small potency x (1 + dead creatures) (the text says 'small amount ... increased by the number of dead creatures'). User 2026-10-26: formula approved.",
+  "release_notes": {
+    "section": "Spells",
+    "effect": "Corpse Explosion (spell)",
+    "intended": "Enemies take a small amount of damage, increased by the number of dead creatures.",
+    "actual": "In the unpatched game, the damage was a moderate amount times the number of dead creatures, so it dealt nothing when nobody was dead.",
+    "fix": "Now it deals a small amount times (1 + the number of dead creatures).",
+    "impact": "neutral",
+    "flags": []
+  }
+}

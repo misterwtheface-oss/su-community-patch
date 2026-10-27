@@ -1,0 +1,43 @@
+{
+  "id": "SU-0093",
+  "aliases": [
+    "D:Life And Other Illusions"
+  ],
+  "title": "Life And Other Illusions",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Life And Other Illusions",
+      "runtime_id": 841,
+      "text_key": "L_TRAIT_DESC_LIFEANDOTHERILLUSIONS"
+    }
+  ],
+  "problem": "one-sided by design (CROSS ruling)",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0093",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:TRIAGE D"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "| 2026-10-26 realign (text is the contract): text claims \"Effects that activate when creatures attack are ignored\". Fix: H: bc_OnAttack L25-L27 exit for every attacker, not only the holder's enemies (and decide whether the defender's when-attacked effects count as 'when creatures attack'). vs bugged: mixed: stronger disruption, also cancels your own on-attack effects. USER DECISION: reverses the earlier 'one-sided by design' (CROSS) reading; the global version also cancels the holder's own side's effects User 2026-10-26: global, as the text reads (no prior design ruling by the user). Fix = extend the trait's existing side test to the bearer's side too; no other changes (e.g. Life And Other Illusions: no extra handling of defenders' when-attacked effects). 2026-10-26 hook batch E built (research/hooks_E.json, loader/hooks_E.c). In-game test: Put Life And Other Illusions on one of YOUR creatures; give another of your creatures an on-attack trait (e.g. 'After this creature attacks, ...'); attack: the on-attack effect should not fire. Then with the trait on an enemy: same for enemies' and your on-attack effects.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "Life And Other Illusions (trait)",
+    "intended": "Effects that activate when creatures attack are ignored.",
+    "actual": "In the unpatched game, only the effects of the side opposing the holder were ignored.",
+    "fix": "Now on-attack effects are ignored for both sides, whichever side holds the trait.",
+    "impact": "neutral",
+    "flags": []
+  }
+}

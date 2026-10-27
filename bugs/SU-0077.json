@@ -1,0 +1,45 @@
+{
+  "id": "SU-0077",
+  "aliases": [
+    "E04",
+    "B6#37"
+  ],
+  "title": "The Walking Dead",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "The Walking Dead",
+      "runtime_id": 1143,
+      "text_key": "L_TRAIT_DESC_THEWALKINGDEAD"
+    }
+  ],
+  "problem": "Text: master's highest stat. Code deliberately skips Health (uses 2nd highest). Aligned to text: zombies get much stronger on high-Health masters. Balance change, review.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0077",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:B6 #37",
+    "community:B6#37"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: K: n=2 → 1 — in patch (byte-verified) 2026-10-26: code patch switched off by default (kept in patches.json for reference); text correction instead. 2026-10-26 (text is the contract): code fix re-enabled; text correction dropped.",
+  "release_notes": {
+    "section": "Traits",
+    "effect": "The Walking Dead (trait)",
+    "intended": "Your Zombies deal damage based on their master's highest stat.",
+    "actual": "The game skipped Health, using the second-highest stat when Health was highest.",
+    "fix": "Now the master's highest stat is used, Health included.",
+    "impact": "stronger",
+    "flags": []
+  }
+}

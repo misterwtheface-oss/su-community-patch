@@ -1,0 +1,47 @@
+{
+  "id": "SU-0075",
+  "aliases": [
+    "E02",
+    "B1#5"
+  ],
+  "title": "Blink of an Eye (Nether boss Blacksmith Ianne, traits 1351-1353)",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Blink of an Eye",
+      "runtime_id": 1351,
+      "text_key": "L_TRAIT_DESC_BLINKOFANEYE1"
+    }
+  ],
+  "problem": "Text: 10% per hit (tiers 2-3), maximum 95%. Code: 5% per hit, clamped at the shared 80% cap. Aligning to text makes this boss harder.",
+  "category": "bug",
+  "confidence": "code-certain",
+  "decision": "fix-code",
+  "status": "patched",
+  "patch": "SU-0075",
+  "text_overrides": [],
+  "app_note": {
+    "status": "none"
+  },
+  "sources": [
+    "own:B1 #5",
+    "community:B1#5"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Fix: K: 0.05→0.1 (×2); S: six cap loads → static 0.95 — in patch (byte-verified)",
+  "release_notes": {
+    "section": "Bosses & Nether bosses",
+    "effect": "Blink of an Eye (Nether boss Blacksmith Ianne)",
+    "intended": "The boss takes less damage for each time it was hit this battle (10% per hit on its higher tiers), up to 95%.",
+    "actual": "In the unpatched game, it used 5% per hit and stopped at 80%.",
+    "fix": "Now its higher tiers use 10% per hit, up to 95%.",
+    "impact": "stronger",
+    "flags": [
+      "boss"
+    ]
+  }
+}

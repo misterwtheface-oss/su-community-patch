@@ -1,0 +1,35 @@
+{
+  "id": "SU-0291",
+  "aliases": [
+    "B5#37"
+  ],
+  "title": "Oathbreaker",
+  "subjects": [
+    {
+      "kind": "trait",
+      "name": "Oathbreaker",
+      "runtime_id": 1797,
+      "text_key": "L_TRAIT_DESC_OATHBREAKER"
+    }
+  ],
+  "problem": "It adds a second copy of the realm-boost stat amount. Where there are no realm-boost stats (outside normal realm battles) there is nothing to double, so it does nothing there. The Rodian Aftermath damage effect that Oathbreaker also carries is a separate, already-registered bug.",
+  "category": "not-a-bug",
+  "confidence": "code-certain",
+  "decision": "leave",
+  "status": "wontfix",
+  "patch": null,
+  "text_overrides": [],
+  "app_note": {
+    "status": "not-needed"
+  },
+  "sources": [
+    "community:B5#37"
+  ],
+  "builds": {
+    "2.0.38": {
+      "present": true
+    }
+  },
+  "notes": "Text: Your creatures gain 100% more benefit from stat-increasing Realm Boosts. This trait does not stack. Evidence: crit_attack: base scr_RealmBoostCount @0x1417b1dd7; Oathbreaker scr_AnyAllyHasPassive(1797) @0x1417b1e83 -> scr_RealmBoostCount @0x1417b1f3a; start-of-battle @0x14174bd1a / @0x14174bf01. Rodian Aftermath part: SU-0078 (public). Reasoning: '100% more benefit from Realm Boosts' with no Realm Boosts is zero, so the text holds. The other Oathbreaker issue is already covered by SU-0078 and is outside this row. App note (unpatched game): Oathbreaker only does something where Realm Boosts give stats; in other battles there is nothing to double. Source: errata round 2 (2026-10-26).",
+  "reason": "works as its text says"
+}
