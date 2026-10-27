@@ -10,7 +10,7 @@
  *   SU-0264 Draconic Arrogance  the allies' highest stat is read from their stored stats (no getter recursion)
  *   SU-0269 Fallen Star         a Feared holder does not steal; Max Health gains can be stolen too
  *   SU-0202 Unstable Horror     the master's highest stat may be Health (Maximum Health is used)
- *   SU-0275 Grandiose           the raw buff / debuff list[0] reads see the shared counters (bc_CountBuffs / _Debuffs)
+ *   SU-0275 Grandiose           raw buff / debuff list counts read the shared counters (bc_CountBuffs / bc_CountDebuffs)
  */
 
 #define J_SELF        0x149ed8950   /* qword: self of the getter whose race test is running (set by the cave stub) */
@@ -337,68 +337,29 @@ static RValue *hook_j_su0202_provoke(RValue *dst, int n)
 /* ===== SU-0275 Grandiose: "your creatures act as if they have 3 more buffs, debuffs, and minions". The +3 (and
  * Redefined, perk 630) live only in bc_CountBuffs / bc_CountDebuffs; these effects fetch the raw list and read its
  * count (list[0]) instead: Lenience, Holy Might, Reckoning, Pandemonium Exploit, a +10% per buff spell; Under Stress,
- * Swell, Nighttaker, Ruin, Daybreaker, Heresy, a chance per debuff spell. Nothing here writes into a game array or a
- * game-owned value (the fetched list can be the creature's own stored list).
- *  - The fetch hooks are pure pass-throughs: they ask the shared counter for the same creature, run the original
- *    fetch, and record (the list's identity, its list[0], the counter) in a small ring.
- *  - The element read hook stands in for each site's list[0] read (the builder checks it is the only use of the list
- *    and that the caller only reads the returned value). It runs the original read; when the array matches a record
- *    and its list[0] is still the recorded one, it returns a fresh real holding the counter instead. Records are not
- *    consumed (Swell reads list[0] as a loop condition); the newest record for an array wins. */
-#define J_ELEM 0x14028c820   /* RValue *elem(RValue *array, int index): &array[index] (read) */
-typedef RValue *(*JElem)(RValue *arr, int idx);
-
-typedef struct { void *ref; double raw, count; } JCountRec;
-static JCountRec j_count_rec[32];
-static unsigned j_count_next;
-static RValue j_count_out[8];
-static unsigned j_count_out_next;
-
-/* list[0] of an array value, read only; 0 if not an array with a numeric list[0] */
-static int j_list_head(const RValue *arr, double *raw)
-{
-    char *ref; RValue *data; int ok;
-    if (!arr || (arr->kind & 0xffffff) != 2 || !arr->v.ptr) return 0;
-    ref = (char *)arr->v.ptr;
-    data = *(RValue **)(ref + 8);
-    if (*(int *)(ref + 0x24) < 1 || !data) return 0;
-    *raw = j_num(data, &ok);
-    return ok;
-}
-
-static RValue *j_list_fetch(unsigned long long fetch, unsigned long long counter,
+ * Swell, Nighttaker, Ruin, Daybreaker, Heresy, a chance per debuff spell. Stands in for those list fetches only (the
+ * builder checks that each site reads nothing but list[0]): the fresh list's count is replaced by the shared counter's
+ * value. The list is the callee's new array (reference count 1); anything else is left alone. */
+static RValue *j_list_count(unsigned long long fetch, unsigned long long counter,
                             void *self, void *other, RValue *ret, int argc, RValue **args)
 {
-    double n = 0.0, raw;
-    int have = argc == 1 && args && args[0] && j_script_num(counter, self, other, argc, args, &n);
     RValue *r = ((GmlScript)RVA(fetch))(self, other, ret, argc, args);
-    RValue *arr = r ? r : ret;
-    if (have && j_list_head(arr, &raw)) {
-        JCountRec *c = &j_count_rec[j_count_next++ & 31];
-        c->ref = arr->v.ptr; c->raw = raw; c->count = n;
-    }
+    RValue *arr = r ? r : ret, *d0;
+    char *ref;
+    double n; int ok;
+    if (argc != 1 || !args || !args[0] || (arr->kind & 0xffffff) != 2 || !arr->v.ptr) return r;
+    ref = (char *)arr->v.ptr;
+    if (*(int *)(ref + 0x18) != 1 || *(int *)(ref + 0x24) < 1 || !*(RValue **)(ref + 8)) return r;
+    d0 = *(RValue **)(ref + 8);
+    j_num(d0, &ok);
+    if (!ok || !j_script_num(counter, self, other, argc, args, &n)) return r;
+    if (n < 0) n = 0;
+    j_real(d0, n);
     return r;
 }
 
 static RValue *hook_j_su0275_buffs(void *self, void *other, RValue *ret, int argc, RValue **args)
-{ return j_list_fetch(J_GET_BUFFS, J_COUNT_BUFFS, self, other, ret, argc, args); }
+{ return j_list_count(J_GET_BUFFS, J_COUNT_BUFFS, self, other, ret, argc, args); }
 
 static RValue *hook_j_su0275_debuffs(void *self, void *other, RValue *ret, int argc, RValue **args)
-{ return j_list_fetch(J_GET_DEBUFS, J_COUNT_DEBUFS, self, other, ret, argc, args); }
-
-static RValue *hook_j_su0275_elem(RValue *arr, int idx)
-{
-    RValue *p = ((JElem)RVA(J_ELEM))(arr, idx), *out;
-    double now; unsigned k; int ok;
-    if (idx != 0 || !p || !arr || (arr->kind & 0xffffff) != 2 || !arr->v.ptr) return p;
-    for (k = 1; k <= 32; k++) {
-        const JCountRec *c = &j_count_rec[(j_count_next - k) & 31];
-        if (c->ref != arr->v.ptr) continue;
-        now = j_num(p, &ok);
-        if (!ok || now != c->raw) return p;
-        out = &j_count_out[j_count_out_next++ & 7];
-        j_real(out, c->count);
-        return out;
-    }
-    return p;
-}
+{ return j_list_count(J_GET_DEBUFS, J_COUNT_DEBUFS, self, other, ret, argc, args); }

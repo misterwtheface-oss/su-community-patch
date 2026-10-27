@@ -4,9 +4,9 @@ Build: Siralim Ultimate 2.0.38 (Steam build 20548371). Patches in loader/patches
 
 | Status | Count |
 |---|---|
-| patched | 186 |
+| patched | 184 |
 | planned | 0 |
-| needs-hook | 0 |
+| needs-hook | 2 |
 | test-first | 2 |
 | open | 5 |
 | wontfix | 18 |
@@ -191,16 +191,21 @@ Build: Siralim Ultimate 2.0.38 (Steam build 20548371). Patches in loader/patches
 | SU-0270 | Father Shadow | bug | high | SU-0270 | none | community:B4#36 |
 | SU-0271 | Gemcutter | bug | high | SU-0271 | none | community:B4#38 |
 | SU-0272 | Giftwrapped Army | bug | code-certain | SU-0272 | none | community:B4#39 |
-| SU-0275 | Grandiose | bug | code-certain | SU-0275 | none | community:B5#3c |
 | SU-0280 | Improbable Catapult | bug | code-certain | SU-0280 | none | community:B5#12 |
 | SU-0281 | Jealousy | bug | high | SU-0281 | none | community:B5#14 |
 | SU-0286 | Master of Hounds | bug | code-certain | SU-0286 | none | community:B5#27 |
 | SU-0289 | Master of Spellmanes | bug | medium | SU-0289 | none | community:B5#32 |
 | SU-0290 | Mesmer | bug | code-certain | SU-0290 | none | community:B5#35 |
 | SU-0297 | Ravish | bug | code-certain | SU-0297 | none | community:B6#14 |
-| SU-0301 | Roulette (new finding: heal branch ends the whole attack) | bug | high | SU-0301 | none | own:errata-round2 (found decoding B6#18) |
 | SU-0303 | Savior (new finding: halves damage to itself) | bug | code-certain | SU-0303 | none | own:errata-round2 (found decoding B6#19) |
 | SU-0310 | Terminus | bug | high | SU-0310 | none | community:B6#36 |
+
+## Needs hook code
+
+| Id | Title | Category | Confidence | Patch | App note | Sources |
+|---|---|---|---|---|---|---|
+| SU-0275 | Grandiose | bug | code-certain | SU-0275 | none | community:B5#3c |
+| SU-0301 | Roulette (new finding: heal branch ends the whole attack) | bug | high | SU-0301 | none | own:errata-round2 (found decoding B6#18) |
 
 ## Test in game first
 

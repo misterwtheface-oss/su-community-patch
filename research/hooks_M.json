@@ -4,48 +4,17 @@
       "id": "SU-0301",
       "bug": "SU-0301",
       "default": 1,
-      "group": "heavy",
-      "title": "Roulette: a heal roll ends only that hit (no damage, like a hit that dealt none), so the remaining extra attacks and the after-attack effects still happen (code: the heal roll ended the whole attack)",
+      "title": "Roulette: a heal roll ends only that hit, so the creature's remaining extra attacks still happen (code: the heal roll ended the whole attack)",
       "edits": [
         {
-          "va": "0x149856760",
-          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
-          "write": "c7442440fd060000b201488d8c2458860000e8395ca3f6488984245865000048",
-          "note": "SU-0301 Roulette heal: L1789 (first_attack_done = true), then join the per-hit end at L1871 like a hit that dealt no damage (cave code)"
-        },
-        {
-          "va": "0x149856780",
-          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
-          "write": "8b8424586500004889842460650000488b942460650000488d8c24803a0000e8",
-          "note": "SU-0301 Roulette heal: L1789 (first_attack_done = true), then join the per-hit end at L1871 like a hit that dealt no damage (cave code)"
-        },
-        {
-          "va": "0x1498567a0",
-          "expect": "0000000000000000000000000000000000000000000000000000000000000000",
-          "write": "6c5ca3f690488d8c2458860000e86e5aa3f64c8d8c24803a000041b800000080",
-          "note": "SU-0301 Roulette heal: L1789 (first_attack_done = true), then join the per-hit end at L1871 like a hit that dealt no damage (cave code)"
-        },
-        {
-          "va": "0x1498567c0",
-          "expect": "000000000000000000000000000000000000000000",
-          "write": "8b15b2b01800488d4c2468e8905a06fee9dee4e9f6",
-          "note": "SU-0301 Roulette heal: L1789 (first_attack_done = true), then join the per-hit end at L1871 like a hit that dealt no damage (cave code)"
-        },
-        {
-          "va": "0x1406f098a",
-          "expect": "c7442440f0060000",
-          "write": "e9d15d1609909090",
-          "note": "bc_CreatureAttack L1776 (Roulette heal `return`, its line marker; the shared return tail at 0x1406f09a2 stays untouched) -> SU-0301 stub"
+          "va": "0x1406f09b2",
+          "expect": "e9c68b0000",
+          "write": "e9b1fbfdff",
+          "note": "bc_CreatureAttack L1776 Roulette heal: continue with the next hit (hit-loop continue block) instead of returning"
         }
       ],
       "runtime_hooks": [],
-      "reserves": [
-        {
-          "start": "0x149856760",
-          "end": "0x1498567d4",
-          "what": "SU-0301 Roulette heal continuation stub"
-        }
-      ]
+      "reserves": []
     },
     {
       "id": "SU-0286",

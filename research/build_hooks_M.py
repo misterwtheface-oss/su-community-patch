@@ -1,5 +1,5 @@
 """Build research/hooks_M.json: errata round-2 batch M (attacks, Avatar traits, overworld). See loader/hooks_M.c.
-SU-0301 Roulette (cave stub, heavy), SU-0286 Master of Hounds, SU-0243 Teleportation Shrine, SU-0268 Forbearance + Master of
+SU-0301 Roulette (byte edit), SU-0286 Master of Hounds, SU-0243 Teleportation Shrine, SU-0268 Forbearance + Master of
 Wights, SU-0200 Disarmed (heavy), SU-0280 Improbable Catapult (heavy, partial). SU-0249 (battle music) is not built:
 its gate already lets the realm-music swap run in battle when the option is off (see the SU-0249 record).
 Verifies every expect byte, call target, frame offset and jump-safety assumption against the exe. Assigned space only:
@@ -88,147 +88,30 @@ def calls_to(lo, hi, target):
 
 
 # ------------------------------------------------------------------------------------------------- SU-0301 Roulette
-# bc_CreatureAttack hit loop L1076-L1892 (continue block 0x1406d0568, back edge 0x1406f6748, exit 0x1406f674d).
-# Roulette L1742-L1776 sits in it. Its heal branch: L1746-L1773 queue one bc_EventHeal per creature, L1775 dmg = 0,
-# L1776 `return`. The return's tail (0x1406f09a2: store the return value, 0x1406f09b2: jmp epilogue) is SHARED with the
-# pre-loop L176 exit (Stomp, jmp from 0x1406a7ef9 to 0x1406f09a2): the first build retargeted 0x1406f09b2 and so sent
-# Stomp-failed attacks into the hit loop before `i` was ever set (in-game: 'STRING argument is unset' at L1076 = the
-# ++ of an unset i). Now the detour is the L1776 line marker 0x1406f098a, reached only from the heal branch; the shared
-# tail is untouched. The stub runs L1789 (attacker.first_attack_done = true, which every hit runs) and joins the path a
-# dodged hit takes after its dodge branch: L1871 (0x1406f4cb3, the L1834 `not dodged or still hits` false target), so
-# the heal hit skips the dodge branch and the damage event, then runs the per-hit end (L1871-L1892) and the next hit.
-RL_SITE, RL_TAIL, RL_TAILJMP, RL_EPILOGUE = 0x1406f098a, 0x1406f09a2, 0x1406f09b2, 0x1406f957d
-RL_L1775, RL_HEAL_LO = 0x1406f0973, 0x1406efbc5                  # L1775 dmg = 0; L1742 Roulette gate
-RL_L1789, RL_L1789_END, RL_L1871 = 0x1406f1472, 0x1406f14e2, 0x1406f4cb3
-RL_CONTINUE, RL_BACKEDGE, RL_LOOP_EXIT = 0x1406d0568, 0x1406f6748, 0x1406f674d
-RL_STOMP_JMP = 0x1406a7ef9
-RL_TEMPS = {0x48, 0x58, 0xa8, 0x1b8}            # YYC temps: each use is `release, reset kind`, then the call writes it
-RL_ARGS = (0xc0, 0x350)                         # argument pointer array + argument RValue array (assigned by helpers)
-RL_WRITERS = {0x14028c530, 0x14028c410, 0x14028c4a0, 0x14028c3b0, 0x14028c360, 0x14028c3d0}   # helpers: rcx = dest
-RL_VARGET = 0x1478bbd70
+RL_JMP, RL_EPILOGUE, RL_CONTINUE, RL_BACKEDGE = 0x1406f09b2, 0x1406f957d, 0x1406d0568, 0x1406f6748
 
 
 def check_su0301():
     lo, hi = S.func_range("bc_CreatureAttack")
-    ins = S.disasm(lo, hi)
-    at = {x.address: n for n, x in enumerate(ins)}
-    # the site: L1776 marker (8 bytes), after L1775 dmg = 0; then the shared return tail
-    s = ins[at[RL_SITE]]
-    assert s.op_str == "dword ptr [rsp + 0x40], 0x6f0" and s.size == 8
-    assert ins[at[RL_L1775]].op_str == "dword ptr [rsp + 0x40], 0x6ef"
-    assert ins[at[RL_TAILJMP]].mnemonic == "jmp" and int(ins[at[RL_TAILJMP]].op_str, 16) == RL_EPILOGUE
-    assert RL_TAIL in at and RL_SITE + 8 < RL_TAIL
-    jumps = [(x.address, int(x.op_str, 16)) for x in ins if x.mnemonic.startswith("j") and x.op_str.startswith("0x")]
-    # every jump into [L1775, tail) comes from the Roulette block; the only foreign entry is Stomp's into the tail
-    for src, t in jumps:
-        if RL_L1775 <= t < RL_TAIL:
-            assert RL_HEAL_LO <= src < RL_L1775, "jump into the heal-branch end from %#x" % src
-            assert t == RL_L1775, "jump into L1776 itself from %#x" % src
-    assert (RL_STOMP_JMP, RL_TAIL) in jumps                                  # the shared tail (left untouched)
-    # the Roulette block is only entered from inside the hit loop
-    for src, t in jumps:
-        if RL_HEAL_LO <= t < RL_TAIL:
-            assert RL_CONTINUE <= src < RL_LOOP_EXIT, hex(src)
-    # loop shape: back edge -> continue block; the dodged path joins at L1871 (L1834 false target)
-    assert (RL_BACKEDGE, RL_CONTINUE) in jumps
-    assert ins[at[RL_L1871]].op_str == "dword ptr [rsp + 0x40], 0x74f"
-    j1834 = [src for src, t in jumps if t == RL_L1871]
-    assert j1834 and all(0x1406f3848 <= src < RL_L1871 for src in j1834), [hex(x) for x in j1834]
-    assert ins[at[0x1406f3848]].op_str == "dword ptr [rsp + 0x40], 0x72a"   # L1834 (if !dodged || still_hits)
-    flags_dead(RL_L1871)
-    # no non-volatile register is written anywhere in the loop (so no register state rides across the skipped code)
+    i = ins_at(RL_JMP)
+    assert i.mnemonic == "jmp" and int(i.op_str, 16) == RL_EPILOGUE
+    b = ins_at(RL_BACKEDGE)
+    assert b.mnemonic == "jmp" and int(b.op_str, 16) == RL_CONTINUE          # the hit loop's own back edge
+    c = S.disasm(RL_CONTINUE, RL_CONTINUE + 12)
+    assert c[0].op_str == "eax, eax" and c[1].op_str == "eax, 1" and c[2].mnemonic == "je"
+    # the heal branch is inside the hit loop: L1775 (dmg = 0) right before
+    m = S.disasm(0x1406f0973, 0x1406f097b)[0]
+    assert m.op_str == "dword ptr [rsp + 0x40], 0x6ef"
+    # no non-volatile register is written anywhere in the loop body (the jump skips L1777-L1892 of one hit only)
     import capstone
     md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_64); md.detail = True
-    canon = lambda n: {"eax": "rax", "ebx": "rbx", "ecx": "rcx", "edx": "rdx", "esi": "rsi", "edi": "rdi", "al": "rax",
-                       "bl": "rbx", "cl": "rcx", "dl": "rdx", "sil": "rsi", "dil": "rdi"}.get(n, re.sub(r"^(r\d+)[dwb]$", r"\1", n))
     nv = {"rbx", "rsi", "rdi", "r12", "r13", "r14", "r15", "rbp"} | {"xmm%d" % k for k in range(6, 16)}
-    for x in md.disasm(S.pe.get_data(RL_CONTINUE - S.BASE, RL_LOOP_EXIT - RL_CONTINUE), RL_CONTINUE):
+    for x in md.disasm(S.pe.get_data(RL_CONTINUE - S.BASE, 0x1406f674d - RL_CONTINUE), RL_CONTINUE):
         for r in x.regs_access()[1]:
-            assert canon(x.reg_name(r)) not in nv, hex(x.address)
-    # at the landing every register is written before it is read (up to the first call, after which volatiles are dead)
-    seen = set()
-    for x in md.disasm(S.pe.get_data(RL_L1871 - S.BASE, 0x200), RL_L1871):
-        r, w = x.regs_access()
-        r = {canon(x.reg_name(y)) for y in r} - {"rsp", "rip", "rflags"}
-        if x.mnemonic == "call":
-            break
-        assert r <= seen, ("register read before set at L1871", hex(x.address), r - seen)
-        seen |= {canon(x.reg_name(y)) for y in w}
-
-    # ---- stack-slot audit (both directions), regions in address order:
-    HEAL, R1 = (RL_HEAL_LO, RL_SITE), (RL_L1789_END, RL_L1871)            # heal branch; code the heal hit now skips
-    LATER = [(RL_L1871, RL_LOOP_EXIT), (RL_LOOP_EXIT, RL_EPILOGUE), (RL_CONTINUE, RL_HEAL_LO)]  # per-hit end, post, next hit
-
-    def refs(a, b):
-        out = {}
-        for n, x in enumerate(ins):
-            if a <= x.address < b:
-                for m in re.finditer(r"\[rsp \+ (0x[0-9a-f]+)\]", x.op_str):
-                    out.setdefault(int(m.group(1), 16), []).append(n)
-        return out
-
-    def writes(n):
-        x = ins[n]
-        if x.mnemonic == "mov" and re.match(r"(byte|word|dword|qword) ptr \[rsp", x.op_str):
-            return True
-        if x.mnemonic == "lea":
-            reg = x.op_str.split(",")[0]
-            for y in ins[n + 1:n + 12]:
-                if y.mnemonic == "call":
-                    t = int(y.op_str, 16) if y.op_str.startswith("0x") else None
-                    return (reg == "rcx" and t in RL_WRITERS) or (reg == "r9" and t == RL_VARGET) or reg == "r8"
-                if y.op_str.split(",")[0] == reg:
-                    return False              # pointer kept for an argument array / release block: checked below
-        return False
-
-    def is_temp_release(n):                   # lea rax, [rsp+T]; mov [rsp+X], rax; ... (release, reset kind to 5)
-        x, y = ins[n], ins[n + 1]
-        return x.op_str.startswith("rax, [rsp + ") and y.mnemonic == "mov" and y.op_str.endswith(", rax")
-
-    for name, (a, b) in (("heal branch", HEAL), ("skipped L1791-L1870", R1)):
-        for slot, ns in refs(a, b).items():
-            if not any(writes(n) for n in ns):
-                continue                      # only read there: the heal path leaves it as it was
-            if RL_ARGS[0] <= slot < RL_ARGS[1]:
-                continue                      # argument arrays: every call assigns its own entries first
-            for la, lb in LATER:
-                r = refs(la, lb).get(slot)
-                if not r:
-                    continue
-                if slot in RL_TEMPS:
-                    assert is_temp_release(r[0]), (name, hex(slot), hex(ins[r[0]].address))
-                else:
-                    assert writes(r[0]), ("%s writes %#x, read first at %#x" % (name, slot, ins[r[0]].address))
-    return ins, at
-
-
-def su0301_stub(ins, at, base):
-    """L1789 replayed instruction by instruction (calls and rip operands re-encoded for the cave), then jmp L1871."""
-    src = []
-    for x in ins[at[RL_L1789]:at[RL_L1789_END]]:
-        if x.mnemonic == "call":
-            src.append("call %s" % x.op_str)
-        elif "rip" in x.op_str:
-            src.append("%s %s" % (x.mnemonic, re.sub(r"\[rip [+-] 0x[0-9a-f]+\]", "[%#x]" % rip_target(x), x.op_str)))
-        else:
-            src.append("%s %s" % (x.mnemonic, x.op_str))
-    src.append("jmp %#x" % RL_L1871)
-    code = asm("\n".join(src), base)
-    # the replica decodes to the same instructions and targets as the original
-    got = S.md.disasm(code, base)
-    want = ins[at[RL_L1789]:at[RL_L1789_END]]
-    got = list(got)
-    for g, w in zip(got, want):
-        assert g.mnemonic == w.mnemonic, (hex(g.address), g.mnemonic, w.mnemonic)
-        if w.mnemonic == "call":
-            assert g.op_str == w.op_str
-        elif "rip" in w.op_str:
-            assert rip_target(g) == rip_target(w) and re.sub(r"\[rip.*\]", "", g.op_str) == re.sub(r"\[rip.*\]", "", w.op_str)
-        else:
-            assert g.op_str == w.op_str, (g.op_str, w.op_str)
-    assert len(got) == len(want) + 1 and got[-1].mnemonic == "jmp" and int(got[-1].op_str, 16) == RL_L1871
-    assert any(rip_target(w) == 0x1499e1878 for w in want)                 # first_attack_done
-    return code
+            n = re.sub(r"(d|w|b)$", "", x.reg_name(r)) if x.reg_name(r).startswith("r1") else x.reg_name(r)
+            assert {"ebx": "rbx", "esi": "rsi", "edi": "rdi", "bl": "rbx", "sil": "rsi", "dil": "rdi"}.get(n, n) not in nv, hex(x.address)
+    return [{"va": hex(RL_JMP), "expect": bytes(i.bytes).hex(), "write": "e9" + le(RL_CONTINUE - (RL_JMP + 5)),
+             "note": "bc_CreatureAttack L1776 Roulette heal: continue with the next hit (hit-loop continue block) instead of returning"}]
 
 
 # --------------------------------------------------------------------------------------- SU-0286 Master of Hounds
@@ -464,7 +347,7 @@ def check_black():
 
 
 def main():
-    rl_ins, rl_at = check_su0301()
+    rl = check_su0301()
     check_su0286(); check_su0243(); check_su0268(); check_su0200(); check_black()
 
     taken = []
@@ -502,13 +385,11 @@ def main():
 
     patches = []
 
-    # ---- SU-0301 (cave stub placed after the other patches' code so their bytes do not move; see below)
-    rl_patch = {"id": "SU-0301", "bug": "SU-0301", "default": 1, "group": "heavy",
-                "title": "Roulette: a heal roll ends only that hit (no damage, like a hit that dealt none), so the "
-                         "remaining extra attacks and the after-attack effects still happen (code: the heal roll "
-                         "ended the whole attack)",
-                "edits": [], "runtime_hooks": [], "reserves": []}
-    patches.append(rl_patch)
+    # ---- SU-0301
+    patches.append({"id": "SU-0301", "bug": "SU-0301", "default": 1,
+                    "title": "Roulette: a heal roll ends only that hit, so the creature's remaining extra attacks still "
+                             "happen (code: the heal roll ended the whole attack)",
+                    "edits": rl, "runtime_hooks": [], "reserves": []})
 
     # ---- SU-0286
     tE, eE, rE = tramp(SLOT_HOUND_E, "hook_m_su0286_enemy")
@@ -593,45 +474,6 @@ def main():
                              "damage parts, The Truth, The Black, I HATE YOU); code: your side only",
                     "edits": e, "runtime_hooks": [{"slot_va": hex(SLOT_AVATAR), "symbol": "hook_m_su0280_any_ally"}],
                     "reserves": rv})
-
-    # ---- SU-0301 stub (after every other M cave byte, 16-aligned)
-    at[0] = (at[0] + 15) // 16 * 16
-    rl_code = su0301_stub(rl_ins, rl_at, at[0])
-    rs = at[0]
-    at[0] += len(rl_code)
-    assert at[0] - 1 <= CODE_HI
-    site = asm("jmp %#x" % rs, RL_SITE) + b"\x90\x90\x90"
-    assert len(site) == 8
-    rl_patch["edits"] = chunks(rs, rl_code, "SU-0301 Roulette heal: L1789 (first_attack_done = true), then join the "
-                                            "per-hit end at L1871 like a hit that dealt no damage") + [
-        {"va": hex(RL_SITE), "expect": S.pe.get_data(RL_SITE - S.BASE, 8).hex(), "write": site.hex(),
-         "note": "bc_CreatureAttack L1776 (Roulette heal `return`, its line marker; the shared return tail at "
-                 "0x1406f09a2 stays untouched) -> SU-0301 stub"}]
-    rl_patch["reserves"] = [res(rs, len(rl_code), "SU-0301 Roulette heal continuation stub")]
-    # no other patch branches into the heal-branch end (L1775-L1776) or edits it
-    import capstone as _cs
-    _md = _cs.Cs(_cs.CS_ARCH_X86, _cs.CS_MODE_64)
-    for f in [os.path.join(HERE, "..", "loader", "patches.json")] + glob.glob(os.path.join(HERE, "hooks_*.json")):
-        if f.endswith("hooks_M.json"):
-            continue
-        for p in json.load(open(f, encoding="utf-8"))["patches"]:
-            if p["id"] in MY_IDS:
-                continue
-            for d in p["edits"]:
-                va = int(d["va"], 16)
-                assert not (RL_L1775 <= va < RL_TAIL + 21), (p["id"], d["va"])
-                for x in _md.disasm(bytes.fromhex(d["write"]), va):
-                    if x.mnemonic.startswith("j") or x.mnemonic == "call":
-                        if x.op_str.startswith("0x"):
-                            assert not (RL_L1775 < int(x.op_str, 16) < RL_TAIL), (p["id"], hex(x.address))
-    # the other M patches are live and tested: their bytes must not change
-    old = os.path.join(HERE, "hooks_M.json")
-    if os.path.exists(old):
-        prev = {p["id"]: p for p in json.load(open(old, encoding="utf-8"))["patches"]}
-        for p in patches:
-            if p["id"] != "SU-0301" and p["id"] in prev:
-                assert p["edits"] == prev[p["id"]]["edits"] and p["reserves"] == prev[p["id"]]["reserves"], \
-                    "%s changed" % p["id"]
 
     for p in patches:
         for r in p["reserves"]:

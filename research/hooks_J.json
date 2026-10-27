@@ -457,178 +457,88 @@
           "note": "trampoline -> hook_j_su0275_debuffs (loader/hooks_J.c) (cave code)"
         },
         {
-          "va": "0x14a34359c",
-          "expect": "000000000000",
-          "write": "ff250e54b9ff",
-          "note": "trampoline -> hook_j_su0275_elem (loader/hooks_J.c) (cave code)"
-        },
-        {
           "va": "0x140e1a072",
           "expect": "6a823200",
           "write": "1a955209",
-          "note": "bc_EventDamage L2488 Lenience: list fetch -> pass-through, records the bc_CountBuffs value"
-        },
-        {
-          "va": "0x140e1a30e",
-          "expect": "0e2547ff",
-          "write": "8a925209",
-          "note": "bc_EventDamage L2489 Lenience: list[0] read -> the recorded buff count (fresh value)"
+          "note": "bc_EventDamage L2488 Lenience: raw buff count -> bc_CountBuffs"
         },
         {
           "va": "0x140eadf78",
           "expect": "64432900",
           "write": "14564909",
-          "note": "bc_EventDamage L5144 Holy Might: list fetch -> pass-through, records the bc_CountBuffs value"
-        },
-        {
-          "va": "0x140eae1e9",
-          "expect": "33e63dff",
-          "write": "af534909",
-          "note": "bc_EventDamage L5145 Holy Might: list[0] read -> the recorded buff count (fresh value)"
+          "note": "bc_EventDamage L5144 Holy Might: raw buff count -> bc_CountBuffs"
         },
         {
           "va": "0x140dc5bd6",
           "expect": "06c73700",
           "write": "b6d95709",
-          "note": "bc_EventDamage L902 Reckoning: list fetch -> pass-through, records the bc_CountBuffs value"
-        },
-        {
-          "va": "0x140dc5c25",
-          "expect": "f76b4cff",
-          "write": "73d95709",
-          "note": "bc_EventDamage L903 Reckoning: list[0] read -> the recorded buff count (fresh value)"
+          "note": "bc_EventDamage L902 Reckoning: raw buff count -> bc_CountBuffs"
         },
         {
           "va": "0x140e72f7e",
           "expect": "5ef32c00",
           "write": "0e064d09",
-          "note": "bc_EventDamage L4077 Pandemonium Exploit: list fetch -> pass-through, records the bc_CountBuffs value"
-        },
-        {
-          "va": "0x140e72fa8",
-          "expect": "749841ff",
-          "write": "f0054d09",
-          "note": "bc_EventDamage L4078 Pandemonium Exploit: list[0] read -> the recorded buff count (fresh value)"
+          "note": "bc_EventDamage L4077 Pandemonium Exploit: raw buff count -> bc_CountBuffs"
         },
         {
           "va": "0x1408931b5",
           "expect": "27f18a00",
           "write": "d703ab09",
-          "note": "bc_CreatureCast L8705 spell: +10% per buff: list fetch -> pass-through, records the bc_CountBuffs value"
-        },
-        {
-          "va": "0x140893214",
-          "expect": "08969fff",
-          "write": "8403ab09",
-          "note": "bc_CreatureCast L8706 spell: +10% per buff: list[0] read -> the recorded buff count (fresh value)"
+          "note": "bc_CreatureCast L8705 spell: +10% per buff: raw buff count -> bc_CountBuffs"
         },
         {
           "va": "0x1406df0f2",
           "expect": "ba39a600",
           "write": "a044c609",
-          "note": "bc_CreatureAttack L1401 Under Stress: list fetch -> pass-through, records the bc_CountDebuffs value"
-        },
-        {
-          "va": "0x1406df1e0",
-          "expect": "3cd6baff",
-          "write": "b843c609",
-          "note": "bc_CreatureAttack L1402 Under Stress: list[0] read -> the recorded debuff count (fresh value)"
+          "note": "bc_CreatureAttack L1401 Under Stress: raw debuff count -> bc_CountDebuffs"
         },
         {
           "va": "0x140ecf85f",
           "expect": "4d322700",
           "write": "333d4709",
-          "note": "bc_EventDamage L5752 Under Stress: list fetch -> pass-through, records the bc_CountDebuffs value"
-        },
-        {
-          "va": "0x140ecf953",
-          "expect": "c9ce3bff",
-          "write": "453c4709",
-          "note": "bc_EventDamage L5753 Under Stress: list[0] read -> the recorded debuff count (fresh value)"
+          "note": "bc_EventDamage L5752 Under Stress: raw debuff count -> bc_CountDebuffs"
         },
         {
           "va": "0x14138231b",
           "expect": "9107dcff",
           "write": "7712fc08",
-          "note": "bc_OnAttack L2081 Swell: list fetch -> pass-through, records the bc_CountDebuffs value"
-        },
-        {
-          "va": "0x1413823a1",
-          "expect": "7ba4f0fe",
-          "write": "f711fc08",
-          "note": "bc_OnAttack L2082 Swell: list[0] read -> the recorded debuff count (fresh value)"
+          "note": "bc_OnAttack L2081 Swell: raw debuff count -> bc_CountDebuffs"
         },
         {
           "va": "0x140dfa2ba",
           "expect": "f2873400",
           "write": "d8925409",
-          "note": "bc_EventDamage L1868 Nighttaker: list fetch -> pass-through, records the bc_CountDebuffs value"
-        },
-        {
-          "va": "0x140dfa2e4",
-          "expect": "382549ff",
-          "write": "b4925409",
-          "note": "bc_EventDamage L1869 Nighttaker: list[0] read -> the recorded debuff count (fresh value)"
+          "note": "bc_EventDamage L1868 Nighttaker: raw debuff count -> bc_CountDebuffs"
         },
         {
           "va": "0x140e28fd4",
           "expect": "d89a3100",
           "write": "bea55109",
-          "note": "bc_EventDamage L2786 Ruin: list fetch -> pass-through, records the bc_CountDebuffs value"
-        },
-        {
-          "va": "0x140e28ffe",
-          "expect": "1e3846ff",
-          "write": "9aa55109",
-          "note": "bc_EventDamage L2787 Ruin: list[0] read -> the recorded debuff count (fresh value)"
+          "note": "bc_EventDamage L2786 Ruin: raw debuff count -> bc_CountDebuffs"
         },
         {
           "va": "0x140ec0a4c",
           "expect": "60202800",
           "write": "462b4809",
-          "note": "bc_EventDamage L5497 Ruin: list fetch -> pass-through, records the bc_CountDebuffs value"
-        },
-        {
-          "va": "0x140ec0a76",
-          "expect": "a6bd3cff",
-          "write": "222b4809",
-          "note": "bc_EventDamage L5498 Ruin: list[0] read -> the recorded debuff count (fresh value)"
+          "note": "bc_EventDamage L5497 Ruin: raw debuff count -> bc_CountDebuffs"
         },
         {
           "va": "0x140e7559d",
           "expect": "0fd52c00",
           "write": "f5df4c09",
-          "note": "bc_EventDamage L4124 Daybreaker: list fetch -> pass-through, records the bc_CountDebuffs value"
-        },
-        {
-          "va": "0x140e75627",
-          "expect": "f57141ff",
-          "write": "71df4c09",
-          "note": "bc_EventDamage L4125 Daybreaker: list[0] read -> the recorded debuff count (fresh value)"
+          "note": "bc_EventDamage L4124 Daybreaker: raw debuff count -> bc_CountDebuffs"
         },
         {
           "va": "0x140eb24ca",
           "expect": "e2052900",
           "write": "c8104909",
-          "note": "bc_EventDamage L5224 Heresy: list fetch -> pass-through, records the bc_CountDebuffs value"
-        },
-        {
-          "va": "0x140eb253a",
-          "expect": "e2a23dff",
-          "write": "5e104909",
-          "note": "bc_EventDamage L5225 Heresy: list[0] read -> the recorded debuff count (fresh value)"
+          "note": "bc_EventDamage L5224 Heresy: raw debuff count -> bc_CountDebuffs"
         },
         {
           "va": "0x1408b2ecb",
           "expect": "e1fb8800",
           "write": "c706a909",
-          "note": "bc_CreatureCast L9543 spell: chance per debuff: list fetch -> pass-through, records the bc_CountDebuffs value"
-        },
-        {
-          "va": "0x1408b2ef5",
-          "expect": "27999dff",
-          "write": "a306a909",
-          "note": "bc_CreatureCast L9544 spell: chance per debuff: list[0] read -> the recorded debuff count (fresh value)"
+          "note": "bc_CreatureCast L9543 spell: chance per debuff: raw debuff count -> bc_CountDebuffs"
         }
       ],
       "reserves": [
@@ -651,16 +561,6 @@
           "start": "0x149ed89a8",
           "end": "0x149ed89af",
           "what": "hook pointer hook_j_su0275_debuffs"
-        },
-        {
-          "start": "0x14a34359c",
-          "end": "0x14a3435a1",
-          "what": "trampoline -> hook_j_su0275_elem"
-        },
-        {
-          "start": "0x149ed89b0",
-          "end": "0x149ed89b7",
-          "what": "hook pointer hook_j_su0275_elem"
         }
       ],
       "runtime_hooks": [
@@ -671,10 +571,6 @@
         {
           "slot_va": "0x149ed89a8",
           "symbol": "hook_j_su0275_debuffs"
-        },
-        {
-          "slot_va": "0x149ed89b0",
-          "symbol": "hook_j_su0275_elem"
         }
       ],
       "group": "heavy"
