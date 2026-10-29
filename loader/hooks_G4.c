@@ -10,7 +10,9 @@
 #define G4_SLOT_ENEMIES 0x1499e06a8
 
 typedef RValue *(*G4GlobalRef)(void *global_obj, int var_id);       /* 0x140297c10: the global variable's value */
-typedef RValue *(*G4ElemRef)(RValue *arr, int index);                /* 0x14028c8a0: array element, for writing */
+typedef RValue *(*G4ElemRef)(RValue *arr, int index);                /* 0x14028c8a0: array element, for writing; */
+typedef void (*G4Pop)(int n);  /* it pushes the array on the runtime's owner stack, so each write is followed by the
+                                * game's pop 0x1478957b0(1) (2026-10-28: unpopped entries crashed the collector) */
 typedef void (*G4IntSet)(RValue *dst, int value);                    /* 0x14028c530: dst = int */
 typedef void (*G4Assign)(RValue *dst, RValue *src);                  /* 0x14028c410: dst = src (refcounted copy) */
 typedef double (*G4IRandom)(long long lo, long long hi);             /* 0x1478b83e0: irandom_range */
@@ -165,7 +167,9 @@ static RValue *hook_su0143_eventcast(void *self, void *other, RValue *ret, int a
             int pick = (int)((G4IRandom)RVA(0x1478b83e0))(0, n - 1);
             if (pick < 0 || pick >= n) pick = 0;
             ((G4IntSet)RVA(0x14028c530))(((G4ElemRef)RVA(0x14028c8a0))(args[1], 0), 1);
+            ((G4Pop)RVA(0x1478957b0))(1);
             ((G4Assign)RVA(0x14028c410))(((G4ElemRef)RVA(0x14028c8a0))(args[1], 1), &pool[pick]);
+            ((G4Pop)RVA(0x1478957b0))(1);
         }
     }
     return g4_script(0x140cd8d00, self, other, ret, argc, args);              /* bc_EventCast */
