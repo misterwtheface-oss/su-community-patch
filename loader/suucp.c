@@ -92,6 +92,33 @@ static const char *where_kind(ULONG_PTR a, ULONG_PTR *off)
     *off = a; return "other";
 }
 
+/* The game's own GML call stack (the trace its error box prints): a linked list of {prev, script name, line}; the
+ * head is a global each YYC script updates on entry. Read-only, every pointer checked first. */
+#define GML_TRACE_HEAD 0x149d53148
+static int readable(const void *p, SIZE_T n)
+{
+    MEMORY_BASIC_INFORMATION mi;
+    if (!p || !VirtualQuery(p, &mi, sizeof mi) || mi.State != MEM_COMMIT) return 0;
+    if (mi.Protect & (PAGE_NOACCESS | PAGE_GUARD)) return 0;
+    return (const char *)p + n <= (const char *)mi.BaseAddress + mi.RegionSize;
+}
+
+static void gml_trace(void)
+{
+    const char *e;
+    int k;
+    if (!g_base || !readable(RVA(GML_TRACE_HEAD), 8)) return;
+    e = *(const char **)RVA(GML_TRACE_HEAD);
+    for (k = 0; k < 24 && readable(e, 0x14); k++) {
+        const char *name = *(const char *const *)(e + 8);
+        char buf[80]; int j;
+        for (j = 0; j < 79 && readable(name + j, 1) && name[j]; j++) buf[j] = name[j];
+        buf[j] = 0;
+        logf_("  gml: %s (line %d)", j ? buf : "?", *(const int *)(e + 0x10));
+        e = *(const char *const *)e;
+    }
+}
+
 static LONG CALLBACK crash_logger(EXCEPTION_POINTERS *ep)
 {
     DWORD code = ep->ExceptionRecord->ExceptionCode;
@@ -108,15 +135,18 @@ static LONG CALLBACK crash_logger(EXCEPTION_POINTERS *ep)
     sp = (ULONG_PTR *)ep->ContextRecord->Rsp;
     {
         ULONG_PTR top = (ULONG_PTR)((NT_TIB *)NtCurrentTeb())->StackBase;     /* never read past the stack */
-        for (i = 0; i < 512 && shown < 8 && (ULONG_PTR)&sp[i] + 8 <= top; i++) { /* return-address candidates */
-        ULONG_PTR v = sp[i];
-        if (v >= (ULONG_PTR)g_base + 0x1000 && v < (ULONG_PTR)g_base + 0x88c0000) {
+        int dll_shown = 0;
+        for (i = 0; i < 4096 && (shown < 8 || dll_shown < 8) && (ULONG_PTR)&sp[i] + 8 <= top; i++) {
+        ULONG_PTR v = sp[i];                                                   /* return-address candidates */
+        if (shown < 8 && v >= (ULONG_PTR)g_base + 0x1000 && v < (ULONG_PTR)g_base + 0x88c0000) {
             logf_("  stack[%d]: game +0x%llX", i, (unsigned long long)(v - (ULONG_PTR)g_base)); shown++;
-        } else if (g_dll_base && v >= (ULONG_PTR)g_dll_base && v < (ULONG_PTR)g_dll_base + g_dll_size) {
-            logf_("  stack[%d]: dll +0x%llX", i, (unsigned long long)(v - (ULONG_PTR)g_dll_base)); shown++;
+        } else if (dll_shown < 8 && g_dll_base && v >= (ULONG_PTR)g_dll_base && v < (ULONG_PTR)g_dll_base + g_dll_size) {
+            logf_("  stack[%d]: dll +0x%llX", i, (unsigned long long)(v - (ULONG_PTR)g_dll_base)); dll_shown++;
         }
         }
     }
+    if (g_su0275_step) logf_("  SU-0275 counter step %d", g_su0275_step);
+    gml_trace();
     t_in_logger = 0;
     return EXCEPTION_CONTINUE_SEARCH;
 }

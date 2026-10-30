@@ -4,7 +4,7 @@ Fixes bugs in Siralim Ultimate so that effects work the way their in-game text s
 affiliated with Thylacine Studios. **Players:** see `publish/README.md` (install guide) and the release's
 `PATCH_NOTES.pdf`. This file is for people working on the patch.
 
-**Status:** version in `loader/VERSION` (0.9.1-beta), for Siralim Ultimate 2.0.38 (Steam build 20548371). Live fixes
+**Status:** version in `loader/VERSION` (0.9.2-beta), for Siralim Ultimate 2.0.38 (Steam build 20548371). Live fixes
 and open items: `STATUS.md` (generated). In-game checks still wanted: `IN_GAME_TESTS.md` (generated).
 
 ## How it works
